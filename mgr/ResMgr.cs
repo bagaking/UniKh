@@ -34,7 +34,6 @@ namespace UniKh.mgr {
         internal T SetCache<T>(string key, T pref) where T : Object {
             if (_cache1 == null) {
                 _cache1 = new Dictionary<string, Object>(pageSize);
-                return null;
             }
 
             if (!_cache1.ContainsKey(key) && _cache1.Count >= pageSize) {
@@ -46,7 +45,9 @@ namespace UniKh.mgr {
             return pref;
         }
 
-        public GameObject LoadR(uint id) => Load<GameObject>($"prefab_r/{id}");
+        public GameObject LoadR(uint id) {
+            return Load<GameObject>($"prefab_r/{id}");
+        }
 
         public T Load<T>(string path) where T : Object {
             var pref = LoadFromCache(path);
