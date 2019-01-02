@@ -18,5 +18,9 @@ namespace UniKh.core {
 
             _inst = this as T;
         }
+
+        private void Start() {
+            DontDestroyOnLoad(this);
+        }
     }
 }
