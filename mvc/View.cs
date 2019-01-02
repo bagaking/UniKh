@@ -13,22 +13,22 @@ namespace UniKh.mvc {
             // OnBind(model_);
         }
 
-        public void Debind() {
+        public void UnBind() {
             var oldModel = Model;
             Model = null;
-            StartCoroutine(OnDebind(oldModel));
+            OnUnbind(oldModel);
         }
 
         public void UpdateView() {
             if (!Model.dirty) return;
-            CorouMgr.Run(OnUpdateView());
+            OnUpdateView();
             Model.MarkRendered();
         }
 
-        protected abstract IEnumerator OnUpdateView();
+        protected abstract void OnUpdateView();
 
         // protected abstract IEnumerator OnBind(TModel oldModel);
 
-        protected abstract IEnumerator OnDebind(TModel oldModel);
+        protected abstract void OnUnbind(TModel oldModel);
     }
 }
