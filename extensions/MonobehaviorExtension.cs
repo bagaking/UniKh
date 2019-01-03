@@ -18,5 +18,27 @@ namespace UniKh.extensions {
             aiNode.transform.SetParent(mono.transform);
             return aiNode.AddComponent<TComponent>();
         }
+        
+        public static Transform GetChild(this MonoBehaviour mono, string name) {
+            for (var i = 0; i < mono.transform.childCount; i++) {
+                var childI = mono.transform.GetChild(i);
+                if (childI.name == name) {
+                    return childI;
+                }
+            }
+
+            return null;
+        }
+        
+        public static Transform GetChild(this GameObject go, string name) {
+            for (var i = 0; i < go.transform.childCount; i++) {
+                var childI = go.transform.GetChild(i);
+                if (childI.name == name) {
+                    return childI;
+                }
+            }
+
+            return null;
+        }
     }
 }
