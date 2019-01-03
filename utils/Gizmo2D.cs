@@ -113,6 +113,12 @@ namespace UniKh.utils {
             UnityEditor.Handles.DrawSolidDisc(pos, Vector3.back, radius);
             return AfterDraw();
         }
+        
+        public Gizmo2DDrawer DrawLabel(Vector2 pos, string text) {
+            BeforeDraw();
+            UnityEditor.Handles.Label(pos, text);
+            return AfterDraw();
+        }
 
         public Gizmo2DDrawer DrawLine(Vector2[] poses) {
             BeforeDraw();

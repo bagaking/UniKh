@@ -39,6 +39,12 @@ namespace UniKh.extensions {
             }
         }
 
+        public static void ForEach<TTerm>(this List<TTerm> lst, System.Action<TTerm, int> action) {
+            for (var i = 0; i < lst.Count; i++) {
+                action(lst[i], i);
+            }
+        }
+        
         public static void ForEach<TTerm>(this TTerm[] lst, System.Action<TTerm, int> action) {
             for (var i = 0; i < lst.Length; i++) {
                 action(lst[i], i);
