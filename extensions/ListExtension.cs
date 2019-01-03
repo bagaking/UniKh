@@ -12,10 +12,12 @@ namespace UniKh.extensions {
         }
 
 
-        public static string ToItemsString<TTerm>(this IEnumerable<TTerm> lst, string prefix = "") {
-            var sb = new StringBuilder(prefix);
-            return lst.Reduce((prev, term) => prev.Append(' ').Append(term), sb).ToString();
-        }
+        private static StringBuilder sbCombind = new StringBuilder();
+
+        public static string ToItemsString<TTerm>(this IEnumerable<TTerm> lst, string prefix = "") => lst.Reduce(
+                (prev, term) => prev.Append(' ').Append(term),
+                sbCombind.Clear().Append(prefix))
+            .ToString();
 
         public static List<TResult> Map<TTerm, TResult>(this List<TTerm> lst, System.Func<TTerm, TResult> mapper) {
             var ret = new List<TResult>(lst.Count);
