@@ -6,7 +6,9 @@ namespace UniKh.core {
         public static T Inst {
             get {
                 if (_inst) return _inst;
-                var go = GameObject.Find("__SYS__") ?? (new GameObject("__SYS__"));
+                var type = typeof(T);
+                var inUniKh = type.Namespace.StartsWith("UniKh");
+                var go = new GameObject(inUniKh ? $"[S]UniKh/{type.Name}" : $"[S]{type.FullName}");
                 return go.AddComponent<T>();
             }
         }

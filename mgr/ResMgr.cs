@@ -46,7 +46,8 @@ namespace UniKh.mgr {
         }
 
         public GameObject LoadR(uint id) {
-            return Load<GameObject>($"prefab_r/{id}");
+            var path = $"prefab_r/{id}";
+            return Load<GameObject>(path);
         }
 
         public T Load<T>(string path) where T : Object {
