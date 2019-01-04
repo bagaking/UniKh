@@ -36,12 +36,24 @@ namespace UniKh.dataStructure {
 
         public Vector2 center => new Vector2(left + width / 2, bottom + height / 2);
 
-        public BoundLBRT Expand(float size) {
+        public BoundLBRT ExpandX(float size) {
             left -= size;
             bottom -= size;
             width += size * 2;
             height += size * 2;
             return this;
+        }
+
+        public BoundLBRT Clone() {
+            return new BoundLBRT(
+                left,
+                bottom,
+                width,
+                height);
+        }
+
+        public BoundLBRT Expand(float size) {
+            return Clone().ExpandX(size);
         }
 
         public BoundLBRT Expand2AccommodateNodes(Vector2 pos) {
