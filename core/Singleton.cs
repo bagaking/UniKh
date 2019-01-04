@@ -1,4 +1,5 @@
 using System;
+using UniKh.utils;
 using UnityEngine;
 
 namespace UniKh.core {
@@ -7,7 +8,8 @@ namespace UniKh.core {
             get {
                 if (_inst) return _inst;
                 var type = typeof(T);
-                var inUniKh = type.Namespace.StartsWith("UniKh");
+                Log.Verbose($"create singleton node of type {type} ");
+                var inUniKh = type.Namespace != null && type.Namespace.StartsWith("UniKh");
                 var go = new GameObject(inUniKh ? $"[S]UniKh/{type.Name}" : $"[S]{type.FullName}");
                 return go.AddComponent<T>();
             }
