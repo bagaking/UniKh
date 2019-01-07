@@ -45,11 +45,6 @@ namespace UniKh.mgr {
             return pref;
         }
 
-        public GameObject LoadR(uint id) {
-            var path = $"prefab_r/{id}";
-            return Load<GameObject>(path);
-        }
-
         public T Load<T>(string path) where T : Object {
             var pref = LoadFromCache(path);
             if (null != pref) return pref as T;
@@ -58,12 +53,10 @@ namespace UniKh.mgr {
 
             return SetCache(path, prefT);
         }
-
+        
         public void LoadAsync<T>(string path, Action<T> callback) where T : Object {
             StartCoroutine(LoadAsyncCorou(path, callback));
         }
-
-        
         
         private IEnumerator<object> LoadAsyncCorou<T>(string path, Action<T> callback) where T : Object {
             if (_keysInSync.Contains(path)) { // lock
@@ -82,6 +75,12 @@ namespace UniKh.mgr {
             callback(prefT);
         }
 
+        public T Create<T>(string path) where T : Object {
+            var pref = Load<T>(path);
+            var inst = Instantiate(pref);
+            return inst;
+        }
+        
         [Btn]
         public void PrintCache() { // todo: show in inspector 
             print(ToString());
