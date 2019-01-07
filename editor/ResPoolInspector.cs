@@ -8,6 +8,7 @@ using UniKh.mgr;
 using UniKh.res;
 using UniKh.utils;
 using UnityEditor;
+using UnityEngine;
 
 namespace UniKh.editor {
     [CustomEditor(typeof(ResPool))]
@@ -17,7 +18,7 @@ namespace UniKh.editor {
 
 //            var resPool = target as ResPool;
 
-            var types = Assembly.GetAssembly(typeof(ResPool)).GetTypes();
+            var types = Assembly.GetAssembly(typeof(IdsAttribute)).GetTypes();
             var lstEnumType = new List<IdsAttribute>();
             IdsTree root = null;
             types.ForEach(
@@ -27,19 +28,25 @@ namespace UniKh.editor {
                     var idSeg = new IdsTree(attr.SegStart, attr.SegEnd, type);
                     root = root == null ? idSeg : root.Insert(idSeg);
                 });
-            
-            
+
+
             root.ForEach(
                 (t, d) => EditorGUILayout.LabelField(" - ".Repeat(d) + t.ToString()));
             EditorGUILayout.Space();
 
+            
+            if (!Application.isPlaying) {
+                EditorGUILayout.LabelField("Monitor will show while playing");
+                return;
+            }
+
             EditorGUILayout.LabelField("|ResId\t|InPool\t|All\t|Desc\t|");
-            if (ResPool.Pool != null) {
-                var lst = ResPool.Pool.Keys.ToList();
+            if (ResPool.Inst.pool != null) {
+                var lst = ResPool.Inst.pool.Keys.ToList();
                 lst.Sort();
                 foreach (var key in lst) {
                     EditorGUILayout.LabelField(
-                        $"|{key}\t|{ResPool.Pool[key].Count}\t|{ResPool.totalCreated.TryGet(key, 0)}\t|{root.Find(key)}\t|");
+                        $"|{key}\t|{ResPool.Inst.pool[key].Count}\t|{ResPool.Inst.totalCreated.TryGet(key, 0)}\t|{root.Find(key)}\t|");
                 }
             }
 
