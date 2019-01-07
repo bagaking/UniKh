@@ -11,37 +11,37 @@ namespace UniKh.mgr {
     public class ResMgr : Singleton<ResMgr> {
         public int pageSize = 32;
 
-        private Dictionary<string, Object> _cache1;
+        public Dictionary<string, Object> Cache1 { get; private set; }
 
-        private Dictionary<string, Object> _cache2;
+        public Dictionary<string, Object> Cache2{ get; private set; }
 
         private readonly HashSet<string> _keysInSync = new HashSet<string>();
 
         public void SetPageSize(int size) => pageSize = size;
 
         internal Object LoadFromCache(string key) {
-            if (_cache1 != null && _cache1.ContainsKey(key)) {
-                return _cache1[key];
+            if (Cache1 != null && Cache1.ContainsKey(key)) {
+                return Cache1[key];
             }
 
-            if (_cache2 != null && _cache2.ContainsKey(key)) {
-                return _cache2[key];
+            if (Cache2 != null && Cache2.ContainsKey(key)) {
+                return Cache2[key];
             }
 
             return null;
         }
 
         internal T SetCache<T>(string key, T pref) where T : Object {
-            if (_cache1 == null) {
-                _cache1 = new Dictionary<string, Object>(pageSize);
+            if (Cache1 == null) {
+                Cache1 = new Dictionary<string, Object>(pageSize);
             }
 
-            if (!_cache1.ContainsKey(key) && _cache1.Count >= pageSize) {
-                _cache2 = _cache1;
-                _cache1 = new Dictionary<string, Object>(pageSize);
+            if (!Cache1.ContainsKey(key) && Cache1.Count >= pageSize) {
+                Cache2 = Cache1;
+                Cache1 = new Dictionary<string, Object>(pageSize);
             }
 
-            _cache1[key] = pref;
+            Cache1[key] = pref;
             return pref;
         }
 
@@ -89,12 +89,12 @@ namespace UniKh.mgr {
         public override string ToString() {
             var sb = new StringBuilder("ResMgr : ");
             sb.AppendLine().Append("cache 1 :");
-            if(_cache1 != null)foreach (var key in _cache1.Keys) {
+            if(Cache1 != null)foreach (var key in Cache1.Keys) {
                 sb.Append(key).Append(' ');
             }
 
             sb.AppendLine().Append("cache 2 :");
-            if(_cache2 != null)foreach (var key in _cache2.Keys) {
+            if(Cache2 != null)foreach (var key in Cache2.Keys) {
                 sb.Append(key).Append(' ');
             }
 

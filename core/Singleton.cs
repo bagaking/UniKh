@@ -6,6 +6,7 @@ namespace UniKh.core {
     public class Singleton<T> : MonoBehaviour where T : Singleton<T>, new() {
         public static T Inst {
             get {
+                if(!Application.isPlaying) throw new Exception($"The singleton can only be called at runtime");
                 if (_inst) return _inst;
                 var type = typeof(T);
                 Log.Verbose($"create singleton node of type {type} ");
@@ -18,7 +19,8 @@ namespace UniKh.core {
         private static T _inst;
 
         public Singleton() : base() {
-            if (_inst) { throw new Exception($"The singleton {_inst} of type {typeof(T)} is already exist"); }
+            var type = typeof(T);
+            if (_inst) { throw new Exception($"The singleton {_inst} of type {type.FullName} is already exist"); }
 
             _inst = this as T;
         }
