@@ -20,7 +20,7 @@ namespace UniKh.core {
 
         public Singleton() : base() {
             var type = typeof(T);
-            if (_inst) { throw new Exception($"The singleton {_inst} of type {type.FullName} is already exist"); }
+            if (_inst && _inst != this) { Log.Error($"The singleton of type is already exist"); }
 
             _inst = this as T;
         }
