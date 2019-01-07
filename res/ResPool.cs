@@ -30,6 +30,8 @@ namespace UniKh.res {
             obj.transform.SetParent(Inst.transform);
             obj.transform.localPosition = Vector3.zero;
         }
+        
+        
 
     }
 }
