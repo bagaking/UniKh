@@ -10,7 +10,7 @@ namespace UniKh.core {
             get {
                 if (Inst) return Inst;
                 var type = typeof(T);
-                Log.Verbose($"create singleton node of type {type} ");
+                
                 var inUniKh = type.Namespace != null && type.Namespace.StartsWith("UniKh");
                 var go = new GameObject(inUniKh ? $"[S]UniKh/{type.Name}" : $"[S]{type.FullName}");
                 return _SetInst(go.AddComponent<T>());
@@ -20,13 +20,14 @@ namespace UniKh.core {
         private static T _SetInst(T mono) {
             Inst = mono;
             DontDestroyOnLoad(mono.gameObject);
+            Log.Info($"create singleton node of type {typeof(T)} \n{mono}");
             return mono;
         }
 
         protected virtual void Awake() {
             var type = typeof(T);
             if (Inst && Inst != this) {
-                Log.Error(
+                Log.Info(
                     $"The singleton of type {type} is already exist :{Inst}. \nThis node {name} will be destroy immediately");
                 if (Inst.gameObject == gameObject) { // same gameobject
                     DestroyImmediate(this);
@@ -38,7 +39,6 @@ namespace UniKh.core {
 
             if (Inst) return;
             _SetInst(this as T);
-            Log.Verbose($"Singleton created {Inst} of type {type}");
         }
 
         protected virtual void OnDestroy() {
