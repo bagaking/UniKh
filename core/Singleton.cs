@@ -28,7 +28,11 @@ namespace UniKh.core {
             if (Inst && Inst != this) {
                 Log.Error(
                     $"The singleton of type {type} is already exist :{Inst}. \nThis node {name} will be destroy immediately");
-                DestroyImmediate(gameObject);
+                if (Inst.gameObject == gameObject) { // same gameobject
+                    DestroyImmediate(this);
+                } else {
+                    DestroyImmediate(gameObject);
+                }
                 return;
             }
 
