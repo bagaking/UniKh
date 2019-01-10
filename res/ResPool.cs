@@ -15,7 +15,7 @@ namespace UniKh.res {
 
         public GameObject Pop(uint tid) {
             if (pool.ContainsKey(tid) && pool[tid].Count > 0) return pool[tid].Pop();
-            var go = ResMgr.Inst.Create<GameObject>($"prefab_r/{tid}");
+            var go = ResMgr.LazyInst.Create<GameObject>($"prefab_r/{tid}");
             objIds[go.GetHashCode()] = tid;
             go.name = go.name.Replace("(Clone)", "");
             totalCreated.Inc(tid, 1);
