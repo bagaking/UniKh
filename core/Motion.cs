@@ -27,6 +27,15 @@ namespace UniKh.core {
 
         private float accumulateX = 0;
 
+        public Motion(T posStart, T posEnd, float duration, Func<T, T, float, T> Evaluate, Action<T> SetValue) {
+            this.posStart = posStart;
+            this.posEnd = posEnd;
+            this.duration = duration;
+            this.Evaluate = Evaluate;
+            this.SetValue = SetValue;
+            Reset();
+        }
+        
         public void Pulse(float deltaX) {
             if (accumulateX < 0) return;
             if (State.Complete == state) return;
