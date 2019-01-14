@@ -63,7 +63,7 @@ namespace UniKh.core {
             this.duration = duration;
             this.Evaluate = Evaluate;
             this.SetValue = SetValue;
-            Reset();
+//            Reset();
         }
 
         public override void Update(float rate) {
