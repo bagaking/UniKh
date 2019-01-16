@@ -6,7 +6,7 @@ using UnityEditorInternal;
 namespace UniKh.mgr {
     public class BIMgr {
         
-        private static Statistics statistics;
+        private static Statistics statistics = new LogStatistics();
 
         public static void Create(Statistics statisticsObj) {
             statistics = statisticsObj;
