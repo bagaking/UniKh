@@ -6,13 +6,13 @@ using UnityEditorInternal;
 namespace UniKh.mgr {
     public class BIMgr {
         
-        private static IStatistics statistics;
+        private static Statistics statistics;
 
-        public static void Create(IStatistics statisticsObj) {
+        public static void Create(Statistics statisticsObj) {
             statistics = statisticsObj;
         }
 
-        public static IStatistics Record => statistics;
+        public static Statistics Record => statistics;
 
     }
 }
