@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using model;
 using UnityEngine;
 
 namespace UniKh.core { 
@@ -14,8 +13,7 @@ namespace UniKh.core {
                 if (_inst) return _inst;
                 var results = Resources.Load<ConfigList>(assetName);
                 if (results == null)
-                    throw new Exception(
-                        $"Cannot find UniKh/ConfigList. Create it from Menu : 'UniKh/Create/Config List'");
+                    throw new Exception("Cannot find UniKh/ConfigList. Create it from Menu : 'UniKh/Create/Config List'");
                 return results;
             }
         }
