@@ -9,6 +9,14 @@ namespace UniKh.extensions {
             );
         }
 
+        public static Vector3 AddRandom(this Vector3 v, float xRange, float yRange, float zRange) {
+            return new Vector3(
+                xRange > 0 ? v.x + Random.Range(-xRange, xRange) : v.x,
+                yRange > 0 ? v.y + Random.Range(-yRange, yRange) : v.y,
+                zRange > 0 ? v.z + Random.Range(-zRange, zRange) : v.z
+            );
+        }
+
         public static float Dot(this Vector2 v, Vector2 vt) { return Vector2.Dot(v, vt); }
 
         public static float Cross(this Vector2 v, Vector2 vt) { return v.x * vt.y - v.y * vt.x; }

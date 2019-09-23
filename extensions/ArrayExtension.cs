@@ -4,6 +4,8 @@ using System.Collections.Generic;
 namespace UniKh.extensions {
     public static class ArrayExtension {
 
+        static Random random = new Random();
+
         public static TResult[] Map<T, TResult>(this T[] arr, Converter<T, TResult> converter) {
             var ret = new TResult[arr.Length];
             for (uint i = 0; i < arr.Length; i++) ret[i] = converter(arr[i]);
@@ -13,8 +15,7 @@ namespace UniKh.extensions {
 
         public static T RandomElem<T>(this T[] arr)
         {
-            var rand = new Random();
-            return arr[rand.Next(arr.Length)];
+            return arr[random.Next(arr.Length)];
         }
 
         public static TResult Reduce<T, TResult>(this T[] lst, System.Func<TResult, T, TResult> reducer, TResult startVal) {

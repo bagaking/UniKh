@@ -1,8 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace UniKh.extensions {
     public static class ListExtension {
+
+        static Random random = new Random();
+
         public static TPrev Reduce<TPrev, TTerm>(
             this IEnumerable<TTerm> lst,
             System.Func<TPrev, TTerm, TPrev> reducer,
@@ -44,7 +48,7 @@ namespace UniKh.extensions {
                 action(lst[i], i);
             }
         }
-        
+
         public static void ForEach<TTerm>(this TTerm[] lst, System.Action<TTerm, int> action) {
             for (var i = 0; i < lst.Length; i++) {
                 action(lst[i], i);
@@ -57,6 +61,24 @@ namespace UniKh.extensions {
             var item = lst[lst.Count - 1];
             lst.RemoveAt(lst.Count - 1);
             return item;
+        }
+
+        public static List<TTerm> Filter<TTerm>(this List<TTerm> lst, System.Predicate<TTerm> condition) {
+            var ret = new List<TTerm>(lst.Count / 4 + 1);
+
+            lst.ForEach(t => {
+                if (condition(t)) {
+                    ret.Add(t);
+                }
+            });
+            return ret;
+        }
+
+        public static T RandomElem<T>(this List<T> list) {
+            if(list.Count <= 0) {
+                throw new Exception("cannot call RandomElem for a empty list");
+            }
+            return list[random.Next(list.Count)];
         }
     }
 }

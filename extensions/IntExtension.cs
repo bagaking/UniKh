@@ -19,6 +19,12 @@ namespace UniKh.extensions {
 
             return ret;
         }
+
+        public static void Repeat(this int v, System.Action<int> cb) {
+            for(var i = 0; i < v; i ++) {
+                cb(i);
+            }
+        }
         
         
     }
