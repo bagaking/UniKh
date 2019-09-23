@@ -29,10 +29,12 @@ namespace UniKh.editor {
                     root = root == null ? idSeg : root.Insert(idSeg);
                 });
 
-
-            root.ForEach(
-                (t, d) => EditorGUILayout.LabelField(" - ".Repeat(d) + t.ToString()));
-            EditorGUILayout.Space();
+            if (null != root)
+            {
+                root.ForEach(
+                    (t, d) => EditorGUILayout.LabelField(" - ".Repeat(d) + t.ToString()));
+                EditorGUILayout.Space();
+            }
 
             
             if (!Application.isPlaying) {
@@ -45,8 +47,9 @@ namespace UniKh.editor {
                 var lst = ResPool.Inst.pool.Keys.ToList();
                 lst.Sort();
                 foreach (var key in lst) {
+                    var desc = null != root ? root.Find(key).ToString() : "NONE";
                     EditorGUILayout.LabelField(
-                        $"|{key}\t|{ResPool.Inst.pool[key].Count}\t|{ResPool.Inst.totalCreated.TryGet(key, 0)}\t|{root.Find(key)}\t|");
+                        $"|{key}\t|{ResPool.Inst.pool[key].Count}\t|{ResPool.Inst.totalCreated.TryGet(key, 0)}\t|{desc}\t|");
                 }
             }
 
