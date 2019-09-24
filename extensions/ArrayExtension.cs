@@ -45,6 +45,17 @@ namespace UniKh.extensions {
 
             return ret;
         }
-        
+
+        public static T Find<T>(this T[] arr, Predicate<T> predicate) where T : class {
+            for (uint i = 0; i < arr.Length; i++) {
+                var obj = arr[i];
+                if (predicate(obj)) {
+                    return obj;
+                }
+            }
+
+            return null;
+        }
+
     }
 }
