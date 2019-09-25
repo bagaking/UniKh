@@ -57,6 +57,14 @@ namespace UniKh.extensions {
 
         public static void Push<TTerm>(this List<TTerm> lst, TTerm item) { lst.Add(item); }
 
+        public static bool Append<TTerm>(this List<TTerm> lst, TTerm item) {
+            if (lst.Contains(item)) {
+                return false;
+            }
+            lst.Add(item);
+            return false;
+        }
+
         public static TTerm Pop<TTerm>(this List<TTerm> lst) {
             var item = lst[lst.Count - 1];
             lst.RemoveAt(lst.Count - 1);
@@ -75,7 +83,7 @@ namespace UniKh.extensions {
         }
 
         public static T RandomElem<T>(this List<T> list) {
-            if(list.Count <= 0) {
+            if (list.Count <= 0) {
                 throw new Exception("cannot call RandomElem for a empty list");
             }
             return list[random.Next(list.Count)];
