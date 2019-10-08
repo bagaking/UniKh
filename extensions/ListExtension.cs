@@ -88,5 +88,105 @@ namespace UniKh.extensions {
             }
             return list[random.Next(list.Count)];
         }
+
+
+        /** queue and stack */
+        /// <summary>
+        /// Pop the head item of the seq
+        /// </summary>
+        /// <param name="item">the out value</param>
+        /// <returns>return self for pipeline</returns>
+        public static List<T> PopFirst<T>(this List<T> self, out T elem) {
+            if (self.Count <= 0) {
+                throw new Exception("List pop first elem error: empty list");
+            }
+            elem = self[0];
+            self.RemoveAt(0);
+            return self;
+        }
+
+        public static T PopFirst<T>(this List<T> self) {
+            self.PopFirst(out T ret);
+            return ret;
+        }
+
+        /// <summary>
+        /// Pop the tile item of the seq
+        /// </summary>
+        /// <param name="item">the out value</param>
+        /// <returns>return self for pipeline</returns>
+        public static List<T> PopLast<T>(this List<T> self, out T elem) {
+            if (self.Count <= 0) {
+                throw new Exception("List pop last elem error: empty list");
+            }
+            elem = self[self.Count - 1];
+            self.RemoveAt(self.Count - 1);
+            return self;
+        }
+
+
+        public static T PopLast<T>(this List<T> self) {
+            self.PopLast(out T elem);
+            return elem;
+        }
+
+        /// <summary>
+        /// push an item at the head of the seq
+        /// </summary>
+        /// <param name="item">the item</param>
+        /// <returns>return self for pipeline</returns>
+        public static List<T> PushFirst<T>(this List<T> self, T t) {
+            self.Insert(0, t);
+            return self;
+        }
+
+        /// <summary>
+        /// push an item at the tail of the seq
+        /// </summary>
+        /// <param name="item">the item</param>
+        /// <returns>return self for pipeline</returns>
+        public static List<T> PushLast<T>(this List<T> self, T t) {
+            self.Add(t);
+            return self;
+        }
+
+        /// <summary>
+        /// push an item to the stack(seq)
+        /// </summary>
+        /// <param name="item">the item</param>
+        /// <returns>the item self</returns>
+        public static T StackPush<T>(this List<T> self, T t) {
+            self.PushLast(t);
+            return t;
+        }
+
+        /// <summary>
+        /// pop an item from the stack(seq)
+        /// </summary> 
+        /// <returns>the item</returns>
+        public static T StackPop<T>(this List<T> self) {
+            self.PopLast(out T t);
+            return t;
+        }
+
+        /// <summary>
+        /// push an item to the queue(seq)
+        /// </summary>
+        /// <param name="item">the item</param>
+        /// <returns>the item self</returns>
+        public static T QueuePush<T>(this List<T> self, T t) {
+            self.PushFirst(t);
+            return t;
+        }
+
+        /// <summary>
+        /// pop an item from the queue(seq)
+        /// </summary> 
+        /// <returns>the item</returns>
+        public static T QueuePop<T>(this List<T> self) {
+            self.PopLast(out T t);
+            return t;
+        }
+
     }
 }
