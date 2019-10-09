@@ -20,8 +20,8 @@ namespace UniKh.core {
                 m_initiated = true;
                 OnInit();
             }
-            OnSetActive(true);
             m_started = true;
+            OnSetActive(true);
         }
 
         private void OnDisable() { OnSetActive(false); }

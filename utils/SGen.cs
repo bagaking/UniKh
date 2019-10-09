@@ -84,7 +84,6 @@ namespace UniKh.utils {
                 return ret;
             }
 
-            //========================================= For Fun
 
             public Builder this[object value] { get { return this.Append(value); } }
             public Builder this[char[] value] { get { return this.Append(value); } }
