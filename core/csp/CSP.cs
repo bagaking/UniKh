@@ -32,23 +32,27 @@ namespace UniKh.core {
 
         public List<Proc> procLst = new List<Proc>();
 
-        public long total_system_frame { get; private set; }
-        //public static long count_triggered_corou_by_frame { get; private set; }
+        public long TotalTicks { get; private set; } = 0;
+        public int LastTickIndex { get; private set; } = 0;
 
-        private long last_tick_time_ms = 0;
-        private int last_tick_index = 0;
+        public long MonitExecutedInFrame { get; private set; } = 0;
+        public long MonitTickTimeCost { get; private set; } = 0;
+
+        public long MonitTotalUpdates { get; private set; } = 0;
 
         public void TriggerTick() {
+            MonitExecutedInFrame = 0;
+
             if (procLst.Count <= 0) return;
 
-            total_system_frame += 1;
+            TotalTicks += 1;
 
             int maxTickDurationMS = CONST.TIME_SPAN_MS_MAX;
             int maxExecuteRound = procLst.Count * CONST.MAX_ROUND;
 
             long startTimeMS = sw.ElapsedMilliseconds;
 
-            int startIndex = (last_tick_index % procLst.Count);
+            int startIndex = (LastTickIndex % procLst.Count);
 
             int roundOfTick = 0;
 
@@ -57,26 +61,27 @@ namespace UniKh.core {
                     break;
                 }
 
-                last_tick_index %= procLst.Count;
+                LastTickIndex %= procLst.Count;
 
-                Proc currentProc = procLst[last_tick_index];
+                Proc currentProc = procLst[LastTickIndex];
                 if (!currentProc.isActive) { // 清理失效 proc
                     Rem(currentProc);
                     continue;
                 }
 
                 currentProc.Tick(maxTickDurationMS / procLst.Count); // 均分时间窗口, 过程中可能变化 (发生 REM 的话)
+                MonitExecutedInFrame += 1;
 
-                last_tick_index++; //每跳计数
+                LastTickIndex++; //每跳计数
                 roundOfTick++; //遍历计数
 
 
-                if (startIndex == last_tick_index % procLst.Count) { // 如果已经循环一轮了, 则以最小TimeSpan结束. 其中删除项可能导致这一轮条件永远无法满足, 这个边界不予考虑
+                if (startIndex == LastTickIndex % procLst.Count) { // 如果已经循环一轮了, 则以最小TimeSpan结束. 其中删除项可能导致这一轮条件永远无法满足, 这个边界不予考虑
                     maxTickDurationMS = CONST.TIME_SPAN_MS_MIN;
                 }
 
             }
-            last_tick_time_ms = sw.ElapsedMilliseconds;
+            MonitTickTimeCost = sw.ElapsedMilliseconds - startTimeMS;
         }
 
         public Proc Reg(Proc proc) {
@@ -92,6 +97,7 @@ namespace UniKh.core {
         public void RemTick(Action t) { ticks -= t; }
 
         public void Update() {
+            MonitTotalUpdates += 1;
             TriggerTick();
         }
     }

@@ -55,12 +55,12 @@ namespace UniKh.core.csp.waiting {
         }
         public Skip Restart(uint frameCountToSkip = 1) {
             this.frame_count = frameCountToSkip;
-            frame_created = CSP.LazyInst.total_system_frame;
+            frame_created = CSP.LazyInst.TotalTicks;
             return this;
         }
 
         public override bool IsExpired(long timeMS) {
-            return CSP.LazyInst.total_system_frame >= frame_created + frame_count;
+            return CSP.LazyInst.TotalTicks >= frame_created + frame_count;
         }
 
         public override string ToString() {

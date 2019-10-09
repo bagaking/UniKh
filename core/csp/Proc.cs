@@ -20,8 +20,9 @@ namespace UniKh.core.csp {
         public static int IDCounter { get; private set; } = 1;
         public int ID { get; private set; }
         public string Tag { get; private set; }
-        public long timeLatestExecute { get; private set; }
-        public long monitLatestTickFrameCount { get; private set; }
+        public long ExecutedTime { get; private set; }
+        public long MonitTickFrameCount { get; private set; }
+        public long MonitTickTimeCost { get; private set; }
 
         public bool isActive { get; private set; }
         public override bool keepWaiting => isActive;
@@ -37,7 +38,7 @@ namespace UniKh.core.csp {
             return m_opCurr;
         }
         public WaitingOperation SetOpCurr(WaitingOperation op) {
-            op.SetStartTimeMS(timeLatestExecute);
+            op.SetStartTimeMS(ExecutedTime);
             return m_opCurr = op;
         }
         private WaitingOperation m_opCurr;
@@ -61,21 +62,23 @@ namespace UniKh.core.csp {
 
 
         public long Tick(long maxFrameTime = CONST.TIME_SPAN_MS_MIN) {
-            long time_start = CSP.LazyInst.sw.ElapsedMilliseconds;
-            long span = 0;
+            long timeStart = CSP.LazyInst.sw.ElapsedMilliseconds;
+            ExecutedTime = timeStart;
+            //long span = 0;
 
-            monitLatestTickFrameCount = 0;
+            MonitTickFrameCount = 0;
 
-            while (isActive && (timeLatestExecute - time_start) <= maxFrameTime) {
-                monitLatestTickFrameCount++;
-                var shouldContinue = Frame(time_start);
+            while (isActive && (ExecutedTime - timeStart) <= maxFrameTime) {
+                MonitTickFrameCount++;
+                var shouldContinue = Frame(timeStart);
                 if (!shouldContinue) break;
                 //if (PrintInfo != null && latest_ret != null && latest_ret is string) {
                 //    PrintInfo(Helper.SGen.New[id]["-"][total_system_frame]["|span["][time_start]["->"][time_last_execute]["("][span][")]: "][latest_ret].End);
                 //}
             }
+            MonitTickTimeCost = ExecutedTime - timeStart;
 
-            return monitLatestTickFrameCount;
+            return MonitTickFrameCount;
         }
 
         public bool Frame(long realTimeMS) {
@@ -98,7 +101,7 @@ namespace UniKh.core.csp {
                 return false;
             }
 
-            timeLatestExecute = CSP.LazyInst.sw.ElapsedMilliseconds;
+            ExecutedTime = CSP.LazyInst.sw.ElapsedMilliseconds;
 
             var yieldVal = procTop.Current;
 
