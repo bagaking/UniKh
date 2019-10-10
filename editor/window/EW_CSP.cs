@@ -17,15 +17,16 @@ using UniKh.utils;
 namespace UniKh.editor {
     public class EW_CSP : EWBase<EW_CSP> {
 
-        [MenuItem("UniKh/CSP_Monitor")]
+        [MenuItem("UniKh/Monitor/CSP")]
         public static void ShowDialog() {
-            GetWindow("UniKh - CSP_Monitor");
+            GetWindow("UniKh/Monitor/CSP");
         }
 
         public override bool Initial() {
             return true;
         }
 
+        public long TicksLost { get; private set; } = 0;
         public class ProcStatistic {
             public string Tag = "_";
             public long TotalCpuTimeCostMS = 0;
@@ -56,21 +57,18 @@ namespace UniKh.editor {
             }
 
             EditorGUILayout.LabelField("Statistics:");
-            EditorGUILayout.LabelField("|  Procs\t| Frames\t| MS\t| Ticks\t| Updates");
-            EditorGUILayout.LabelField($"| {CSP.Inst.procLst.Count}\t| {CSP.Inst.MonitExecutedInFrame}\t| {CSP.Inst.MonitTickTimeCost}\t| {CSP.Inst.TotalTicks}\t| {CSP.Inst.MonitTotalUpdates}");
+            EditorGUILayout.LabelField("|  Procs\t| Frames\t| MS\t| Ticks\t| Updates\t| Lost");
+            EditorGUILayout.LabelField($"| {CSP.Inst.procLst.Count}\t| {CSP.Inst.MonitExecutedInFrame}\t| {CSP.Inst.MonitTickTimeCost}\t| {CSP.Inst.TotalTicks}\t| {CSP.Inst.MonitTotalUpdates}\t| {TicksLost}");
 
             var array = new int[procStatistics.Count];
             procStatistics.Keys.CopyTo(array, 0);
             var disabledProcs = new List<int>(array);
 
+
             tpProcInAction.Draw(CSP.Inst.procLst.Count.ToString(), () => {
                 foreach (var proc in CSP.Inst.procLst) {
                     var st = GetProcStatistic(proc.ID);
-                    disabledProcs.Remove(proc.ID);
-                    st.Tag = proc.Tag;
-                    st.TotalCpuTimeCostMS += proc.MonitTickTimeCost;
-                    st.TotalFrameCount += proc.MonitTickFrameCount;
-
+                    
                     var OpCurr = proc.GetOpCurr();
                     EditorGUILayout.LabelField(
                         SGen.New[proc.ID][". #"][proc.Tag]
@@ -89,7 +87,12 @@ namespace UniKh.editor {
 
 
             tpProcFinished.Draw(disabledProcs.Count.ToString(), () => {
-                foreach (var procID in disabledProcs) {
+
+                for (var i = disabledProcs.Count - 1; i >= 0; i--) {
+                    var procID = disabledProcs[i];
+                    if (CSP.Inst.procLst.Exists(proc => proc.ID == procID)) {
+                        continue;
+                    }
                     var st = GetProcStatistic(procID);
                     EditorGUILayout.LabelField(
                         SGen.New[procID][". #"][st.Tag]
@@ -98,16 +101,43 @@ namespace UniKh.editor {
                         .End);
                 }
             });
-            
         }
 
 
-        //private bool using_corou_in_editor = false;
+        long latestCollectTick = -1;
+        private void CollectData() { 
+            if (null == CSP.Inst) {
+                return;
+            }
+            if(latestCollectTick >= CSP.Inst.TotalTicks) {
+                return;
+            }
+            foreach (var proc in CSP.Inst.procLst) {
+                var st = GetProcStatistic(proc.ID);
+                st.Tag = proc.Tag;
+                st.TotalCpuTimeCostMS += proc.MonitTickTimeCost;
+                st.TotalFrameCount += proc.MonitTickFrameCount;
+            }
+
+            if(latestCollectTick != -1) {
+                var skiped = (CSP.Inst.TotalTicks - latestCollectTick - 1);
+                if(skiped != 0) {
+                    Debug.LogWarning(SGen.New["EW_CSP CollectData: lost ticks - skiped:"][skiped][" TotalTicks:"][CSP.Inst.TotalTicks][" latestCollectTick:"][latestCollectTick]);
+                    TicksLost += skiped;
+                }
+            }
+            latestCollectTick = CSP.Inst.TotalTicks;
+            
+        }
+
         public void Update() {
             //if (!Application.isPlaying && using_corou_in_editor) {
             //    Corou.TriggerTick();
             //}
-            Repaint();
+            if (Application.isPlaying && !EditorApplication.isPaused) {
+                CollectData();
+                Repaint();
+            }
         }
 
     }

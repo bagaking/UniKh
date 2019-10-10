@@ -13,7 +13,9 @@ namespace UniKh.core {
                 
                 var inUniKh = type.Namespace != null && type.Namespace.StartsWith("UniKh");
                 var go = new GameObject(inUniKh ? $"[S]UniKh/{type.Name}" : $"[S]{type.FullName}");
-                return _SetInst(go.AddComponent<T>());
+                var mono = go.AddComponent<T>();
+                if (Inst == mono) return mono;
+                return _SetInst(mono);
             }
         }
 
