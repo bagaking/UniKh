@@ -31,6 +31,10 @@ namespace UniKh.editor {
             public string Tag = "_";
             public long TotalCpuTimeCostMS = 0;
             public long TotalFrameCount = 0;
+            public long DetectedAt = 0;
+            public long FinishAt = 0;
+            public long DetectedTick = 0;
+            public long FinishTick = 0;
         }
 
         public static Dictionary<int, ProcStatistic> procStatistics = new Dictionary<int, ProcStatistic>();
@@ -72,7 +76,8 @@ namespace UniKh.editor {
                     var OpCurr = proc.GetOpCurr();
                     EditorGUILayout.LabelField(
                         SGen.New[proc.ID][". #"][proc.Tag]
-                        ["  At:"][proc.ExecutedTime]
+                        ["  Detected:at-"][st.DetectedAt][",tick-"][st.DetectedTick]
+                        ["  ExecutedTime:"][proc.ExecutedTime]
                         ["  Frames:"][proc.MonitTickFrameCount]['/'][st.TotalFrameCount]
                         ["  MS:"][proc.MonitTickTimeCost]['/'][st.TotalCpuTimeCostMS]
                         ["  Waiting:"][OpCurr == null ? "(null)" : OpCurr.ToString()].End);
@@ -85,21 +90,25 @@ namespace UniKh.editor {
                 }
             });
 
+            for (var i = disabledProcs.Count - 1; i >= 0; i--) {
+                var procID = disabledProcs[i];
+                if (!CSP.Inst.procLst.Exists(proc => proc.ID == procID)) {
+                    continue;
+                }
+                disabledProcs.RemoveAt(i);
+            }
 
             tpProcFinished.Draw(disabledProcs.Count.ToString(), () => {
-
-                for (var i = disabledProcs.Count - 1; i >= 0; i--) {
-                    var procID = disabledProcs[i];
-                    if (CSP.Inst.procLst.Exists(proc => proc.ID == procID)) {
-                        continue;
-                    }
+                disabledProcs.ForEach(procID => {
                     var st = GetProcStatistic(procID);
                     EditorGUILayout.LabelField(
                         SGen.New[procID][". #"][st.Tag]
+                        ["  Detected:at-"][st.DetectedAt][",tick-"][st.DetectedTick]
                         ["  Frames:"][st.TotalFrameCount]
                         ["  MS:"][st.TotalCpuTimeCostMS]
+                        ["  Finished:at-"][st.FinishAt][",tick-"][st.FinishTick]
                         .End);
-                }
+                });
             });
         }
 
@@ -117,6 +126,16 @@ namespace UniKh.editor {
                 st.Tag = proc.Tag;
                 st.TotalCpuTimeCostMS += proc.MonitTickTimeCost;
                 st.TotalFrameCount += proc.MonitTickFrameCount;
+
+
+                if (st.DetectedAt == 0) {
+                    st.DetectedAt = proc.ExecutedTime;
+                }
+                if (st.DetectedTick == 0) {
+                    st.DetectedTick = CSP.Inst.TotalTicks;
+                }
+                st.FinishAt = proc.ExecutedTime;
+                st.FinishTick = CSP.Inst.TotalTicks;
             }
 
             if(latestCollectTick != -1) {
@@ -143,34 +162,3 @@ namespace UniKh.editor {
     }
 }
 
-public class GUILayoutTogglePanel {
-
-    public string title;
-    public bool state;
-    public GUILayoutTogglePanel(string title, bool initState = false) {
-        this.title = title;
-        this.state = initState;
-    }
-
-    public void Draw(string appendTitle, Action DeawContent) {
-        GUILayout.Space(3f);
-
-        var cBgOrigin = GUI.backgroundColor;
-        GUI.backgroundColor = new Color(2f, 2f, 0.9f);
-        state = GUILayout.Toggle(state, SGen.New[state ? "\u25B2" : "\u25BC"]["<b> <size=11>"][title][' '][appendTitle]["</size></b>"].End, "dragtab", GUILayout.MinWidth(20f));
-
-        GUILayout.Space(2f);
-        GUI.backgroundColor = cBgOrigin;
-
-        if (state && null != DeawContent) {
-            DeawContent();
-        } else {
-            GUILayout.Space(3f);
-        }
-
-    }
-
-    public void Draw(Action DeawContent) {
-        this.Draw("", DeawContent);
-    }
-}
