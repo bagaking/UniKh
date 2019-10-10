@@ -22,7 +22,17 @@ namespace UniKh.editor {
             GetWindow("UniKh/Monitor/CSP");
         }
 
+        // initial (OnEnable) will be called when enter the playing mode
+        // thus there are no needs to use playModeStateChanged methods
         public override bool Initial() {
+            //Debug.Log("EW_CSP Initialed");
+            //EditorApplication.playModeStateChanged += (state) => {
+            //if (state == PlayModeStateChange.ExitingPlayMode) {
+            latestCollectTick = -1;
+            procStatistics.Clear();
+            //}
+            //};
+
             return true;
         }
 
@@ -50,59 +60,60 @@ namespace UniKh.editor {
         public GUILayoutTogglePanel tpProcFinished = new GUILayoutTogglePanel("Proc finished");
 
         public override void GUIProc(Event e) {
-            if (!Application.isPlaying) {
-                EditorGUILayout.LabelField("UniKh/CSP can only be accessed while the program is running ...");
-                return;
+            if (latestCollectTick < 0) {
+                if (!Application.isPlaying) {
+                    EditorGUILayout.LabelField("UniKh/CSP can only be accessed while the program is running ...");
+                    return;
+                }
+
+                if (!CSP.Inst) {
+                    EditorGUILayout.LabelField("UniKh/CSP cre not loaded ...");
+                    return;
+                }
             }
 
-            if(!CSP.Inst) {
-                EditorGUILayout.LabelField("UniKh/CSP cre not loaded ...");
-                return;
-            }
-
-            EditorGUILayout.LabelField("Statistics:");
-            EditorGUILayout.LabelField("|  Procs\t| Frames\t| MS\t| Ticks\t| Updates\t| Lost");
-            EditorGUILayout.LabelField($"| {CSP.Inst.procLst.Count}\t| {CSP.Inst.MonitExecutedInFrame}\t| {CSP.Inst.MonitTickTimeCost}\t| {CSP.Inst.TotalTicks}\t| {CSP.Inst.MonitTotalUpdates}\t| {TicksLost}");
 
             var array = new int[procStatistics.Count];
             procStatistics.Keys.CopyTo(array, 0);
             var disabledProcs = new List<int>(array);
 
+            if (Application.isPlaying) {
+                EditorGUILayout.LabelField("Statistics:");
+                EditorGUILayout.LabelField("|  Procs\t| Frames\t| MS\t| Ticks\t| Updates\t| Lost");
+                EditorGUILayout.LabelField($"| {CSP.Inst.procLst.Count}\t| {CSP.Inst.MonitExecutedInFrame}\t| {CSP.Inst.MonitTickTimeCost}\t| {CSP.Inst.TotalTicks}\t| {CSP.Inst.MonitTotalUpdates}\t| {TicksLost}");
 
-            tpProcInAction.Draw(CSP.Inst.procLst.Count.ToString(), () => {
-                foreach (var proc in CSP.Inst.procLst) {
-                    var st = GetProcStatistic(proc.ID);
-                    
-                    var OpCurr = proc.GetOpCurr();
-                    EditorGUILayout.LabelField(
-                        SGen.New[proc.ID][". #"][proc.Tag]
-                        ["  Detected:at-"][st.DetectedAt][",tick-"][st.DetectedTick]
-                        ["  ExecutedTime:"][proc.ExecutedTime]
-                        ["  Frames:"][proc.MonitTickFrameCount]['/'][st.TotalFrameCount]
-                        ["  MS:"][proc.MonitTickTimeCost]['/'][st.TotalCpuTimeCostMS]
-                        ["  Waiting:"][OpCurr == null ? "(null)" : OpCurr.ToString()].End);
+                tpProcInAction.Draw(CSP.Inst.procLst.Count.ToString(), () => {
+                    foreach (var proc in CSP.Inst.procLst) {
+                        var st = GetProcStatistic(proc.ID);
 
-                    var StackTrace = SGen.New["Stack: "];
-                    proc.ProcStack.ForEach((layer, ind) => {
-                        StackTrace = StackTrace['/'][layer.Current == null ? "null" : layer.Current.ToString()];
-                    });
-                    EditorGUILayout.LabelField(StackTrace.End);
-                }
-            });
+                        var OpCurr = proc.GetOpCurr();
+                        EditorGUILayout.LabelField(
+                            SGen.New[proc.ID][". #"][proc.Tag]
+                            ["  Detected:at-"][st.DetectedAt][",tick-"][st.DetectedTick]
+                            ["  ExecutedTime:"][proc.ExecutedTime]
+                            ["  Frames:"][proc.MonitTickFrameCount]['/'][st.TotalFrameCount]
+                            ["  MS:"][proc.MonitTickTimeCost]['/'][st.TotalCpuTimeCostMS]
+                            ["  Waiting:"][OpCurr == null ? "(null)" : OpCurr.ToString()].End);
 
-            for (var i = disabledProcs.Count - 1; i >= 0; i--) {
-                var procID = disabledProcs[i];
-                if (!CSP.Inst.procLst.Exists(proc => proc.ID == procID)) {
-                    continue;
-                }
-                disabledProcs.RemoveAt(i);
+                        var StackTrace = SGen.New["Stack: "];
+                        proc.ProcStack.ForEach((layer, ind) => {
+                            StackTrace = StackTrace['/'][layer.Current == null ? "null" : layer.Current.ToString()];
+                        });
+                        EditorGUILayout.LabelField(StackTrace.End);
+                    }
+                });
+
+                disabledProcs = disabledProcs.Filter(procID => !CSP.Inst.procLst.Exists(proc => proc.ID == procID));
+            } else {
+                EditorGUILayout.LabelField("UniKh/CSP is not running. Here's the data of procs from the last run.");
             }
-
-            tpProcFinished.Draw(disabledProcs.Count.ToString(), () => {
+            disabledProcs.Reverse();
+            tpProcFinished.Draw("(" + disabledProcs.Count + ")", () => {
                 disabledProcs.ForEach(procID => {
-                    var st = GetProcStatistic(procID);
+                    var id = procID;
+                    var st = GetProcStatistic(id);
                     EditorGUILayout.LabelField(
-                        SGen.New[procID][". #"][st.Tag]
+                        SGen.New[id][". #"][st.Tag]
                         ["  Detected:at-"][st.DetectedAt][",tick-"][st.DetectedTick]
                         ["  Frames:"][st.TotalFrameCount]
                         ["  MS:"][st.TotalCpuTimeCostMS]
@@ -112,13 +123,15 @@ namespace UniKh.editor {
             });
         }
 
+        // It should be cleared when restart the game, cuz the editor state will not be cleared;
+        private static long latestCollectTick { get; set; } = -1;
 
-        long latestCollectTick = -1;
-        private void CollectData() { 
+        private void CollectData() {
             if (null == CSP.Inst) {
                 return;
             }
-            if(latestCollectTick >= CSP.Inst.TotalTicks) {
+            var totalTicks = CSP.Inst.TotalTicks;
+            if (latestCollectTick >= totalTicks) {
                 return;
             }
             foreach (var proc in CSP.Inst.procLst) {
@@ -132,27 +145,30 @@ namespace UniKh.editor {
                     st.DetectedAt = proc.ExecutedTime;
                 }
                 if (st.DetectedTick == 0) {
-                    st.DetectedTick = CSP.Inst.TotalTicks;
+                    st.DetectedTick = totalTicks;
                 }
                 st.FinishAt = proc.ExecutedTime;
-                st.FinishTick = CSP.Inst.TotalTicks;
+                st.FinishTick = totalTicks;
             }
 
-            if(latestCollectTick != -1) {
-                var skiped = (CSP.Inst.TotalTicks - latestCollectTick - 1);
-                if(skiped != 0) {
-                    Debug.LogWarning(SGen.New["EW_CSP CollectData: lost ticks - skiped:"][skiped][" TotalTicks:"][CSP.Inst.TotalTicks][" latestCollectTick:"][latestCollectTick]);
+            if (latestCollectTick != -1) {
+                var skiped = (totalTicks - latestCollectTick - 1);
+                if (skiped != 0) {
+                    Debug.LogWarning(SGen.New["EW_CSP CollectData: lost ticks - skiped:"][skiped][" TotalTicks:"][totalTicks][" latestCollectTick:"][latestCollectTick]);
                     TicksLost += skiped;
                 }
             }
-            latestCollectTick = CSP.Inst.TotalTicks;
-            
+            latestCollectTick = totalTicks;
+
         }
 
         public void Update() {
+
+
             //if (!Application.isPlaying && using_corou_in_editor) {
             //    Corou.TriggerTick();
             //}
+
             if (Application.isPlaying && !EditorApplication.isPaused) {
                 CollectData();
                 Repaint();
