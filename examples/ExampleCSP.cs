@@ -16,12 +16,14 @@ using UniKh.core.csp.waiting;
 namespace UniKh.example {
     public class ExampleCSP : BetterBehavior {
 
+        private int testCount = 0;
+
         /// <summary>
         /// The initial method of TestCSP.
         /// This method **CAN** be removed
         /// </summary>
         protected override void OnSetActive(bool active) {
-            CSP.LazyInst.Do(Go());
+            CSP.LazyInst.Do(Go(), "example round " + ++ testCount);
         }
 
         protected IEnumerator Go() {
@@ -48,7 +50,7 @@ namespace UniKh.example {
         protected IEnumerator Test2() {
             var timeNow = Time.time;
             var ind = 1;
-            yield return new Condition(t => Time.time > timeNow + 1);
+            yield return Condition.New.Start(t => Time.time > timeNow + 1);
             Debug.Log($"Test 2.{ind++}: {timeNow} => {Time.time} : {CSP.LazyInst.sw.ElapsedMilliseconds}");
         }
 

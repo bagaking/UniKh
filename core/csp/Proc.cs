@@ -33,6 +33,7 @@ namespace UniKh.core.csp {
 
         public WaitingOperation GetOpCurr(long realTimeMS = 0) {
             if (null != m_opCurr && m_opCurr.IsExpired(realTimeMS > 0 ? realTimeMS : CSP.LazyInst.sw.ElapsedMilliseconds)) {
+                m_opCurr.Recycle();
                 m_opCurr = null;
             }
             return m_opCurr;
@@ -116,29 +117,29 @@ namespace UniKh.core.csp {
                 return false;
             } else if (yieldVal is int) {
                 float value = ((int)yieldVal);
-                SetOpCurr(UnitySecond.General.Restart(value));
+                SetOpCurr(UnitySecond.New.Start(value));
                 return false;
             } else if (yieldVal is uint) {
                 float value = ((uint)yieldVal);
-                SetOpCurr(UnitySecond.General.Restart(value));
+                SetOpCurr(UnitySecond.New.Start(value));
                 return false;
             } else if (yieldVal is float) {
-                SetOpCurr(UnitySecond.General.Restart((float)yieldVal));
+                SetOpCurr(UnitySecond.New.Start((float)yieldVal));
                 return false;
             } else if (yieldVal is double) {
-                SetOpCurr(UnitySecond.General.Restart((float)(double)yieldVal));
+                SetOpCurr(UnitySecond.New.Start((float)(double)yieldVal));
                 return false;
             } else if (yieldVal is decimal) {
-                SetOpCurr(RealSecond.General.Restart((float)(decimal)yieldVal));
+                SetOpCurr(RealSecond.New.Start((float)(decimal)yieldVal));
                 return false;
             } else if (yieldVal is CustomYieldInstruction) {
-                SetOpCurr(new UnityCustomYieldInstruction(yieldVal as CustomYieldInstruction));
+                SetOpCurr(UnityCustomYieldInstruction.New.Start(yieldVal as CustomYieldInstruction));
                 return false;
             } else if (yieldVal is AsyncOperation) {
-                SetOpCurr(new UnityAsync(yieldVal as AsyncOperation));
+                SetOpCurr(UnityAsync.New.Start(yieldVal as AsyncOperation));
                 return false;
             } else { // yieldVal == null or undefined 
-                SetOpCurr(Skip.General.Restart()); //yield return null 的情况跳过一帧
+                SetOpCurr(Skip.New.Restart()); //yield return null 的情况跳过一帧
                 return false;
             }
         }

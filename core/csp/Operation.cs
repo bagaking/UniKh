@@ -4,11 +4,9 @@
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
  */
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using UniKh.core;
 using UniKh.extensions;
 using UniKh.utils;
 using System;
@@ -24,7 +22,7 @@ namespace UniKh.core.csp.waiting {
         }
     }
 
-    public abstract class WaitingOperation {
+    public abstract class WaitingOperation : CustomYieldInstruction {
 
         public long TimeStart { get; private set; }
 
@@ -34,25 +32,43 @@ namespace UniKh.core.csp.waiting {
 
         public abstract bool IsExpired(long timeMS);
 
+        public override bool keepWaiting {
+            get {
+                if (null == CSP.Inst) return true;
+                return !IsExpired(CSP.Inst.sw.ElapsedMilliseconds);
+            }
+        }
 
+        public abstract void Recycle();
     }
 
-    public abstract class WaitingOperation<T> : WaitingOperation where T : WaitingOperation<T> {
+    public abstract class WaitingOperation<T> : WaitingOperation where T : WaitingOperation<T>, new() {
 
         public static List<T> pool = new List<T>(); // todo
+
+        public static T New {
+            get {
+                T ret = null;
+                while (null == ret && pool.Count > 0) {
+                    ret = pool.StackPop();
+                }
+                return null == ret ? new T() : ret;
+            }
+        }
+
+        public override void Recycle() {
+            pool.StackPush(this as T); // todo: pool.Append(this as T); ?
+        }
     }
 
     public class Skip : WaitingOperation<Skip> {
-
-        public static Skip General { get; } = new Skip(1);
 
         public uint frame_count { get; private set; }
 
         public long frame_created { get; private set; }
 
-        public Skip(uint frameCountToSkip = 1) {
-            Restart(frameCountToSkip);
-        }
+        public Skip() { }
+
         public Skip Restart(uint frameCountToSkip = 1) {
             this.frame_count = frameCountToSkip;
             frame_created = CSP.LazyInst.TotalTicks;
@@ -64,7 +80,7 @@ namespace UniKh.core.csp.waiting {
         }
 
         public override string ToString() {
-            return SGen.New["uniKh.csp.waiting.Skip("][frame_count][")from:"][frame_created].End;
+            return SGen.New["Skip("][frame_count][")from:"][frame_created].End;
         }
     }
 
@@ -72,11 +88,9 @@ namespace UniKh.core.csp.waiting {
 
         public Predicate<long> condition { get; private set; }
 
-        public Condition(Predicate<long> condition) {
-            Restart(condition);
-        }
+        public Condition() { }
 
-        public Condition Restart(Predicate<long> condition) {
+        public Condition Start(Predicate<long> condition) {
             this.condition = condition;
             return this;
         }
@@ -87,7 +101,7 @@ namespace UniKh.core.csp.waiting {
         }
 
         public override string ToString() {
-            return "uniKh.csp.waiting.Condition";
+            return "Condition";
         }
     }
 
@@ -95,11 +109,9 @@ namespace UniKh.core.csp.waiting {
 
         public AsyncOperation asyncOp { get; private set; }
 
-        public UnityAsync(AsyncOperation asyncOp) {
-            Restart(asyncOp);
-        }
+        public UnityAsync() { }
 
-        public UnityAsync Restart(AsyncOperation asyncOp) {
+        public UnityAsync Start(AsyncOperation asyncOp) {
             this.asyncOp = asyncOp;
             return this;
         }
@@ -109,7 +121,7 @@ namespace UniKh.core.csp.waiting {
         }
 
         public override string ToString() {
-            return asyncOp.ToString();
+            return SGen.New["UnityAsyncOperation("][asyncOp.ToString()][")"].End;
         }
     }
 
@@ -117,11 +129,9 @@ namespace UniKh.core.csp.waiting {
 
         public CustomYieldInstruction customYield { get; private set; }
 
-        public UnityCustomYieldInstruction(CustomYieldInstruction customYield) {
-            Restart(customYield);
-        }
+        public UnityCustomYieldInstruction() { }
 
-        public UnityCustomYieldInstruction Restart(CustomYieldInstruction customYield) {
+        public UnityCustomYieldInstruction Start(CustomYieldInstruction customYield) {
             this.customYield = customYield;
             return this;
         }
@@ -137,15 +147,11 @@ namespace UniKh.core.csp.waiting {
 
     public class RealSecond : WaitingOperation<RealSecond> {
 
-        public static RealSecond General { get; } = new RealSecond(0);
-
         public float FixedTimeS { get; private set; }
 
-        public RealSecond(float timeSpanS) {
-            Restart(timeSpanS);
-        }
+        public RealSecond() { }
 
-        public RealSecond Restart(float timeSpanS) {
+        public RealSecond Start(float timeSpanS) {
             FixedTimeS = timeSpanS;
             return this;
         }
@@ -155,24 +161,20 @@ namespace UniKh.core.csp.waiting {
         }
 
         public override string ToString() {
-            return SGen.New["uniKh.csp.waiting.RealSecond("][FixedTimeS][")"].End;
+            return SGen.New["RealSecond("][FixedTimeS][")"].End;
         }
     }
 
 
-    public class UnitySecond : WaitingOperation<RealSecond> {
-
-        public static UnitySecond General { get; } = new UnitySecond(0);
+    public class UnitySecond : WaitingOperation<UnitySecond> {
 
         public float TimeSpanS { get; private set; }
 
         public float UnityTimeStartS { get; private set; }
 
-        public UnitySecond(float timeSpanS) {
-            Restart(timeSpanS);
-        }
+        public UnitySecond() { }
 
-        public UnitySecond Restart(float timeSpanS) {
+        public UnitySecond Start(float timeSpanS) {
             TimeSpanS = timeSpanS;
             UnityTimeStartS = Time.time;
             return this;
@@ -183,7 +185,7 @@ namespace UniKh.core.csp.waiting {
         }
 
         public override string ToString() {
-            return SGen.New["uniKh.csp.waiting.UnitySecond("][TimeSpanS][")"].End;
+            return SGen.New["UnitySecond("][TimeSpanS][")"].End;
         }
     }
 
