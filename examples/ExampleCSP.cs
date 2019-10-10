@@ -26,6 +26,7 @@ public class ExampleCSP : BetterBehavior {
     protected IEnumerator Go() {
         yield return Test1();
         yield return Test2();
+        yield return Test3();
     }
 
     protected IEnumerator Test1() {
@@ -40,6 +41,7 @@ public class ExampleCSP : BetterBehavior {
         Debug.Log($"Test 1.{ind++}: {Time.time} : {CSP.LazyInst.sw.ElapsedMilliseconds}");
         yield return null; // wait for unity frame - 1
         Debug.Log($"Test 1.{ind++}: {Time.time} : {CSP.LazyInst.sw.ElapsedMilliseconds}");
+        Time.timeScale = 1;
     }
 
     protected IEnumerator Test2() {
@@ -47,6 +49,16 @@ public class ExampleCSP : BetterBehavior {
         var ind = 1;
         yield return new Condition(t => Time.time > timeNow + 1);
         Debug.Log($"Test 2.{ind++}: {timeNow} => {Time.time} : {CSP.LazyInst.sw.ElapsedMilliseconds}");
+    }
+
+    protected IEnumerator Test3() {
+        var timeNow = Time.time;
+        for (float i = 0, v = 1; i < 10000000; i ++) {
+            v /= 2;
+            v += i;
+        }
+        yield return 1;
+        Debug.Log($"Test 3: {timeNow} => {Time.time} : {CSP.LazyInst.sw.ElapsedMilliseconds}");
     }
 
 
