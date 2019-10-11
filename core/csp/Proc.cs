@@ -138,6 +138,12 @@ namespace UniKh.core.csp {
             } else if (yieldVal is AsyncOperation) {
                 SetOpCurr(UnityAsync.New.Start(yieldVal as AsyncOperation));
                 return false;
+            } else if (yieldVal is WaitForSeconds) {
+                var Ts = (yieldVal as WaitForSeconds).GetType();
+                var field = Ts.GetField("m_Seconds", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                var sec = field.GetValue(yieldVal);
+                SetOpCurr(UnitySecond.New.Start((float)sec));
+                return false;
             } else { // yieldVal == null or undefined 
                 SetOpCurr(Skip.New.Restart()); //yield return null 的情况跳过一帧
                 return false;
