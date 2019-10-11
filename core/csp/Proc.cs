@@ -13,6 +13,7 @@ using UniKh.extensions;
 
 
 namespace UniKh.core.csp {
+    using UniKh.utils;
     using waiting;
 
     public class Proc : CustomYieldInstruction {
@@ -144,8 +145,19 @@ namespace UniKh.core.csp {
                 var sec = field.GetValue(yieldVal);
                 SetOpCurr(UnitySecond.New.Start((float)sec));
                 return false;
+            } else if (yieldVal is WaitForEndOfFrame) { // WaitForEndOfFrame: skip this frame, but try execute in the next tickFrame
+                SetOpCurr(Skip.New.Restart()); // todo: This implementation is incomplete, and it needs to be reconsidered in the future.
+                return true; 
+            } else if(yieldVal is string) { // wait a frame and show this string
+                Debug.Log(yieldVal);
+                SetOpCurr(Skip.New.Restart());
+                return false;
+            } else if (yieldVal is null) { // skip this frame
+                SetOpCurr(Skip.New.Restart());
+                return false;
             } else { // yieldVal == null or undefined 
-                SetOpCurr(Skip.New.Restart()); //yield return null 的情况跳过一帧
+                Debug.LogError(SGen.New["yield return value of type "][yieldVal.GetType()]["are not supported."].End);
+                End();
                 return false;
             }
         }
