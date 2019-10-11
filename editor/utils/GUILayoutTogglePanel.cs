@@ -13,10 +13,15 @@ namespace UniKh.editor {
 
         public string title;
         public bool state;
-        public GUILayoutTogglePanel(string title, bool initState = false) {
+        public GUILayoutTogglePanel(string title, bool initState = false, bool usingScroll = true) {
             this.title = title;
             this.state = initState;
+            if (usingScroll) {
+                scrollPanel = new GUILayoutScrollPanel();
+            }
         }
+
+        public GUILayoutScrollPanel scrollPanel;
 
         public void Draw(string appendTitle, Action DeawContent) {
             GUILayout.Space(3f);
@@ -29,7 +34,11 @@ namespace UniKh.editor {
             GUI.backgroundColor = cBgOrigin;
 
             if (state && null != DeawContent) {
-                DeawContent();
+                if(null != scrollPanel) {
+                    scrollPanel.Draw(DeawContent);
+                } else {
+                    DeawContent();
+                }
             } else {
                 GUILayout.Space(3f);
             }
