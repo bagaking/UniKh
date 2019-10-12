@@ -18,12 +18,16 @@ namespace UniKh.core {
 
     public class CSP : Singleton<CSP> {
 
+        public static List<Proc> procToRun = new List<Proc>(); // todo: load balancing, priority;
+        
         public Proc Do(IEnumerator _procedure, string tag = "_") {
             if (!sw.IsRunning) {
                 sw.Start(); // todo
             }
 
-            return Reg(new Proc(_procedure, tag).Start());
+            var proc = new Proc(_procedure, tag);
+            procToRun.QueuePush(proc);
+            return proc;
         }
 
         internal event Action ticks;
@@ -42,6 +46,12 @@ namespace UniKh.core {
         public long MonitTotalUpdates { get; private set; } = 0;
 
         public void TriggerTick() {
+
+            while (procToRun.Count > 0) {
+                Reg(procToRun.QueuePop().Start());
+            }
+            
+            
             MonitExecutedInFrame = 0;
 
             if (procLst.Count <= 0) return;

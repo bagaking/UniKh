@@ -186,6 +186,10 @@ namespace UniKh.core.csp {
 
         
         public Proc Delay(WaitingOperation waitionOp) {
+            if (!CSP.Inst) {
+                Debug.LogError("UniKH/CSP/Proc: delay proc failed, CSP are not loaded.");
+            }
+
             if (isActive) {
                 Debug.LogError("UniKH/CSP/Proc: delay proc failed, this proc is currently running.");
             }
@@ -195,7 +199,8 @@ namespace UniKh.core.csp {
                     "UniKH/CSP/Proc: delay proc failed, delay object are already set. Maybe you can use QueueJumping to achieve similar effects.");
             }
 
-            SetOpCurr(waitionOp);
+            m_opCurr = waitionOp;
+            m_opCurr.SetStartTimeMS(CSP.Inst.sw.ElapsedMilliseconds);
             return this;
         }
 
