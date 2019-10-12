@@ -68,11 +68,10 @@ namespace UniKh.core.csp {
         public long Tick(long maxFrameTime = CONST.TIME_SPAN_MS_MIN) {
             var timeStart = CSP.LazyInst.sw.ElapsedMilliseconds;
             MonitTickFrameCount = 0;
-
-            if (null != GetOpCurr(ExecutedTime)) return 0;
-
+            
             ExecutedTime = timeStart;
             while (isActive && (ExecutedTime - timeStart) <= maxFrameTime) {
+                if (null != GetOpCurr(ExecutedTime)) break;
                 MonitTickFrameCount++;
                 var shouldContinue = Frame(timeStart);
                 if (!shouldContinue) break;
@@ -122,8 +121,6 @@ namespace UniKh.core.csp {
                 ProcStack.StackPush(yieldVal as IEnumerator);
                 return false;
             }
-            
-            
 
             if (yieldVal is Result) {
                 Channel.QueuePush((yieldVal as Result).Val);
@@ -187,5 +184,28 @@ namespace UniKh.core.csp {
             return false; 
         }
 
+        
+        public Proc Delay(WaitingOperation waitionOp) {
+            if (isActive) {
+                Debug.LogError("UniKH/CSP/Proc: delay proc failed, this proc is currently running.");
+            }
+
+            if (GetOpCurr() != null) {
+                Debug.LogError(
+                    "UniKH/CSP/Proc: delay proc failed, delay object are already set. Maybe you can use QueueJumping to achieve similar effects.");
+            }
+
+            SetOpCurr(waitionOp);
+            return this;
+        }
+
+        public Proc QueueJump(IEnumerator queueJumper) {
+            if (isActive) {
+                Debug.LogError("UniKH/CSP/Proc: delay proc failed, this proc is currently running.");
+            }
+            ProcStack.StackPush(queueJumper);
+            return this;
+        }
+        
     }
 }
