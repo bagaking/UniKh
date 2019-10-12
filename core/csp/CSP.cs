@@ -11,6 +11,7 @@ using UnityEngine;
 using UniKh.core;
 using UniKh.extensions;
 using System;
+using UniKh.utils;
 
 namespace UniKh.core {
     using csp;
@@ -98,7 +99,21 @@ namespace UniKh.core {
 
         public void Update() {
             MonitTotalUpdates += 1;
+            if (0 == MonitTotalUpdates % 600) { 
+                CheckHealth(true); // todo: to add a switch in UniKh/Const
+            }
+            
             TriggerTick();
+        }
+
+        public bool CheckHealth(bool printHealth = true) {
+            if (printHealth) {
+                var sb = SGen.New["CSP Status:"]["ticks-"][TotalTicks][",procs-"][procLst.Count];
+                procLst.ForEach(p => sb['#'][p.Tag]['.'][null != p.GetOpCurr() ? p.GetOpCurr().ToString() : "null"].Append(","));
+                Debug.Log(sb.End);
+            }
+            
+            return true; // there no unhealthy situation for now 
         }
     }
 }
