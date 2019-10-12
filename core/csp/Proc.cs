@@ -7,7 +7,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using UniKh.core;
 using UniKh.extensions;
 
@@ -17,7 +16,6 @@ namespace UniKh.core.csp {
     using waiting;
 
     public class Proc : CustomYieldInstruction {
-
         public static int IDCounter { get; private set; } = 1;
         public int ID { get; private set; }
         public string Tag { get; private set; }
@@ -33,16 +31,20 @@ namespace UniKh.core.csp {
         public List<object> Channel { get; } = new List<object>();
 
         public WaitingOperation GetOpCurr(long realTimeMS = 0) {
-            if (null != m_opCurr && m_opCurr.IsExpired(realTimeMS > 0 ? realTimeMS : CSP.LazyInst.sw.ElapsedMilliseconds)) {
+            if (null != m_opCurr &&
+                m_opCurr.IsExpired(realTimeMS > 0 ? realTimeMS : CSP.LazyInst.sw.ElapsedMilliseconds)) {
                 m_opCurr.Recycle();
                 m_opCurr = null;
             }
+
             return m_opCurr;
         }
+
         public WaitingOperation SetOpCurr(WaitingOperation op) {
             op.SetStartTimeMS(ExecutedTime);
             return m_opCurr = op;
         }
+
         private WaitingOperation m_opCurr;
 
 
@@ -64,28 +66,24 @@ namespace UniKh.core.csp {
 
 
         public long Tick(long maxFrameTime = CONST.TIME_SPAN_MS_MIN) {
-            long timeStart = CSP.LazyInst.sw.ElapsedMilliseconds;
-            ExecutedTime = timeStart;
-            //long span = 0;
-
+            var timeStart = CSP.LazyInst.sw.ElapsedMilliseconds;
             MonitTickFrameCount = 0;
 
+            if (null != GetOpCurr(ExecutedTime)) return 0;
+
+            ExecutedTime = timeStart;
             while (isActive && (ExecutedTime - timeStart) <= maxFrameTime) {
                 MonitTickFrameCount++;
                 var shouldContinue = Frame(timeStart);
                 if (!shouldContinue) break;
-                //if (PrintInfo != null && latest_ret != null && latest_ret is string) {
-                //    PrintInfo(Helper.SGen.New[id]["-"][total_system_frame]["|span["][time_start]["->"][time_last_execute]["("][span][")]: "][latest_ret].End);
-                //}
             }
-            MonitTickTimeCost = ExecutedTime - timeStart;
 
+            MonitTickTimeCost = ExecutedTime - timeStart;
             return MonitTickFrameCount;
         }
 
-        public bool Frame(long realTimeMS) {
-
-            if (null != GetOpCurr(realTimeMS)) { // ´æÔÚ Operation ÔòÍË³ö
+        public bool Frame(long realTimeMs) {
+            if (null != GetOpCurr(realTimeMs)) {
                 return false;
             }
 
@@ -105,64 +103,89 @@ namespace UniKh.core.csp {
 
             ExecutedTime = CSP.LazyInst.sw.ElapsedMilliseconds;
 
-            var yieldVal = procTop.Current;
-
-            if (yieldVal is IEnumerator) {
-                ProcStack.StackPush(yieldVal as IEnumerator);
-                return true;
-            } else if (yieldVal is Result) {
-                Channel.QueuePush((yieldVal as Result).Val);
-                return true;
-            } else if (yieldVal is WaitingOperation) {
-                SetOpCurr(yieldVal as WaitingOperation);
-                return false;
-            } else if (yieldVal is int) {
-                float value = ((int)yieldVal);
-                SetOpCurr(UnitySecond.New.Start(value));
-                return false;
-            } else if (yieldVal is uint) {
-                float value = ((uint)yieldVal);
-                SetOpCurr(UnitySecond.New.Start(value));
-                return false;
-            } else if (yieldVal is float) {
-                SetOpCurr(UnitySecond.New.Start((float)yieldVal));
-                return false;
-            } else if (yieldVal is double) {
-                SetOpCurr(UnitySecond.New.Start((float)(double)yieldVal));
-                return false;
-            } else if (yieldVal is decimal) {
-                SetOpCurr(RealSecond.New.Start((float)(decimal)yieldVal));
-                return false;
-            } else if (yieldVal is CustomYieldInstruction) {
-                SetOpCurr(UnityCustomYieldInstruction.New.Start(yieldVal as CustomYieldInstruction));
-                return false;
-            } else if (yieldVal is AsyncOperation) {
-                SetOpCurr(UnityAsync.New.Start(yieldVal as AsyncOperation));
-                return false;
-            } else if (yieldVal is WaitForSeconds) {
-                var Ts = (yieldVal as WaitForSeconds).GetType();
-                var field = Ts.GetField("m_Seconds", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                var sec = field.GetValue(yieldVal);
-                SetOpCurr(UnitySecond.New.Start((float)sec));
-                return false;
-            } else if (yieldVal is WaitForEndOfFrame) { // WaitForEndOfFrame: skip this frame, but try execute in the next tickFrame
-                SetOpCurr(Skip.New.Restart()); // todo: This implementation is incomplete, and it needs to be reconsidered in the future.
-                return true; 
-            } else if(yieldVal is string) { // wait a frame and show this string
-                Debug.Log(yieldVal);
-                SetOpCurr(Skip.New.Restart());
-                return false;
-            } else if (yieldVal is null) { // skip this frame
-                SetOpCurr(Skip.New.Restart());
-                return false;
-            } else { // yieldVal == null or undefined 
-                Debug.LogError(SGen.New["yield return value of type "][yieldVal.GetType()]["are not supported."].End);
-                End();
-                return false;
-            }
+            return EnqueueOperation(procTop.Current);
         }
 
+        public bool EnqueueOperation(object yieldVal) {
+            if (yieldVal is WaitingOperation) {
+                // WaitingOperation < CustomYieldInstruction < IEnumerator, the default 
+                SetOpCurr(yieldVal as WaitingOperation);
+                return false;
+            }
+
+            if (yieldVal is CustomYieldInstruction) {
+                SetOpCurr(UnityCustomYieldInstruction.New.Start(yieldVal as CustomYieldInstruction));
+                return false;
+            }
+            
+            if (yieldVal is IEnumerator) {
+                ProcStack.StackPush(yieldVal as IEnumerator);
+                return false;
+            }
+            
+            
+
+            if (yieldVal is Result) {
+                Channel.QueuePush((yieldVal as Result).Val);
+                return true;
+            }
+
+            if (yieldVal is int) {
+                float value = ((int) yieldVal);
+                return EnqueueOperation(UnitySecond.New.Start(value));
+            }
+
+            if (yieldVal is uint) {
+                float value = ((uint) yieldVal);
+                return EnqueueOperation(UnitySecond.New.Start(value));
+            }
+
+            if (yieldVal is float) {
+                return EnqueueOperation(UnitySecond.New.Start((float) yieldVal));
+            }
+
+            if (yieldVal is double) {
+                return EnqueueOperation(UnitySecond.New.Start((float) (double) yieldVal));
+            }
+
+            if (yieldVal is decimal) {
+                return EnqueueOperation(RealSecond.New.Start((float) (decimal) yieldVal));
+            }
+
+            if (yieldVal is AsyncOperation) {
+                return EnqueueOperation(UnityAsync.New.Start(yieldVal as AsyncOperation));
+            }
+
+            if (yieldVal is WaitForSeconds) {
+                var ts = (yieldVal as WaitForSeconds).GetType();
+                var field = ts.GetField("m_Seconds",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                var sec = field.GetValue(yieldVal);
+                return EnqueueOperation(UnitySecond.New.Start((float) sec));
+            }
+
+            if (yieldVal is WaitForEndOfFrame) {
+                // WaitForEndOfFrame: skip this frame, but try execute in the next tickFrame
+                return
+                    EnqueueOperation(Skip.New
+                        .Restart()); // todo: This implementation is incomplete, and it needs to be reconsidered in the future.
+            }
+
+            if (yieldVal is string) {
+                // wait a frame and show this string 
+                Debug.Log(yieldVal);
+                return EnqueueOperation(Skip.New.Restart());
+            }
+
+            if (yieldVal is null) {
+                // skip this frame
+                return EnqueueOperation(Skip.New.Restart());
+            }
+ 
+            Debug.LogError(SGen.New["yield return value of type "][yieldVal.GetType()]["are not supported."].End);
+            End();
+            return false; 
+        }
 
     }
 }
-

@@ -135,8 +135,10 @@ namespace UniKh.core.csp.waiting {
             this.customYield = customYield;
             return this;
         }
-
-        public override bool IsExpired(long timeMS) {
+        
+        // Cuz the Current field of CustomYieldInstruction always return null in waiting, there is no needs to provide this.
+        // But I provided this approach to make it easier to make it clearer and easier to monitor.
+        public override bool IsExpired(long timeMS) { 
             return customYield == null || !customYield.keepWaiting;
         }
 

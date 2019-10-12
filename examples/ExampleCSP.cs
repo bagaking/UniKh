@@ -38,6 +38,8 @@ namespace UniKh.example {
             Debug.Log($"Test 1.{ind++}: {Time.time} : {CSP.LazyInst.sw.ElapsedMilliseconds}");
             yield return 1; // wait for unity time - 1 sec
             Debug.Log($"Test 1.{ind++}: {Time.time} : {CSP.LazyInst.sw.ElapsedMilliseconds}");
+            yield return UnitySecond.New.Start(1f); // wait for unity time - 1 sec
+            Debug.Log($"Test 1.{ind++}: {Time.time} : {CSP.LazyInst.sw.ElapsedMilliseconds}");
             yield return 1.2f; // wait for unity time - 1.2 sec
             Debug.Log($"Test 1.{ind++}: {Time.time} : {CSP.LazyInst.sw.ElapsedMilliseconds}");
             yield return 1.5m; // wait for real time - 1.5 sec

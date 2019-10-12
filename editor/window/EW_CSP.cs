@@ -119,7 +119,8 @@ namespace UniKh.editor {
                         ["  ExecutedTime:"][proc.ExecutedTime]
                         ["  Frames:"][proc.MonitTickFrameCount]['/'][st.TotalFrameCount]
                         ["  MS:"][proc.MonitTickTimeCost]['/'][st.TotalCpuTimeCostMS]
-                        ["  Waiting:"][OpCurr == null ? "(null)" : OpCurr.ToString()].End);
+                        ["  Waiting:"][OpCurr == null ? "(null)" : OpCurr.ToString()]
+                        .End);
 
                     var StackTrace = SGen.New["Stack: "];
                     proc.ProcStack.ForEach((layer, ind) => {
