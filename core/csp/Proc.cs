@@ -24,7 +24,10 @@ namespace UniKh.core.csp {
         public long MonitTickTimeCost { get; private set; }
 
         public bool isActive { get; private set; }
-        public override bool keepWaiting => isActive;
+        
+        public bool isFinished { get; private set; } = false;
+        
+        public override bool keepWaiting => !isFinished;
 
         public List<IEnumerator> ProcStack { get; } = new List<IEnumerator>();
 
@@ -61,6 +64,7 @@ namespace UniKh.core.csp {
 
         internal Proc End() {
             isActive = false;
+            isFinished = true;
             return this;
         }
 
