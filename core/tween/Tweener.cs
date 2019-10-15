@@ -88,6 +88,7 @@ namespace UniKh.core.tween {
             this.Getter = getter;
             this.ValFrom = valFrom;
             this.ValTo = valTo;
+            this.Evaluator = evaluator;
         }
 
         public Tweener(
@@ -99,12 +100,17 @@ namespace UniKh.core.tween {
 
         public override Tweener MoveTo(float tweenPos) {
             
-            FinishedLoops = Mathf.FloorToInt(tweenPos / Duration);
+            if (Status != State.Active) {
+                return this;
+            }
+            
+            TweenPos = tweenPos;
+            FinishedLoops = Mathf.FloorToInt(TweenPos / Duration);
             if (Loop > 0 && FinishedLoops >= Loop) { // todo: consider about this
                 StateTransition(State.Complete);
             }
 
-            var inLoopPos = tweenPos % Duration; 
+            var inLoopPos = TweenPos % Duration; 
             if (this.Status == State.Complete) { // edge condition: 0 or Duration(max) ?
                 switch (Direction) { // if the tween is completed
                     case Directions.Forward: // In forward mode, the tween pos should be the duration * loops 

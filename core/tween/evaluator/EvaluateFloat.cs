@@ -7,6 +7,7 @@
 using UnityEngine;
 
 namespace UniKh.core.tween {
+    
     public class EvaluateFloat : TweenEvaluator<float, EvaluateFloat> {
         public override float Evaluate(float from, float to, float evaluatePos) {
             return Mathf.Lerp(from, to, evaluatePos);

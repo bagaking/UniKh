@@ -10,16 +10,15 @@ namespace UniKh.core.tween {
     
     public static class TweenExtensionTransform {
 
-        public static Transform TweenMoveY(this Transform trans, float value, float duration) {
+        public static Tweener TweenMoveY(this Transform trans, float value, float duration) {
             var tweener = new Tweener<float>(
                 () => trans.position.y,
-                val => trans.position = trans.position + new Vector3(0,val,0),
+                val => trans.position = new Vector3(0,val,0),
                 trans.position.y,
                 trans.position.y + value,
                 EvaluateFloat.Inst
             );
-            Tween.LazyInst.Activate(tweener.SetMove(duration));
-            return trans;
+            return Tween.LazyInst.Activate(tweener.SetMove(duration));
         }
     }
 }
