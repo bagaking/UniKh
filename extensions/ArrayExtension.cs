@@ -12,6 +12,12 @@ namespace UniKh.extensions {
 
             return ret;
         }
+        
+        public static TResult[] Map<T, TResult>(this T[] arr, Func<T, int, TResult> converter) {
+            var ret = new TResult[arr.Length];
+            for (int i = 0; i < arr.Length; i++) ret[i] = converter(arr[i], i);
+            return ret;
+        }
 
         public static T RandomElem<T>(this T[] arr)
         {
