@@ -98,7 +98,7 @@ public class CubicBezier {
             tTemp = tTemp - offset / dx;
         }
 
-        // Fall back to the bisection method for reliability.
+        // Fallback to Bisection.
         tTemp = x;
         var tFrom = 0f;
         var tTo = 1f;
