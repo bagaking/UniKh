@@ -6,9 +6,7 @@
 
 namespace UniKh.core.tween {
     
-    public class EaseLinear: Easing {
-
-        public static readonly EaseLinear Default = new EaseLinear();
+    public class EaseLinear: Easing<EaseLinear> {
         
         public override float Convert(float convert) {
             return convert;

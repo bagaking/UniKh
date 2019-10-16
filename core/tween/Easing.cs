@@ -10,4 +10,13 @@ namespace UniKh.core.tween {
 
         public abstract float Convert(float convert);
     }
+    
+    /// <summary>
+    /// Easings Reference
+    /// </summary>
+    /// <see cref="https://easings.net/">Easings Reference</see>
+    public abstract class Easing<TEase> : Easing where TEase : Easing<TEase>, new() {
+        
+        public static readonly TEase Default = new TEase();
+    }
 }

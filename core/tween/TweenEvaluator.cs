@@ -15,4 +15,11 @@ namespace UniKh.core.tween {
 
         public static TweenEvaluator<TVal, TEvaluator> Inst = new TEvaluator();
     }
+    
+    public static class TweenEvaluatorDefault {
+    
+        public static TweenEvaluator<TVal> Get<TVal>() {
+            throw new System.NotImplementedException();
+        }
+    }
 }

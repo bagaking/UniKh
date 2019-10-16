@@ -63,6 +63,12 @@ namespace UniKh.core.tween {
             Direction = direction;
             return this;
         }
+        
+        public Tweener SetEase(Easing ease) {
+            Ease = ease;
+            return this;
+        }
+        
     }
 
     public class Tweener<TVal> : Tweener {
@@ -88,7 +94,7 @@ namespace UniKh.core.tween {
             this.Getter = getter;
             this.ValFrom = valFrom;
             this.ValTo = valTo;
-            this.Evaluator = evaluator;
+            this.Evaluator = evaluator; // != null ? evaluator : DefaultTweenEvaluators.Get<TVal>();
         }
 
         public Tweener(
@@ -99,6 +105,9 @@ namespace UniKh.core.tween {
         ) : this(getter, setter, getter(), valTo, evaluator) { }
 
         public override Tweener MoveTo(float tweenPos) {
+            if (Duration <= 0) {
+                throw new Exception("Tweener.MoveTo failed: duration error");
+            }
             
             if (Status != State.Active) {
                 return this;
