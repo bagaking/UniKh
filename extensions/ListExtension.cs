@@ -192,6 +192,10 @@ namespace UniKh.extensions {
         public static List<T> Shuffle<T>(this List<T> self) {
             var lst = new List<T>(self.Count);
             for (int i = 0; i < self.Count; i++) {
+                if (lst.Count <= 0) {
+                    lst.Push(self[i]);
+                    continue;
+                }
                 int pos = random.Next(0, lst.Count);
                 if (pos != i) {
                     T tmp = lst[pos]; 
