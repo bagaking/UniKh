@@ -17,18 +17,21 @@ using UniKh.core.tween;
 namespace UniKh.example {
     public class ExampleTween : BetterBehavior {
 
-
+        [Header("Move Y")]
         public Transform transMoveY;
         public float transMoveYVal;
         public float transMoveYDuration = 1;
         public int transMoveYLoop = 1;
         
+        [Header("Move Offset")]
         public Transform transMoveOffset;
         public Vector3 transMoveOffsetVal;
         public float transMoveOffsetDuration = 1;
-        public int transMoveLoop = 1;
-
-        public CubicBezier TransMoveCurve = new CubicBezier(new Vector2(0.645f, 0.045f), new Vector2(0.355f, 1f));
+        public int transMoveOffsetLoop = 1;
+        [EaseDetail(true)]
+        public StandardEase.Type transMoveOffsetEaseType = StandardEase.Type.Linear;
+        public bool transMoveOffsetUsingCurve = false;
+        public CubicBezier transMoveOffsetEaseCurve = new CubicBezier(new Vector2(0.645f, 0.045f), new Vector2(0.355f, 1f));
         
 //        public float transMoveYDirection;
 //        public float transMoveYPingPong;
@@ -39,8 +42,15 @@ namespace UniKh.example {
         /// </summary>
         protected override void OnSetActive(bool active) {
             transMoveY.TweenMoveY(transMoveYVal, transMoveYDuration).SetLoop(transMoveYLoop);
-            transMoveOffset.TweenMoveOffset(transMoveOffsetVal, transMoveOffsetDuration).SetLoop(transMoveLoop).SetEase(new EaseBezier(TransMoveCurve));
+            var tweenTransMoveOffset = transMoveOffset.TweenMoveOffset(transMoveOffsetVal, transMoveOffsetDuration).SetLoop(transMoveOffsetLoop);
+            if (transMoveOffsetUsingCurve) {
+                tweenTransMoveOffset.SetEase(new EaseBezier(transMoveOffsetEaseCurve));
+            }
+            else {
+                tweenTransMoveOffset.SetEase(transMoveOffsetEaseType);
+            }
+                
         }
-
+        
     }
 }

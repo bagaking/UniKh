@@ -555,10 +555,12 @@ MonoBehaviour:
   transMoveOffset: {fileID: 157724990}
   transMoveOffsetVal: {x: 2, y: 2, z: 0}
   transMoveOffsetDuration: 1
-  transMoveLoop: 1
-  TransMoveCurve:
-    m_hIn: {x: 0.21, y: 1.73}
-    m_hOut: {x: 0, y: 1}
+  transMoveOffsetLoop: 1
+  transMoveOffsetEaseType: 2
+  transMoveOffsetUsingCurve: 0
+  transMoveOffsetEaseCurve:
+    m_hIn: {x: 0.645, y: 0.045}
+    m_hOut: {x: 0.355, y: 1}
 --- !u!4 &1745670100
 Transform:
   m_ObjectHideFlags: 0
