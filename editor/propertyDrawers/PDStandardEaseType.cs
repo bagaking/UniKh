@@ -39,13 +39,12 @@ namespace UniKh.editor {
 
                 EditorGUI.PropertyField(rEnum, property, GUIContent.none);
                 EditorGUI.DrawRect(rPanel, Color.black);
-                var easeType = (StandardEase.Type) Enum.Parse(typeof(StandardEase.Type),
-                    property.enumNames[property.enumValueIndex]);
+                var enumName = property.enumNames[property.enumValueIndex];
+                var easeType = (StandardEase.Type) Enum.Parse(typeof(StandardEase.Type),enumName);
+                var ease = StandardEase.Get(easeType);
+                Debug.Log(enumName + " " + ease);
 
-                var drawPoses = StandardEase
-                    .Get(easeType)
-                    .GetSample(20)
-                    .Map(v2 => {
+                var drawPoses = ease.GetSample(20).Map(v2 => {
                         var offset = v2 * rPanel.size;
                         return new Vector3(rPanel.xMin + offset.x, rPanel.yMax - offset.y);
                     }).ToArray();
@@ -54,8 +53,8 @@ namespace UniKh.editor {
                 {
                     Handles.color = Color.green;
                     Handles.color = Color.Lerp(Color.green, Color.white, 0.2f);
-
-                    Handles.DrawPolyLine(drawPoses);
+                    Handles.DrawAAPolyLine(drawPoses);
+//                    Handles.DrawPolyLine(drawPoses);
                 }
                 Handles.EndGUI();
             }

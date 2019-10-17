@@ -22,7 +22,7 @@ namespace UniKh.core.tween {
     
     public static class StandardEase {
         public enum Type {
-            Linear,
+            Linear = 1,
             InSine,
             OutSine,
             InOutSine,

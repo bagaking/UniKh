@@ -93,7 +93,7 @@ namespace UniKh.editor {
             Handles.color = Color.Lerp(Color.green, Color.white, 0.2f);
 
             if (null != drawPoses) {
-                Handles.DrawPolyLine(drawPoses);
+                Handles.DrawAAPolyLine(drawPoses);
             }
 
 //            Handles.DrawLine(new Vector2(rPanel.xMin, rPanel.yMax), new Vector2(rPanel.xMax, rPanel.yMin));
