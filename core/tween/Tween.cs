@@ -36,7 +36,7 @@ namespace UniKh.core {
             ActiveTweeners.ForEach(tweener => {
                 if (tweener.Status != Tweener.State.Active) return;
 
-                var targetPos = tweener.TweenPos + Time.deltaTime;
+                var targetPos = tweener.TweenPos + Time.smoothDeltaTime;// Time.deltaTime;
                 tweener.MoveTo(targetPos);
             });
         }

@@ -20,8 +20,8 @@ namespace UniKh.core.tween {
             this.curve = curve;
         }
         
-        public override float Convert(float convert) {
-            return curve.Evaluate(convert);
+        public override float Convert(float x) {
+            return curve.Evaluate(x);
         }
     }
 }

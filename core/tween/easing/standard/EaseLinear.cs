@@ -6,10 +6,14 @@
 
 namespace UniKh.core.tween {
     
-    public class EaseLinear: Easing<EaseLinear> {
+    public class EaseLinear: StandardEasing<EaseLinear> {
         
-        public override float Convert(float convert) {
-            return convert;
+        public override float EaseIn(float x) {
+            return x;
+        }
+
+        public override float EaseOut(float x) {
+            return x;
         }
     }
 }

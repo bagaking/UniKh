@@ -69,6 +69,11 @@ namespace UniKh.core.tween {
             return this;
         }
         
+        public Tweener SetEase(StandardEase.Type type) {
+            Ease = StandardEase.Get(type);
+            return this;
+        }
+        
     }
 
     public class Tweener<TVal> : Tweener {
