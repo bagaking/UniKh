@@ -64,7 +64,7 @@ namespace UniKh.core.tween {
                 case Method.Out:
                     return EaseOut(x);
                 case Method.InOut:
-                    return -0.5f * ((float)Math.Cos((float)Math.PI * x) - 1f);
+                    return x < 0.5f ? EaseIn(2 * x) / 2 : (EaseOut(2 * x - 1) + 1) / 2;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

@@ -8,18 +8,15 @@ using System;
 using UnityEngine;
 
 namespace UniKh.core.tween {
-    
-    public class EaseDetailAttribute: PropertyAttribute {
-
+    public class EaseDetailAttribute : PropertyAttribute {
         public readonly bool showMotion = false;
-        public EaseDetailAttribute() {
-        }
-	
+        public EaseDetailAttribute() { }
+
         public EaseDetailAttribute(bool showMotion) {
             this.showMotion = showMotion;
         }
     }
-    
+
     public static class StandardEase {
         public enum Type {
             Linear = 1,
@@ -32,6 +29,15 @@ namespace UniKh.core.tween {
             InCubic,
             OutCubic,
             InOutCubic,
+            InQuart,
+            OutQuart,
+            InOutQuart,
+            InQuint,
+            OutQuint,
+            InOutQuint,
+            InExpo,
+            OutExpo,
+            InOutExpo,
         }
 
         public static Easing Get(Type type) {
@@ -56,6 +62,24 @@ namespace UniKh.core.tween {
                     return EaseCubic.DefaultOut;
                 case Type.InOutCubic:
                     return EaseCubic.DefaultInOut;
+                case Type.InQuart:
+                    return EaseQuart.DefaultIn;
+                case Type.OutQuart:
+                    return EaseQuart.DefaultOut;
+                case Type.InOutQuart:
+                    return EaseQuart.DefaultInOut;
+                case Type.InQuint:
+                    return EaseQuint.DefaultIn;
+                case Type.OutQuint:
+                    return EaseQuint.DefaultOut;
+                case Type.InOutQuint:
+                    return EaseQuint.DefaultInOut;
+                case Type.InExpo:
+                    return EaseExpo.DefaultIn;
+                case Type.OutExpo:
+                    return EaseExpo.DefaultOut;
+                case Type.InOutExpo:
+                    return EaseExpo.DefaultInOut;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
