@@ -11,57 +11,82 @@ using UnityEditor;
 using UnityEditor.Rendering;
 using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UniKh.extensions;
 
 namespace UniKh.editor {
     [CustomPropertyDrawer(typeof(EaseDetailAttribute))]
     public class PDStandardEaseType : PropertyDrawer {
 
+        public float ySlot = 1.9f;
+        
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-            return base.GetPropertyHeight(property, label) * (property.type == "Enum" ? 3 : 1);
+            return base.GetPropertyHeight(property, label) * (property.type == "Enum" ? ySlot : 1);
         }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             EditorGUI.BeginProperty(position, label, property);
- 
+
             position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
             if (property.type != "Enum") {
                 EditorGUI.PropertyField(position, property, GUIContent.none);
                 EditorGUI.EndProperty();
             }
-            
+
             var indent = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
             {
-                var slotWidth = position.width - 62;
-                var rEnum = new Rect(position.x, position.y, slotWidth, position.height / 3);
-                var rPanel = new Rect(position.x + slotWidth + 1, position.y, 60, position.height);
+                var slotHeight = position.height / ySlot;
+                var panelWidth = position.width / 3;
+                var rEnum = new Rect(position.x, position.y, panelWidth * 2 - 3, slotHeight);
+                var rPanelCurve = new Rect(position.x + panelWidth * 2, position.y, panelWidth - 3, position.height);
+                var rPanelGradient = new Rect(position.x + 1, position.y + slotHeight + 3, panelWidth * 2 - 6, slotHeight * (ySlot - 1) - 3);
 
                 EditorGUI.PropertyField(rEnum, property, GUIContent.none);
-                EditorGUI.DrawRect(rPanel, Color.black);
                 var enumName = property.enumNames[property.enumValueIndex];
-                var easeType = (StandardEase.Type) Enum.Parse(typeof(StandardEase.Type),enumName);
+                var easeType = (StandardEase.Type) Enum.Parse(typeof(StandardEase.Type), enumName);
                 var ease = StandardEase.Get(easeType);
-                Debug.Log(enumName + " " + ease);
+//                Debug.Log(enumName + " " + ease);
 
-                var drawPoses = ease.GetSample(20).Map(v2 => {
-                        var offset = v2 * rPanel.size;
-                        return new Vector3(rPanel.xMin + offset.x, rPanel.yMax - offset.y);
-                    }).ToArray();
+                var sample = ease.GetSample(30);
+               
 
+                var bgColor = Color.white.FromHex("#444444"); 
+                EditorGUI.DrawRect(rPanelCurve, bgColor);
                 Handles.BeginGUI();
                 {
-                    Handles.color = Color.green;
-                    Handles.color = Color.Lerp(Color.green, Color.white, 0.2f);
-                    Handles.DrawAAPolyLine(drawPoses);
-//                    Handles.DrawPolyLine(drawPoses);
+                    var drawPoses = sample.Map(v2 => {
+                        var offset = v2 * rPanelCurve.size;
+                        return new Vector3(rPanelCurve.xMin + offset.x, rPanelCurve.yMax - offset.y);
+                    });
+                    var linePos = drawPoses.ToArray();
+
+                    drawPoses.Insert(0, rPanelCurve.max);
+                    Handles.color = new Color().FromHex("#60ACFC88");
+                    Handles.DrawAAConvexPolygon(drawPoses.ToArray());
+                    Handles.color = new Color().FromHex("#5bc49f");
+                    Handles.DrawAAPolyLine(linePos);
+
+
+//                   Handles.DrawPolyLine(drawPoses); 
                 }
                 Handles.EndGUI();
+
+                var gradientStartColor = new Color().FromHex("#feb64d");
+                var gradientEndColor = new Color().FromHex("#60ACFC");
+                sample.ForEach((v2, ind) => {
+                    if (ind == sample.Count - 1) return;
+                    var offset = v2 * rPanelGradient.size;
+                    var offset2 = sample[ind + 1] * rPanelGradient.size;
+                    EditorGUI.DrawRect(new Rect(
+                        rPanelGradient.xMin + offset.x,
+                        rPanelGradient.yMin,
+                        offset2.x - offset.x + 1,
+                        rPanelGradient.height
+                        ), Color.Lerp(gradientStartColor, gradientEndColor, v2.y));
+                });
             }
             EditorGUI.indentLevel = indent;
             EditorGUI.EndProperty();
         }
     }
-    
-    
 }
