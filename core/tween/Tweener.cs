@@ -12,69 +12,7 @@ using UnityEngine;
 using UniKh.core;
 using UniKh.extensions;
 
-namespace UniKh.core.tween {
-    
-    public abstract class Tweener {
-        // Pos related apis
-        public enum State {
-            None = 0,
-            Prepared = 1,
-            Active = 2,
-            Complete = 3,
-        }
-
-        public enum Directions {
-            Forward = 1,
-            Backward = 2,
-            PingPong = 3,
-        }
-        
-        // Runtime Setting
-        public Easing Ease { get; protected set; } = EaseLinear.Default;
-
-        public Directions Direction { get; protected set; } = Directions.Forward;
-
-        public float Duration { get; protected set; } = 0;
-
-        public int Loop { get; protected set; } = 1;
-        
-        // Runtime Values
-        public State Status { get; internal set; }
-        public float TweenPos { get; protected set; }
-        public int FinishedLoops { get; protected set; }
-        
-        
-        public abstract Tweener MoveTo(float tweenPos);
-
-        public Tweener SetMove(float duration, Easing ease = null) {
-            this.Duration = duration;
-            this.TweenPos = 0;
-            this.Status = State.Prepared;
-            if (ease != null) this.Ease = ease;
-            return this;
-        }
-
-        public Tweener SetLoop(int loop) {
-            Loop = loop;
-            return this;
-        }
-        
-        public Tweener SetDirection(Directions direction) {
-            Direction = direction;
-            return this;
-        }
-        
-        public Tweener SetEase(Easing ease) {
-            Ease = ease;
-            return this;
-        }
-        
-        public Tweener SetEase(StandardEase.Type type) {
-            Ease = StandardEase.Get(type);
-            return this;
-        }
-        
-    }
+namespace UniKh.core.tween { 
 
     public class Tweener<TVal> : Tweener {
         // Static Setting
@@ -86,7 +24,6 @@ namespace UniKh.core.tween {
         public TVal ValFrom { get; private set; }
         public TVal ValTo { get; private set; }
         public TweenEvaluator<TVal> Evaluator { get; private set; }
-
 
         public Tweener(
             Func<TVal> getter,
@@ -145,12 +82,6 @@ namespace UniKh.core.tween {
             return this;
         }
 
-        protected State StateTransition(State terminal) {// todo: state conversion
-            if (terminal == State.None) {
-                throw new Exception("Tweener.StateTransition failed: cannot transfer to State.None");
-            }
-            
-            return this.Status = terminal; 
-        }
+        
     }
 }
