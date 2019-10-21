@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Text; 
 
 namespace UniKh.extensions {
     public static class ListExtension {
@@ -80,6 +80,36 @@ namespace UniKh.extensions {
                 }
             });
             return ret;
+        }
+        
+        public static void ChangeLength<TTerm>(this List<TTerm> lst, int length)
+        {
+            if (length < 0)
+                throw new ArgumentException("the new length must be >= 0.");
+
+            if (lst.Count < length) {
+                lst.Capacity = length;
+                while (lst.Count < length) {
+                    lst.Add(default);
+                }
+            }
+            
+            while (lst.Count > length) lst.RemoveRange(length, lst.Count - length);
+        }
+        
+        public static List<TTerm> InPlaceFilter<TTerm>(this List<TTerm> lst, System.Predicate<TTerm> condition) {
+            var shrinkOffset = 0;
+            for (var i = 0; i < lst.Count; i++) {
+                var item = lst[i];
+                if (!condition(lst[i])) {
+                    shrinkOffset++; continue;
+                }
+                if (condition(item) && shrinkOffset > 0) {
+                    lst[i - shrinkOffset] = item;
+                }
+            }
+            lst.ChangeLength(lst.Count - shrinkOffset);
+            return lst;
         }
 
         public static T RandomElem<T>(this List<T> list) {
