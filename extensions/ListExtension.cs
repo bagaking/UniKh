@@ -82,7 +82,7 @@ namespace UniKh.extensions {
             return ret;
         }
         
-        public static void ChangeLength<TTerm>(this List<TTerm> lst, int length)
+        public static List<TTerm> ChangeLength<TTerm>(this List<TTerm> lst, int length)
         {
             if (length < 0)
                 throw new ArgumentException("the new length must be >= 0.");
@@ -95,6 +95,7 @@ namespace UniKh.extensions {
             }
             
             while (lst.Count > length) lst.RemoveRange(length, lst.Count - length);
+            return lst;
         }
         
         public static List<TTerm> InPlaceFilter<TTerm>(this List<TTerm> lst, System.Predicate<TTerm> condition) {
