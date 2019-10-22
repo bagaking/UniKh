@@ -38,6 +38,18 @@ namespace UniKh.core.tween {
             InExpo,
             OutExpo,
             InOutExpo,
+            InBack,
+            OutBack,
+            InOutBack,
+            InCric,
+            OutCric,
+            InOutCric,
+            InBounce,
+            OutBounce,
+            InOutBounce,
+            InElastic,
+            OutElastic,
+            InOutElastic
         }
 
         public static Easing Get(Type type) {
@@ -80,6 +92,30 @@ namespace UniKh.core.tween {
                     return EaseExpo.DefaultOut;
                 case Type.InOutExpo:
                     return EaseExpo.DefaultInOut;
+                case Type.InBack:
+                    return EaseBack.DefaultIn;
+                case Type.OutBack:
+                    return EaseBack.DefaultOut;
+                case Type.InOutBack:
+                    return EaseBack.DefaultInOut;
+                case Type.InElastic:
+                    return EaseElastic.DefaultIn;
+                case Type.OutElastic:
+                    return EaseElastic.DefaultOut;
+                case Type.InOutElastic:
+                    return EaseElastic.DefaultInOut;
+                case Type.InBounce:
+                    return EaseBounce.DefaultIn;
+                case Type.OutBounce:
+                    return EaseBounce.DefaultOut;
+                case Type.InOutBounce:
+                    return EaseBounce.DefaultInOut;
+                case Type.InCric:
+                    return EaseCric.DefaultIn;
+                case Type.OutCric:
+                    return EaseCric.DefaultOut;
+                case Type.InOutCric:
+                    return EaseCric.DefaultInOut;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
