@@ -74,11 +74,9 @@ namespace UniKh.editor {
 
         [MenuItem("GameObject/Kh UI Components/tabs <Tabs>/Anchor To Top", false, 0)]
         static void CreateUINodeTabsTop(MenuCommand mc) {
-            var rectTabs = CreateUINodeTabs(mc, "top");
-            rectTabs.anchorMin = Vector2.up;
-            rectTabs.anchorMax = Vector2.one;
-            rectTabs.sizeDelta = new Vector2(0, itemHeight + spacing.y * 2);
-            rectTabs.pivot = new Vector2(0.5f, 1);
+            var rectTabs = CreateUINodeTabs(mc, "top").SetAnchorStretchTop();
+            rectTabs.sizeDelta = rectTabs.sizeDelta.MappingY(y => itemHeight + spacing.y * 2);
+            
             CreateUINodeTabsItem(rectTabs);
             var layoutGroup = rectTabs.GetOrAdd<HorizontalLayoutGroup>();
             layoutGroup.childForceExpandHeight = false;
@@ -93,11 +91,9 @@ namespace UniKh.editor {
 
         [MenuItem("GameObject/Kh UI Components/tabs <Tabs>/Anchor To Bottom", false, 0)]
         static void CreateUINodeTabsBottom(MenuCommand mc) {
-            var rectTabs = CreateUINodeTabs(mc, "bottom");
-            rectTabs.anchorMin = Vector2.zero;
-            rectTabs.anchorMax = Vector2.right;
-            rectTabs.sizeDelta = new Vector2(0, itemHeight + spacing.y * 2);
-            rectTabs.pivot = Vector2.right * 0.5f;
+            var rectTabs = CreateUINodeTabs(mc, "bottom").SetAnchorStretchBottom();
+            rectTabs.sizeDelta = rectTabs.sizeDelta.MappingY(y => itemHeight + spacing.y * 2);
+            
             CreateUINodeTabsItem(rectTabs);
             var layoutGroup = rectTabs.GetOrAdd<HorizontalLayoutGroup>();
             layoutGroup.childForceExpandHeight = false;
@@ -113,11 +109,9 @@ namespace UniKh.editor {
 
         [MenuItem("GameObject/Kh UI Components/tabs <Tabs>/Anchor To Left", false, 0)]
         static void CreateUINodeTabsLeft(MenuCommand mc) {
-            var rectTabs = CreateUINodeTabs(mc, "left");
-            rectTabs.anchorMin = Vector2.zero;
-            rectTabs.anchorMax = Vector2.up;
-            rectTabs.sizeDelta = new Vector2(itemWidth + spacing.x * 2, 0);
-            rectTabs.pivot = Vector2.up * 0.5f;
+            var rectTabs = CreateUINodeTabs(mc, "left").SetAnchorStretchLeft();
+            rectTabs.sizeDelta = rectTabs.sizeDelta.MappingX(x => itemWidth + spacing.y * 2);
+            
             var layoutGroup = rectTabs.GetOrAdd<VerticalLayoutGroup>();
             layoutGroup.childForceExpandHeight = false;
             layoutGroup.childForceExpandWidth = false;
@@ -131,11 +125,9 @@ namespace UniKh.editor {
 
         [MenuItem("GameObject/Kh UI Components/tabs <Tabs>/Anchor To Right", false, 0)]
         static void CreateUINodeTabsRight(MenuCommand mc) {
-            var rectTabs = CreateUINodeTabs(mc, "right");
-            rectTabs.anchorMin = Vector2.right;
-            rectTabs.anchorMax = Vector2.one;
-            rectTabs.sizeDelta = new Vector2(itemWidth + spacing.x * 2, 0);
-            rectTabs.pivot = new Vector2(1, 0.5f);
+            var rectTabs = CreateUINodeTabs(mc, "right").SetAnchorStretchRight();
+            rectTabs.sizeDelta = rectTabs.sizeDelta.MappingX(x => itemWidth + spacing.y * 2);
+            
             var layoutGroup = rectTabs.GetOrAdd<VerticalLayoutGroup>();
             layoutGroup.childForceExpandHeight = false;
             layoutGroup.childForceExpandWidth = false;

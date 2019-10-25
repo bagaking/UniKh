@@ -24,6 +24,18 @@ namespace UniKh.extensions {
                 v.y + Random.Range(-yRange, yRange)
             );
         }
+        
+        public static Vector2 MappingX(this Vector2 v, Converter<float, float> fnMapping) {
+            return new Vector2(fnMapping(v.x), v.y);
+        }
+        
+        public static Vector2 MappingY(this Vector2 v, Converter<float, float> fnMapping) {
+            return new Vector2(v.x, fnMapping(v.y));
+        }
+        
+        public static Vector2 MappingTo(this Vector2 v, Converter<float, float> fnMappingX, Converter<float, float> fnMappingY) {
+            return new Vector2(fnMappingX(v.x), fnMappingY(v.y));
+        }
 
         public static Vector3 AddRandom(this Vector3 v, float xRange, float yRange, float zRange) {
             return new Vector3(
@@ -67,21 +79,5 @@ namespace UniKh.extensions {
         }
 
         public static bool IsZero(this Vector2 point) => point == Vector2.zero;
-//  public static float FastLength(this Vector2 point)
-//  {
-//// this function computes the distance from 0,0 to x,y with 3.5% error
-// 
-//// fist compute the absolute value of x,y
-//    var x = Mathf.Abs(point.x);
-//    var y = Mathf.Abs(point.y);
-// 
-//// compute the minimum of x,y
-//    float mn = Mathf.Min(x, y);
-//    int 
-// 
-//// return the distance
-//    return (x + y - (mn >> 1) - (mn >> 2) + (mn >> 4));
-// 
-//  }
     }
 }
