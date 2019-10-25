@@ -4,6 +4,8 @@
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
  */
 
+using UniKh.core.tween;
+using UniKh.extensions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,10 +30,9 @@ namespace UniKh.comp.ui {
         [SerializeField] [Range(0, 3)] private int m_rotate = 0;
         [SerializeField] private Vector2 m_skew = Vector2.zero;
 
-//        public new Rect GetPixelAdjustedRect() {
-//            var rect = base.GetPixelAdjustedRect();
-//            return m_rotate % 2 == 0 ? rect : new Rect(rect.center.x - rect.height / 2, rect.center.y - rect.width / 2, rect.height, rect.width);
-//        }
+        [SerializeField] [Vector2Plate(-1, -1, 1, 1)] public Vector2 gradientDirection = Vector2.zero;
+        [SerializeField] public Color gradientColor = Color.white;
+        [SerializeField] [EaseDetailAttribute] public StandardEase.Type gradientEase = StandardEase.Type.Linear;
 
         protected override void OnPopulateMesh(VertexHelper vh) {
             if (color.a * 256f < 5) {
@@ -42,21 +43,37 @@ namespace UniKh.comp.ui {
 
             base.OnPopulateMesh(vh);
 
-            if (Mirror == MirrorType.None && m_rotate <= 0 && m_skew == Vector2.zero)
-                return; // condition of shape changes 
+            if (Mirror == MirrorType.None
+                && m_rotate <= 0
+                && m_skew == Vector2.zero
+                && gradientDirection == Vector2.zero) { // condition of shape changes 
+                return;
+            }
 
 //            var vs = new List<UIVertex>();
 //            var vsNew = new List<UIVertex>(vs.Count);
 //            vh.GetUIVertexStream(vs);
 //            vh.Clear();
-            var r = GetPixelAdjustedRect();
+            var rect = GetPixelAdjustedRect();
+
+            Easing gradientEaseCurve = null;
+            var gradientDir = Vector2.zero;
+            var gradientStart = 0f;
+            var gradientDistance = 1f;
+            if (gradientDirection != Vector2.zero) {
+                gradientEaseCurve = StandardEase.Get(gradientEase);
+                gradientDir = gradientDirection.normalized;
+                var gradientSegment = rect.ProjectionTo(gradientDir);
+                gradientStart = gradientSegment.x;
+                gradientDistance = gradientSegment.y - gradientSegment.x;
+            }
 
             var vCur = new UIVertex();
             for (var i = 0; i < vh.currentVertCount; i++) {
                 vh.PopulateUIVertex(ref vCur, i);
                 var retX = vCur.position.x;
                 var retY = vCur.position.y;
-                var center = r.center;
+                var center = rect.center;
                 if (Mirror != MirrorType.None) {
                     retX = ((int) Mirror % 2 == 1) ? center.x * 2 - vCur.position.x : vCur.position.x;
                     retY = ((int) Mirror > 1) ? center.y * 2 - vCur.position.y : vCur.position.y;
@@ -67,32 +84,41 @@ namespace UniKh.comp.ui {
                     var offY = retY - center.y;
                     switch (m_rotate) {
                         case 1:
-                            retX = center.x + offY * r.width / r.height;
-                            retY = center.y - offX * r.height / r.width;
+                            retX = center.x + offY * rect.width / rect.height;
+                            retY = center.y - offX * rect.height / rect.width;
                             break;
                         case 2:
-
                             retX = center.x - offX;
                             retY = center.y - offY;
                             break;
                         case 3:
-                            retX = center.x - offY * r.width / r.height;
-                            retY = center.y + offX * r.height / r.width;
+                            retX = center.x - offY * rect.width / rect.height;
+                            retY = center.y + offX * rect.height / rect.width;
                             break;
                     }
                 }
 
                 if (m_skew != Vector2.zero) {
-                    var offX = retX - r.xMin;
-                    var offY = retY - r.yMin;
-                    retX += Mathf.Lerp(- m_skew.x, m_skew.x, offY / r.height) ;
-                    retY += Mathf.Lerp(- m_skew.y, m_skew.y, offX / r.width);
+                    var offX = retX - rect.xMin;
+                    var offY = retY - rect.yMin;
+                    retX += Mathf.Lerp(-m_skew.x, m_skew.x, offY / rect.height);
+                    retY += Mathf.Lerp(-m_skew.y, m_skew.y, offX / rect.width);
+                }
+
+                if (gradientDir != Vector2.zero && gradientEaseCurve != null) {
+                    var projectionPos = Vector2.Dot(vCur.position, gradientDir) - gradientStart;
+                    var scaledPos = projectionPos / gradientDistance;
+                    var ratio = gradientEaseCurve.Convert(scaledPos);
+                    vCur.color = Color.Lerp(color, gradientColor, ratio);
                 }
 
                 vCur.position.x = retX;
                 vCur.position.y = retY;
+
+
                 vh.SetUIVertex(vCur, i);
             }
+
 
 //            vh.AddUIVertexTriangleStream(vsNew);
         }

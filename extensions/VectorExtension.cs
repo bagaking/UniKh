@@ -1,6 +1,22 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace UniKh.extensions {
+    
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    public class Vector2PlateAttribute : PropertyAttribute {
+        
+        public readonly Vector2 minValue = Vector2.zero;
+        public readonly Vector2 maxValue = Vector2.zero;
+        public Vector2PlateAttribute() { }
+
+        public Vector2PlateAttribute(float xMin, float yMin, float xMax, float yMax) {
+            this.minValue = new Vector2(xMin, yMin);
+            this.maxValue = new Vector2(xMax, yMax);
+        }
+    }
+    
     public static class VectorExtension {
         public static Vector2 AddRandom(this Vector2 v, float xRange, float yRange) {
             return new Vector2(
