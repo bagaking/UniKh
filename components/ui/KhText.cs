@@ -1,87 +1,91 @@
 ﻿using System;
+using UniKh.utils;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UniKh.comp.ui
-{
-    public class KhText : Text
-    {
-        public string[] unitLst = {"", "K", "M", "B", "T", "P", "a", "b", "c", "e", "f", "g"};
+namespace UniKh.comp.ui {
+    public class KhText : Text {
+        public enum Type {
+            Text,
+            NumberText
+        }
 
-        [SerializeField]
-        private float m_numberValue = 0;
+        public Type m_type;
 
-        [SerializeField]
-        private float m_rotateTarget = float.MinValue;
+        public string m_prefix;
+        public string m_subfix;
 
-        public bool showSign = false;
-        public bool usingTextValue = true;
+        [Serializable]
+        public class NumberText {
+            public float value = 0;
+            public float rotateTo = 0;
+            public bool showSign = false;
+            public uint digit = 2;
+            public bool shrink = false;
+            public string[] unitLst = {"", "K", "M", "B", "T", "P", "a", "b", "c", "e", "f", "g"};
 
+            internal string GetValueString() {
+                var valueInUse = value;
+                var sign = valueInUse < 0 ? "-" : "+";
+                var temp = Mathf.Abs(valueInUse);
+                if (!shrink) {
+                    var ret = temp.ToString("F" + digit);
+                    return showSign ? sign + ret : ret;
+                }
 
-        public void SetValue(float v) {
-            if (usingTextValue) {
-                m_Text = v.ToString();
+                var valueBase = temp < 1 ? 0 : Mathf.Log10(temp);
+                var scale = Mathf.FloorToInt(valueBase / 3);
+                var remainder = Mathf.FloorToInt(valueBase % 3);
+                var shrinkNumber = temp / Mathf.Pow(1000, scale);
+                var unit = unitLst[scale < unitLst.Length ? scale : unitLst.Length - 1];
+                var format = (shrinkNumber == Mathf.Floor(shrinkNumber) || scale == 0)
+                    ? "F" + digit
+                    : "F" + (3 - remainder);
+
+                return showSign
+                    ? (sign + shrinkNumber.ToString(format) + unit)
+                    : (shrinkNumber.ToString(format) + unit);
             }
-            else {
-                m_numberValue = v;
-            } 
-            SetVerticesDirty();
-        }
-    
-        public void RotateValue(float to) {
-            m_rotateTarget = to;
-        }
-    
-        public void RotateValue(float from, float to) {
-            SetValue(from);
-            m_rotateTarget = to;
-        }
-    
-        private float NumberValue {
-            get {
-                return usingTextValue ? (string.IsNullOrWhiteSpace(m_Text) ? 0 : Convert.ToSingle(m_Text.Trim())) : m_numberValue;
+
+            public void TryRotate(float deltaTime) {
+                if (!(Math.Abs(rotateTo - float.MinValue) > float.Epsilon)) return;
+
+                var valueInUse = value;
+                valueInUse = Mathf.Lerp(valueInUse, rotateTo, rotateTo - valueInUse > 1000 ? 0.2f : 0.1f);
+                if (Mathf.Abs(rotateTo - valueInUse) <= float.Epsilon) {
+                    valueInUse = rotateTo;
+                    rotateTo = float.MinValue;
+                }
+
+                value = valueInUse;
             }
         }
-    
-        private string GetValueString() {
-            var valueInUse = NumberValue;
-            var sign = valueInUse < 0 ? "-" : (showSign ? "+" : "");
-            var temp = Mathf.Abs(valueInUse);
-            var i = 0;
-            while (temp > 1000 && i < unitLst.Length) {
-                temp /= 1000;
-                i++;
-            }
-    
-            return sign + temp.ToString((temp == (int) temp || i == 0)
-                           ? "F0"
-                           : (temp > 100
-                               ? "F1"
-                               : "F2")
-                       //(temp > 10
-                       //    ? "F2"
-                       //    : "F3"))
-                   ) + unitLst[i < unitLst.Length ? i : unitLst.Length - 1];
-        }
-    
+
+        public NumberText numberTextSetting = new NumberText();
+
         protected override void OnPopulateMesh(VertexHelper toFill) {
             var textOld = m_Text;
-            m_Text = usingTextValue ? GetValueString() : textOld + GetValueString();
+            var builder = SGen.New[m_prefix];
+            switch (m_type) {
+                case Type.NumberText:
+                    builder.Append(numberTextSetting.GetValueString());
+                    break;
+                case Type.Text:
+                    builder.Append(m_Text);
+                    break;
+            }
+
+            m_Text = builder.Append(m_subfix).End;
             base.OnPopulateMesh(toFill);
             m_Text = textOld;
         }
-    
+
         public void Update() {
-            if (!(Math.Abs(m_rotateTarget - float.MinValue) > float.Epsilon)) return;
-    
-            var valueInUse = NumberValue;
-            valueInUse = Mathf.Lerp(valueInUse, m_rotateTarget, m_rotateTarget - valueInUse > 1000 ? 0.2f : 0.1f);
-            if (Mathf.Abs(m_rotateTarget - valueInUse) <= float.Epsilon) {
-                valueInUse = m_rotateTarget;
-                m_rotateTarget = float.MinValue;
+            switch (m_type) {
+                case Type.NumberText:
+                    numberTextSetting.TryRotate(Time.deltaTime);
+                    break;
             }
-    
-            SetValue(valueInUse);
         }
     }
 }

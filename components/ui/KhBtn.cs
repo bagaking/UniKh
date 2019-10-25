@@ -11,6 +11,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace UniKh.comp.ui {
+    
     public class KhBtn : Button {
 
         public Text text;
