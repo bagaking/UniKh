@@ -70,8 +70,8 @@ namespace UniKh.editor {
                     var valueSelected = attr.minValue + ratioClick * (attr.maxValue - attr.minValue);
                     valueSelected = new Vector2(valueSelected.x, -valueSelected.y);
                     property.vector2Value = valueSelected;
-                    Debug.Log("POs BTN:" + Event.current.mousePosition + " in " + rectRadar + " ? " +
-                              rectRadar.Contains(Event.current.mousePosition) + " _ " + Event.current.button);
+//                    Debug.Log("POs BTN:" + Event.current.mousePosition + " in " + rectRadar + " ? " +
+//                              rectRadar.Contains(Event.current.mousePosition) + " _ " + Event.current.button);
                 }
             }
             EditorGUI.indentLevel = indent;

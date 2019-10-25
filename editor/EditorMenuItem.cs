@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -112,15 +113,12 @@ namespace UniKh.editor {
             go.AddComponent<KhImage>();
 
         }
-        [MenuItem("GameObject/Kh UI Component/tabsItem <TabsItem>",false,0)]
-        static void CreateUINodeTabsItem(MenuCommand mc)
+        
+        static void CreateUINodeTabsItem(KhTabs khTabs)
         {
-            var goParent = (mc.context as GameObject);
-            if (null == goParent) return;
-            
-            var khTabs = goParent.GetComponent<KhTabs>();
             if (null == khTabs) return;
-            var go = CreateNewObject(null != goParent ? goParent.transform : null, "tabsItem");
+            
+            var go = CreateNewObject(khTabs.transform, "tabsItem");
             go.AddComponent<KhTabsItem>();
             go.AddComponent<KhImage>();
             var active = CreateNewObject(null != go ? go.transform : null, "active");
@@ -129,17 +127,27 @@ namespace UniKh.editor {
             unActive.SetActive(false);
             var khTabsItem = go.GetComponent<KhTabsItem>();
             khTabsItem.pActive = active;
-            khTabsItem.pUnActive = unActive;
-
+            khTabsItem.pUnActive = unActive; 
         }
         
-        [MenuItem("GameObject/Kh UI Component/tabs <Tabs>",false,0)]
+        [MenuItem("GameObject/Kh.UI/tabs <Tabs>",false,0)]
         static void CreateUINodeTabs(MenuCommand mc)
         {
             var goParent = (mc.context as GameObject);
-            var go = CreateNewObject(null != goParent ? goParent.transform : null, "tabs");
-            go.AddComponent<KhTabs>();
+            if (goParent == null) throw new Exception("Create UI Node Tabs Failed: MUST given parent");
+            var rectTransParent = goParent.transform as RectTransform;
+            if (rectTransParent == null) throw new Exception("Create UI Node Tabs Failed: MUST be created in a UI Context");
+            
+            var go = CreateNewObject(rectTransParent, "tabs");
+            var tabs = go.AddComponent<KhTabs>();
             go.AddComponent<KhImage>();
+
+            var rectTrans = go.transform as RectTransform;
+            if (!rectTrans) {
+                throw new Exception("Create UI Node Tabs Failed: try create as a UI component failed");
+            }
+            
+            CreateUINodeTabsItem(tabs);
         }
         
         

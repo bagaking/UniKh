@@ -30,7 +30,10 @@ namespace UniKh.comp.ui {
         [SerializeField] [Range(0, 3)] private int m_rotate = 0;
         [SerializeField] private Vector2 m_skew = Vector2.zero;
 
-        [SerializeField] [Vector2Plate(-1, -1, 1, 1)] public Vector2 gradientDirection = Vector2.zero;
+        [SerializeField] 
+        [Vector2Plate(-1, -1, 1, 1)] 
+        public Vector2 gradientDirection = Vector2.zero;
+        
         [SerializeField] public Color gradientColor = Color.white;
         [SerializeField] [EaseDetailAttribute] public StandardEase.Type gradientEase = StandardEase.Type.Linear;
 

@@ -21,10 +21,11 @@ namespace UniKh.editor {
         public SerializedProperty numberTextSetting_unitLst;
         public SerializedProperty numberTextSetting_digit;
         public SerializedProperty numberTextSetting_shrink;
+
         protected override void OnEnable() {
             base.OnEnable();
             m_Script = serializedObject.FindProperty("m_Script");
-            
+
             m_Text = serializedObject.FindProperty("m_Text");
             m_FontData = serializedObject.FindProperty("m_FontData");
             m_type = serializedObject.FindProperty("m_type");
@@ -46,9 +47,9 @@ namespace UniKh.editor {
             serializedObject.Update();
             EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(m_Script, true);
-            
+
             EditorGUILayout.PropertyField(m_type, true);
-            
+
             EditorGUILayout.LabelField("Content", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
             EditorGUILayout.PropertyField(m_prefix, true);
@@ -61,10 +62,13 @@ namespace UniKh.editor {
                     EditorGUI.indentLevel++;
                     EditorGUILayout.PropertyField(numberTextSetting_showSign);
                     EditorGUILayout.PropertyField(numberTextSetting_rotateTo);
-                    EditorGUILayout.PropertyField(numberTextSetting_digit);
                     EditorGUILayout.PropertyField(numberTextSetting_shrink);
                     if (a.numberTextSetting.shrink) {
+                        EditorGUILayout.PropertyField(numberTextSetting_digit, new GUIContent("Max Digits"));
                         EditorGUILayout.PropertyField(numberTextSetting_unitLst, true);
+                    }
+                    else {
+                        EditorGUILayout.PropertyField(numberTextSetting_digit);
                     }
 
                     EditorGUI.indentLevel--;
@@ -72,13 +76,13 @@ namespace UniKh.editor {
                 default:
                     break;
             }
-            
+
             EditorGUILayout.PropertyField(m_subfix, true);
             EditorGUI.indentLevel--;
-            
+
             EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(m_FontData);
-            
+
             AppearanceControlsGUI();
             RaycastControlsGUI();
             serializedObject.ApplyModifiedProperties();
