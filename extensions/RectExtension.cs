@@ -20,9 +20,16 @@ namespace UniKh.extensions {
         }
         
         public static Vector2 ProjectionTo(this Rect rSelf, Vector2 direction) {
-            var min = 0f;
-            var max = Vector2.Dot(rSelf.max, direction);
+            var min = Vector2.Dot(rSelf.min, direction);
+            var max = min;
 
+            var vMax = Vector2.Dot(rSelf.max, direction);
+            if (vMax < min) {
+                min = vMax;
+            }else if (vMax > max) {
+                max = vMax;
+            }
+            
             var vPA = Vector2.Dot(rSelf.GetPA(), direction);
             if (vPA < min) {
                 min = vPA;
