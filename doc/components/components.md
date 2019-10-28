@@ -35,7 +35,7 @@
     - Tree
 - Panel
   - PanelGround
-  - PanelConst
+  - PanelWindow
   - PanelDrawer
   - PanelPopover
 

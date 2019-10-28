@@ -1,26 +1,27 @@
 ﻿using System.Collections;
+using UniKh.core;
 using UniKh.core.csp;
 using UniKh.core.tween;
+using UniKh.extensions;
 using UnityEngine;
 
 namespace UniKh.comp.ui
 {
-    public class KhPanel : MonoBehaviour
+    public abstract class KhPanel : BetterBehavior
     {
-        public CanvasGroup cg;
-        public float startAlpha = 0;
-        public Vector3 startPos = Vector3.zero;
+        
         [EaseDetail(true)]
         public StandardEase.Type easeActive = StandardEase.Type.OutExpo;
         public float durationShow = 0.3f;
-        
-        void OnEnable() {
-            if (!cg) cg = GetComponent<CanvasGroup>();
-            cg.alpha = startAlpha;
-            cg.DoFade(1, durationShow).SetEase(easeActive);
-            Vector3 endPos = transform.position;
-            transform.SetPositionAndRotation(startPos,transform.rotation);
-            transform.TweenMoveOffset(endPos, durationShow);
+
+        protected abstract IEnumerator PlayAdmissionAnimation();
+
+        protected override void OnSetActive(bool active) {
+            base.OnSetActive(active);
+            if (active) {
+                PlayAdmissionAnimation().Go();
+            }
+            
         }
     }
 }

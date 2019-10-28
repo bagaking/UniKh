@@ -36,6 +36,18 @@ namespace UniKh.core.tween {
             );
             return Tween.LazyInst.Activate(tweener.SetMove(duration));
         }
+        
+        public static Tweener TweenMoveOffsetLocal(this Transform trans, Vector3 value, float duration) {
+            var posOrg = trans.localPosition;
+            var tweener = new Tweener<Vector3>(
+                () => trans.localPosition,
+                val => trans.localPosition = val,
+                posOrg,
+                posOrg + value,
+                EvaluateUnityVector3.Inst
+            );
+            return Tween.LazyInst.Activate(tweener.SetMove(duration));
+        }
 
         public static Tweener TweenScale(this Transform trans, Vector3 value, float duration) {
             var sclOrg = trans.localScale;
