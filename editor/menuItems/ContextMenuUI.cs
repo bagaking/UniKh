@@ -24,16 +24,16 @@ namespace UniKh.editor {
         }
 
         internal static GameObject CreateNewUIObject(Transform transParent, string title, string defaultTag = "00") {
-            if (null == transParent) {
-                return null;
-            }
-
             var go = new GameObject(GetNewTransformName(transParent, title, defaultTag));
-            go.transform.SetParent(transParent);
+            if (null != transParent) {
+                go.transform.SetParent(transParent);
+            }
             go.transform.localPosition = Vector3.zero;
             go.transform.eulerAngles = Vector3.zero;
             go.transform.localScale = Vector3.one;
-            go.AddComponent<RectTransform>();
+            if (transParent is RectTransform) {
+                go.AddComponent<RectTransform>();
+            }
 
             Selection.activeObject = go;
             return go;
@@ -45,13 +45,7 @@ namespace UniKh.editor {
             if (rectTransParent == null) throw new Exception(opration + " Failed: MUST be created in a UI Context");
             return rectTransParent;
         }
-
-        [MenuItem("GameObject/Kh UI Components/c <Empty>", false, 0)]
-        internal static void CreateUINodeEmpty(MenuCommand mc) {
-            var goParent = (mc.context as GameObject);
-            CreateNewUIObject(null != goParent ? goParent.transform : null, "c");
-        }
-
+        
         [MenuItem("GameObject/Kh UI Components/i <Image>", false, 0)]
         internal static void CreateUINodeImage(MenuCommand mc) {
             var goParent = (mc.context as GameObject);

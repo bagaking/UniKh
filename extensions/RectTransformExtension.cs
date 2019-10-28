@@ -41,5 +41,31 @@ namespace UniKh.extensions {
             rectTransform.pivot = new Vector2(1, 0.5f);
             return rectTransform;
         }
+        
+        public static RectTransform SetAnchorStretchAll(this RectTransform rectTransform) {
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.sizeDelta = Vector2.zero;
+            return rectTransform;
+        }
+        
+        public static RectTransform SetAnchorPingLeftTop(this RectTransform rectTransform) {
+            rectTransform.pivot = rectTransform.anchorMin = rectTransform.anchorMax = Vector2.up;
+            return rectTransform;
+        }
+        public static RectTransform SetAnchorPingLeftBottom(this RectTransform rectTransform) {
+            rectTransform.pivot = rectTransform.anchorMin = rectTransform.anchorMax = Vector2.zero;
+            return rectTransform;
+        }
+        public static RectTransform SetAnchorPingRightTop(this RectTransform rectTransform) {
+            rectTransform.pivot = rectTransform.anchorMin = rectTransform.anchorMax = Vector2.one;
+            return rectTransform;
+        }
+        public static RectTransform SetAnchorPingRightBottom(this RectTransform rectTransform) {
+            rectTransform.pivot = rectTransform.anchorMin = rectTransform.anchorMax = Vector2.right;
+            return rectTransform;
+        }
+
+
     }
 }

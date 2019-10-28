@@ -21,7 +21,7 @@ namespace UniKh.editor {
 
         static RectTransform CreateUINodeTabs(MenuCommand mc, string appendName = "") {
             var rectTransParent = checkUIContext(mc.context as GameObject, "Create UI Node Tabs");
-            var go = CreateNewUIObject(rectTransParent, "tabs" + (appendName.Exists() ? (":" + appendName) : ""));
+            var go = CreateNewUIObject(rectTransParent, "tabs" + (appendName.Exists() ? (":" + appendName) : ""), "");
             go.AddComponent<KhTabs>();
             var img = go.AddComponent<KhImage>();
             img.color = new Color(0.2f, 0.6f, 0.85f);
@@ -37,21 +37,25 @@ namespace UniKh.editor {
         static void CreateUINodeTabsItem(RectTransform transTabs) {
             if (null == transTabs) return;
 
-            var go = CreateNewUIObject(transTabs, "tabsItem");
-            go.AddComponent<KhTabsItem>();
+            var go = CreateNewUIObject(transTabs, "tab_item");
+            var tabItem = go.AddComponent<KhTabsItem>();
             var img = go.AddComponent<KhImage>();
+            tabItem.targetGraphic = img;
             img.color = new Color(0.85f, 0.5f, 0.2f);
 
             var rectTabsItem = go.transform as RectTransform;
             if (null != rectTabsItem) rectTabsItem.sizeDelta = new Vector2(itemWidth, itemHeight);
 
-            var active = CreateNewUIObject(null != go ? go.transform : null, "active");
-            var unActive = CreateNewUIObject(null != go ? go.transform : null, "unActive");
-            active.SetActive(false);
-            unActive.SetActive(false);
-            var khTabsItem = go.GetComponent<KhTabsItem>();
-            khTabsItem.pActive = active;
-            khTabsItem.pUnActive = unActive;
+            var cActive = CreateNewUIObject(null != go ? go.transform : null, "c:active", "");
+            var cInactive = CreateNewUIObject(null != go ? go.transform : null, "c:inactive", "");
+            cActive.SetActive(false);
+            cInactive.SetActive(false);
+
+            (cActive.transform as RectTransform).SetAnchorStretchAll();
+            (cInactive.transform as RectTransform).SetAnchorStretchAll();
+            
+            tabItem.pActive = cActive;
+            tabItem.pUnActive = cInactive;
 
             Selection.activeObject = transTabs;
         }

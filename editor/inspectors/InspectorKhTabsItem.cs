@@ -17,21 +17,13 @@ namespace UniKh.editor {
     
     [CustomEditor(typeof(KhTabsItem), true)]
     [CanEditMultipleObjects]
-    public class InspectorKhTabsItem : ButtonEditor {
+    public class InspectorKhTabsItem : InspectorKhBtn {
 
-        public SerializedProperty m_Script;
-        public SerializedProperty clickAnimation;
-        public SerializedProperty tweenScale;
-        public SerializedProperty text;
         public SerializedProperty pActive;
         public SerializedProperty pUnActive;
         
         protected override void OnEnable() {
-            base.OnEnable();
-            m_Script = serializedObject.FindProperty("m_Script");
-            clickAnimation = serializedObject.FindProperty("clickAnimation");
-            tweenScale = serializedObject.FindProperty("tweenScale");
-            text = serializedObject.FindProperty("text");
+            base.OnEnable(); 
             pActive = serializedObject.FindProperty("pActive");
             pUnActive = serializedObject.FindProperty("pUnActive");
         }
@@ -41,11 +33,7 @@ namespace UniKh.editor {
             base.OnInspectorGUI();
             
             serializedObject.Update();
-            EditorGUILayout.Separator();
-            EditorGUILayout.PropertyField(m_Script, true);
-            EditorGUILayout.PropertyField(clickAnimation, true);
-            EditorGUILayout.PropertyField(tweenScale, true);
-            EditorGUILayout.PropertyField(text, true);
+            EditorGUILayout.Separator(); 
             EditorGUILayout.PropertyField(pActive, true);
             EditorGUILayout.PropertyField(pUnActive, true);
             serializedObject.ApplyModifiedProperties();
