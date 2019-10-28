@@ -14,6 +14,7 @@ namespace UniKh.comp.ui {
         public float startAlpha = 0;
 
         protected override IEnumerator PlayAdmissionAnimation() {
+            if (startAlpha == 1) yield break;
             var finalAlpha = cg.alpha;
             cg.alpha *= startAlpha;
             cg.DoFade(finalAlpha, durationShow).SetEase(easeActive);
