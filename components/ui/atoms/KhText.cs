@@ -14,6 +14,8 @@ namespace UniKh.comp.ui {
 
         public string m_prefix;
         public string m_subfix;
+        
+        public EveryUpdate updateRotate = new EveryUpdate(0.1f);
 
         [Serializable]
         public class NumberText {
@@ -38,30 +40,54 @@ namespace UniKh.comp.ui {
                 var remainder = Mathf.FloorToInt(valueBase % 3);
                 var shrinkNumber = temp / Mathf.Pow(1000, scale);
                 var unit = unitLst[scale < unitLst.Length ? scale : unitLst.Length - 1];
-                var format = shrinkNumber == Mathf.Floor(shrinkNumber) 
+                var format = shrinkNumber == Mathf.Floor(shrinkNumber)
                     ? "F0"
-                    : ("F" + ((scale == 0 ? (int)digit : 3) - remainder));
+                    : ("F" + ((scale == 0 ? (int) digit : 3) - remainder));
 
                 return showSign
                     ? (sign + shrinkNumber.ToString(format) + unit)
                     : (shrinkNumber.ToString(format) + unit);
             }
+        }
 
-            public void TryRotate(float deltaTime) {
-                if (!(Math.Abs(rotateTo - float.MinValue) > float.Epsilon)) return;
+        [SerializeField] private NumberText numberTextSetting = new NumberText();
 
-                var valueInUse = value;
-                valueInUse = Mathf.Lerp(valueInUse, rotateTo, rotateTo - valueInUse > 1000 ? 0.2f : 0.1f);
-                if (Mathf.Abs(rotateTo - valueInUse) <= float.Epsilon) {
-                    valueInUse = rotateTo;
-                    rotateTo = float.MinValue;
-                }
-
-                value = valueInUse;
+        public float NumberValue {
+            get => numberTextSetting.value;
+            set {
+                numberTextSetting.value = value;
+                SetAllDirty();
             }
         }
 
-        public NumberText numberTextSetting = new NumberText();
+        public bool NumberShowSign {
+            get => numberTextSetting.showSign;
+            set {
+                numberTextSetting.showSign = value;
+                SetAllDirty();
+            }
+        }
+
+        public uint NumberDigit {
+            get => numberTextSetting.digit;
+            set {
+                numberTextSetting.digit = value;
+                SetAllDirty();
+            }
+        }
+
+        public bool NumberShrink {
+            get => numberTextSetting.shrink;
+            set {
+                numberTextSetting.shrink = value;
+                SetAllDirty();
+            }
+        }
+        
+        public float NumberRotateTo {
+            get => numberTextSetting.rotateTo;
+            set => numberTextSetting.rotateTo = value;
+        }
 
         protected override void OnPopulateMesh(VertexHelper toFill) {
             var textOld = m_Text;
@@ -80,10 +106,30 @@ namespace UniKh.comp.ui {
             m_Text = textOld;
         }
 
+        private void TryRotate() {
+            var digitRate = Mathf.Pow(10f, numberTextSetting.digit);
+            if (!(Math.Abs(numberTextSetting.rotateTo - float.MinValue) > 1 / digitRate)) return;
+
+            var valueInUse = NumberValue;
+            valueInUse = Mathf.Lerp(
+                valueInUse,
+                numberTextSetting.rotateTo,
+                (numberTextSetting.rotateTo - valueInUse) > 1000 ? 0.3f : 0.2f
+            );
+             
+            if (Mathf.Abs(numberTextSetting.rotateTo - valueInUse) <= float.Epsilon) {
+                valueInUse = numberTextSetting.rotateTo;
+                numberTextSetting.rotateTo = float.MinValue;
+            }
+            NumberValue = Mathf.Round(valueInUse * digitRate) / digitRate;
+        }
+
         public void Update() {
             switch (m_type) {
                 case Type.NumberText:
-                    numberTextSetting.TryRotate(Time.deltaTime);
+                    if (updateRotate.Test(Time.deltaTime)) {
+                        TryRotate();
+                    }
                     break;
             }
         }

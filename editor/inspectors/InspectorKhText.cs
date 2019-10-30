@@ -63,7 +63,7 @@ namespace UniKh.editor {
                     EditorGUILayout.PropertyField(numberTextSetting_showSign);
                     EditorGUILayout.PropertyField(numberTextSetting_rotateTo);
                     EditorGUILayout.PropertyField(numberTextSetting_shrink);
-                    if (a.numberTextSetting.shrink) {
+                    if (a.NumberShrink) {
                         EditorGUILayout.PropertyField(numberTextSetting_digit, new GUIContent("Max Digits"));
                         EditorGUILayout.PropertyField(numberTextSetting_unitLst, true);
                     }
