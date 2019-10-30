@@ -12,7 +12,7 @@ namespace UniKh.comp.ui
         public Action<int> OnSelectTab;
         public int lastSelect = -1;
         public int select = -1;
-        public int defaultSelect = 0;
+        public int defaultSelect = -1;
         // Start is called before the first frame update
         void Start()
         {
@@ -45,7 +45,7 @@ namespace UniKh.comp.ui
 
             if (index < 0) return;
             if (select == index) {
-//                SetActive(select, false);
+                SetActive(select, true);
 //                lastSelect = -1;
 //                select = -1;
                 return;
@@ -63,7 +63,11 @@ namespace UniKh.comp.ui
         }
         public void SetActive(int index, bool active) {
             var btn = btns[index];
-//            var p = panels[index];
+            if (panels.Count > 0)
+            {
+                var p = panels[index];
+                p.SetActive(active);
+            }
 
             if (btn)
             {
