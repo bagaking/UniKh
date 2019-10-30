@@ -4,6 +4,7 @@
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
  */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,6 +30,31 @@ namespace UniKh.core.csp {
                 ret.Push((payload.Current as Result).Val);
             }
             return ret;
+        }
+
+        public static void Then(this AsyncOperation yieldInstruction, Action<AsyncOperation> callback = null) {
+            YieldOnce(yieldInstruction, callback).Go();
+        }
+        
+        public static void Then(this CustomYieldInstruction yieldInstruction, Action<CustomYieldInstruction> callback = null) {
+            YieldOnce(yieldInstruction, callback).Go();
+        }
+        
+        public static void Then(this WaitForSeconds yieldInstruction, Action<WaitForSeconds> callback = null) {
+            YieldOnce(yieldInstruction, callback).Go();
+        }
+        
+        public static void Then(this WaitForEndOfFrame yieldInstruction, Action<WaitForEndOfFrame> callback = null) {
+            YieldOnce(yieldInstruction, callback).Go();
+        }
+        
+        public static void Then(this IEnumerator yieldInstruction, Action<IEnumerator> callback = null) {
+            YieldOnce(yieldInstruction, callback).Go();
+        }
+
+        public static IEnumerator YieldOnce<T>(T yieldVal, Action<T> callback = null) {
+            yield return yieldVal;
+            callback?.Invoke(yieldVal);
         }
     }
 }
