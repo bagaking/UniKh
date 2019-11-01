@@ -4,13 +4,8 @@
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
  */
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using DG.Tweening;
-using UnityEngine;
-using UniKh.core;
-using UniKh.extensions;
+using System; 
+using UnityEngine; 
 
 namespace UniKh.core.tween { 
 
