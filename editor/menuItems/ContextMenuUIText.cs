@@ -19,12 +19,13 @@ namespace UniKh.editor {
     public class ContextMenuUIText : ContextMenuUI {
 
         static KhText CreateUINodeText(GameObject goParent) {
-            var go = CreateNewUIObject(null != goParent ? goParent.transform : null, "a");
+            var go = CreateNewGameObject(goParent, "a");
             var txt = go.AddComponent<KhText>();
             
             txt.horizontalOverflow = HorizontalWrapMode.Overflow;
             txt.verticalOverflow = VerticalWrapMode.Overflow;
             txt.rectTransform.SetAnchorStretchAll();
+            txt.alignment = TextAnchor.MiddleCenter;
             if (KhPreferenceStatic.Inst) {
                 txt.fontSize = KhPreferenceStatic.Inst.defaultFontSize;
             }
@@ -32,7 +33,7 @@ namespace UniKh.editor {
             return txt;
         }
         
-        [MenuItem("GameObject/Kh UI Components/a <Text>/Ch", false, 0)]
+        [MenuItem("GameObject/Kh UI (Atom)/a <Text>/Ch", false, 0)]
         internal static KhText CreateUINodeTextCh(MenuCommand mc) {
             var txt = CreateUINodeText(mc.context as GameObject); 
             if (KhPreferenceStatic.Inst && KhPreferenceStatic.Inst.fontCH) {
@@ -43,7 +44,7 @@ namespace UniKh.editor {
         }
 
         
-        [MenuItem("GameObject/Kh UI Components/a <Text>/En", false, 0)]
+        [MenuItem("GameObject/Kh UI (Atom)/a <Text>/En", false, 0)]
         internal static KhText CreateUINodeTextEn(MenuCommand mc) {
             var txt = CreateUINodeText(mc.context as GameObject); 
             if (KhPreferenceStatic.Inst && KhPreferenceStatic.Inst.fontEN) {
@@ -52,7 +53,7 @@ namespace UniKh.editor {
             return txt;
         }
         
-        [MenuItem("GameObject/Kh UI Components/a <Text>/Number", false, 0)]
+        [MenuItem("GameObject/Kh UI (Atom)/a <Text>/Number", false, 0)]
         internal static KhText CreateUINodeTextNumber(MenuCommand mc) {
             var txt = CreateUINodeText(mc.context as GameObject);
             txt.m_type = KhText.Type.NumberText;

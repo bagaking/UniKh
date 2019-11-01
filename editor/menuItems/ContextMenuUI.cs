@@ -23,8 +23,17 @@ namespace UniKh.editor {
             var t = children[children.Count - 1];
             return t.name.Replace(' ', '_').IncNumberTail(2);
         }
-
-        internal static GameObject CreateNewUIObject(Transform transParent, string title, string defaultTag = "00") {
+ 
+        
+        internal static GameObject CreateNewGameObject(GameObject goParent, string title, string defaultTag = "00") {
+            if (null == goParent) {
+                goParent = (Selection.activeObject as GameObject) ;
+            } 
+            return CreateNewGameObject(goParent? goParent.transform : null, title, defaultTag);
+        }
+        
+        internal static GameObject CreateNewGameObject(Transform transParent, string title, string defaultTag = "00") {
+             
             var go = new GameObject(GetNewTransformName(transParent, title, defaultTag));
             if (null != transParent) {
                 go.transform.SetParent(transParent);
@@ -42,41 +51,20 @@ namespace UniKh.editor {
         }
 
         internal static RectTransform checkUIContext(GameObject goParent, string opration = "Context") {
+            if (null == goParent) {
+                goParent = (Selection.activeObject as GameObject) ;
+            }  
             if (goParent == null) throw new Exception(opration + " Failed: MUST given parent");
             var rectTransParent = goParent.transform as RectTransform;
             if (rectTransParent == null) throw new Exception(opration + " Failed: MUST be created in a UI Context");
             return rectTransParent;
         }
 
-        [MenuItem("GameObject/Kh UI Components/i <Image>", false, 0)]
-        internal static void CreateUINodeImage(MenuCommand mc) {
-            var goParent = (mc.context as GameObject);
-            var go = CreateNewUIObject(null != goParent ? goParent.transform : null, "i");
-            go.AddComponent<KhImage>();
-        }
-
-        [MenuItem("GameObject/Kh UI Components/p <Panel>", false, 0)]
-        internal static void CreateUINodePanel(MenuCommand mc) {
-            var goParent = (mc.context as GameObject);
-
-            var go = CreateNewUIObject(null != goParent ? goParent.transform : null, "p");
-
-            go.AddComponent<CanvasGroup>();
-            go.AddComponent<KhPanel>();
-            go.AddComponent<KhImage>();
-
-            var rect = go.GetComponent<RectTransform>();
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
-        }
-
-        [MenuItem("GameObject/Kh UI Components/toast <KhToast>", false, 0)]
+        [MenuItem("GameObject/Kh UI (Molecules)/toast <KhToast>", false, 0)]
         internal static void CreateUINodeToast(MenuCommand mc) {
             var goParent = (mc.context as GameObject);
 
-            var go = CreateNewUIObject(null != goParent ? goParent.transform : null, "toast");
+            var go = CreateNewGameObject(null != goParent ? goParent.transform : null, "toast");
 
             go.AddComponent<CanvasGroup>();
             go.AddComponent<KhToast>();
@@ -85,14 +73,13 @@ namespace UniKh.editor {
             var khToast = go.GetComponent<KhToast>();
             khToast.cg = cg;
         } 
-
-        [MenuItem("GameObject/Kh UI Components/btn <Button>", false, 0)]
-        internal static void CreateUINodeBtn(MenuCommand mc) {
-            var goParent = (mc.context as GameObject);
-            var go = CreateNewUIObject(null != goParent ? goParent.transform : null, "btn");
-
-            go.AddComponent<KhBtn>();
-            go.AddComponent<KhImage>();
+        
+        [MenuItem("GameObject/Create Empty", true, 0)]
+        internal static bool CreateUINodeEmptyDefault(MenuCommand mc) {
+//            var goParent = (mc.context as GameObject);
+//            return CreateNewGameObject(null != goParent ? goParent.transform : null, "c");
+            return false;
         }
+
     }
 }

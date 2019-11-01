@@ -14,11 +14,9 @@ namespace UniKh.editor {
     
     public class ContextMenuUIPanel : ContextMenuUI {
         
-        [MenuItem("GameObject/Kh UI Components/p <Panel>/Ground", false, 0)]
+        [MenuItem("GameObject/Kh UI (Molecules)/p <Panel>/Ground", false, 0)]
         internal static void CreateUINodePanelGround(MenuCommand mc) {
-            var goParent = (mc.context as GameObject);
-
-            var go = CreateNewUIObject(null != goParent ? goParent.transform : null, "p");
+            var go = CreateNewGameObject(mc.context as GameObject, "p");
 
             var panel = go.AddComponent<KhPanelGround>();
             panel.cg = go.AddComponent<CanvasGroup>();
@@ -33,11 +31,9 @@ namespace UniKh.editor {
 //            rect.offsetMax = Vector2.zero;
         }
         
-        [MenuItem("GameObject/Kh UI Components/p <Panel>/Window", false, 0)]
+        [MenuItem("GameObject/Kh UI (Molecules)/p <Panel>/Window", false, 0)]
         internal static void CreateUINodePanelConst(MenuCommand mc) {
-            var goParent = (mc.context as GameObject);
-
-            var go = CreateNewUIObject(null != goParent ? goParent.transform : null, "p");
+            var go = CreateNewGameObject(mc.context as GameObject, "p");
  
             var panel = go.AddComponent<KhPanelWindow>();
             panel.startOffset = Vector3.up * 100;

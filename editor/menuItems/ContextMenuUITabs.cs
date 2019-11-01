@@ -21,7 +21,7 @@ namespace UniKh.editor {
 
         static RectTransform CreateUINodeTabs(MenuCommand mc, string appendName = "") {
             var rectTransParent = checkUIContext(mc.context as GameObject, "Create UI Node Tabs");
-            var go = CreateNewUIObject(rectTransParent, "tabs" + (appendName.Exists() ? (":" + appendName) : ""), "");
+            var go = CreateNewGameObject(rectTransParent, "tabs" + (appendName.Exists() ? (":" + appendName) : ""), "");
             go.AddComponent<KhTabs>();
             var img = go.AddComponent<KhImage>();
             img.color = new Color(0.2f, 0.6f, 0.85f);
@@ -37,7 +37,7 @@ namespace UniKh.editor {
         static void CreateUINodeTabsItem(RectTransform transTabs) {
             if (null == transTabs) return;
 
-            var go = CreateNewUIObject(transTabs, "tab_item");
+            var go = CreateNewGameObject(transTabs, "tab_item");
             var tabItem = go.AddComponent<KhTabsItem>();
             var img = go.AddComponent<KhImage>();
             tabItem.targetGraphic = img;
@@ -46,8 +46,8 @@ namespace UniKh.editor {
             var rectTabsItem = go.transform as RectTransform;
             if (null != rectTabsItem) rectTabsItem.sizeDelta = new Vector2(itemWidth, itemHeight);
 
-            var cActive = CreateNewUIObject(null != go ? go.transform : null, "c:active", "");
-            var cInactive = CreateNewUIObject(null != go ? go.transform : null, "c:inactive", "");
+            var cActive = CreateNewGameObject(null != go ? go.transform : null, "c:active", "");
+            var cInactive = CreateNewGameObject(null != go ? go.transform : null, "c:inactive", "");
             cActive.SetActive(false);
             cInactive.SetActive(false);
 
@@ -60,7 +60,7 @@ namespace UniKh.editor {
             Selection.activeObject = transTabs;
         }
 
-        [MenuItem("GameObject/Kh UI Components/tabs <Tabs>/Custom", false, 0)]
+        [MenuItem("GameObject/Kh UI (Molecules)/tabs <Tabs>/Custom", false, 0)]
         static void CreateUINodeTabsGeneral(MenuCommand mc) {
             var rectTabs = CreateUINodeTabs(mc, "custom");
             rectTabs.sizeDelta = new Vector2(itemWidth + spacing.x, (itemHeight + spacing.y) * initItemCount) + spacing;
@@ -76,7 +76,7 @@ namespace UniKh.editor {
             }
         }
 
-        [MenuItem("GameObject/Kh UI Components/tabs <Tabs>/Anchor To Top", false, 0)]
+        [MenuItem("GameObject/Kh UI (Molecules)/tabs <Tabs>/Anchor To Top", false, 0)]
         static void CreateUINodeTabsTop(MenuCommand mc) {
             var rectTabs = CreateUINodeTabs(mc, "top").SetAnchorStretchTop();
             rectTabs.sizeDelta = rectTabs.sizeDelta.MappingY(y => itemHeight + spacing.y * 2);
@@ -93,7 +93,7 @@ namespace UniKh.editor {
             }
         }
 
-        [MenuItem("GameObject/Kh UI Components/tabs <Tabs>/Anchor To Bottom", false, 0)]
+        [MenuItem("GameObject/Kh UI (Molecules)/tabs <Tabs>/Anchor To Bottom", false, 0)]
         static void CreateUINodeTabsBottom(MenuCommand mc) {
             var rectTabs = CreateUINodeTabs(mc, "bottom").SetAnchorStretchBottom();
             rectTabs.sizeDelta = rectTabs.sizeDelta.MappingY(y => itemHeight + spacing.y * 2);
@@ -111,7 +111,7 @@ namespace UniKh.editor {
         }
 
 
-        [MenuItem("GameObject/Kh UI Components/tabs <Tabs>/Anchor To Left", false, 0)]
+        [MenuItem("GameObject/Kh UI (Molecules)/tabs <Tabs>/Anchor To Left", false, 0)]
         static void CreateUINodeTabsLeft(MenuCommand mc) {
             var rectTabs = CreateUINodeTabs(mc, "left").SetAnchorStretchLeft();
             rectTabs.sizeDelta = rectTabs.sizeDelta.MappingX(x => itemWidth + spacing.y * 2);
@@ -127,7 +127,7 @@ namespace UniKh.editor {
             }
         }
 
-        [MenuItem("GameObject/Kh UI Components/tabs <Tabs>/Anchor To Right", false, 0)]
+        [MenuItem("GameObject/Kh UI (Molecules)/tabs <Tabs>/Anchor To Right", false, 0)]
         static void CreateUINodeTabsRight(MenuCommand mc) {
             var rectTabs = CreateUINodeTabs(mc, "right").SetAnchorStretchRight();
             rectTabs.sizeDelta = rectTabs.sizeDelta.MappingX(x => itemWidth + spacing.y * 2);
