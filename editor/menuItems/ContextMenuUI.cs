@@ -7,6 +7,7 @@
 using System;
 using UniKh.extensions;
 using UniKh.comp.ui;
+using UniKh.core;
 using UnityEditor;
 using UnityEngine;
 
@@ -28,6 +29,7 @@ namespace UniKh.editor {
             if (null != transParent) {
                 go.transform.SetParent(transParent);
             }
+
             go.transform.localPosition = Vector3.zero;
             go.transform.eulerAngles = Vector3.zero;
             go.transform.localScale = Vector3.one;
@@ -45,7 +47,7 @@ namespace UniKh.editor {
             if (rectTransParent == null) throw new Exception(opration + " Failed: MUST be created in a UI Context");
             return rectTransParent;
         }
-        
+
         [MenuItem("GameObject/Kh UI Components/i <Image>", false, 0)]
         internal static void CreateUINodeImage(MenuCommand mc) {
             var goParent = (mc.context as GameObject);
@@ -82,15 +84,7 @@ namespace UniKh.editor {
             var cg = go.GetComponent<CanvasGroup>();
             var khToast = go.GetComponent<KhToast>();
             khToast.cg = cg;
-        }
-
-        [MenuItem("GameObject/Kh UI Components/a <Text>", false, 0)]
-        internal static void CreateUINodeText(MenuCommand mc) {
-            var goParent = (mc.context as GameObject);
-            var go = CreateNewUIObject(null != goParent ? goParent.transform : null, "a");
-
-            go.AddComponent<KhText>();
-        }
+        } 
 
         [MenuItem("GameObject/Kh UI Components/btn <Button>", false, 0)]
         internal static void CreateUINodeBtn(MenuCommand mc) {

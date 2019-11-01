@@ -13,7 +13,7 @@ namespace UniKh.editor {
 
         [MenuItem("UniKh/Tools/Open Terminal")]
         public static void OpenTerminal() {
-            var path = EditorPreference.GetTerminalPath();
+            var path = ToolPreference.GetTerminalPath();
             if (path.Exists()) {
                 Process.Start(path);
             }
@@ -21,9 +21,9 @@ namespace UniKh.editor {
         
         [MenuItem("UniKh/Create/Config List")]
         public static void CreateLst() {
-            var so = ScriptableObject.CreateInstance<ConfigList>();
+            var so = ScriptableObject.CreateInstance<KhPreferenceStatic>();
             
-            UnityEditor.AssetDatabase.CreateAsset(so, $"Assets/Resources/{ConfigList.assetName}.asset");
+            UnityEditor.AssetDatabase.CreateAsset(so, $"Assets/Resources/{KhPreferenceStatic.assetName}.asset");
             UnityEditor.AssetDatabase.SaveAssets();
             UnityEditor.AssetDatabase.Refresh();
             UnityEditor.EditorUtility.FocusProjectWindow ();

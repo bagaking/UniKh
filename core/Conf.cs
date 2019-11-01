@@ -9,7 +9,7 @@ namespace UniKh.core {
             get {
                 if (_inst) return _inst;
                 var type = typeof(T);
-                var results = ConfigList.Inst.Configs.Find(c => c.GetType() == type);
+                var results = KhPreferenceStatic.Inst.Configs.Find(c => c.GetType() == type);
                 if (results == null) throw new Exception("Cannot find configuration of type " + type);
                 _inst = results as T;
                 return _inst;
