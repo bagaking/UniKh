@@ -8,7 +8,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using UniKh.core;
 using UniKh.extensions;
 
@@ -17,7 +16,6 @@ namespace UniKh.core.csp {
     using waiting;
 
     public static class CSPExtension {
-
         public static Proc Go(this IEnumerator payload, string tag = "_") {
             return CSP.LazyInst.Do(payload, tag);
         }
@@ -26,36 +24,54 @@ namespace UniKh.core.csp {
             List<object> ret = null;
             while (payload.MoveNext()) {
                 if (!(payload.Current is Result)) continue;
-                if (null == ret) { ret = new List<object>(); }
+                if (null == ret) {
+                    ret = new List<object>();
+                }
+
                 ret.Push((payload.Current as Result).Val);
             }
+
             return ret;
         }
-
-        public static void Then(this AsyncOperation yieldInstruction, Action<AsyncOperation> callback = null) {
-            YieldOnce(yieldInstruction, callback).Go();
-        }
-        
-        public static void Then(this CustomYieldInstruction yieldInstruction, Action<CustomYieldInstruction> callback = null) {
-            YieldOnce(yieldInstruction, callback).Go();
-        }
-        
-        public static void Then(this WaitForSeconds yieldInstruction, Action<WaitForSeconds> callback = null) {
-            YieldOnce(yieldInstruction, callback).Go();
-        }
-        
-        public static void Then(this WaitForEndOfFrame yieldInstruction, Action<WaitForEndOfFrame> callback = null) {
-            YieldOnce(yieldInstruction, callback).Go();
-        }
-        
-        public static void Then(this IEnumerator yieldInstruction, Action<IEnumerator> callback = null) {
-            YieldOnce(yieldInstruction, callback).Go();
+  
+        public static Promise<TVal> AsPromise<TVal>(this AsyncOperation yieldInstruction, TVal defaultVal) {
+            var promise = new Promise<TVal>(); 
+            YieldOnce(yieldInstruction, promise, defaultVal).Go();
+            return promise;
         }
 
-        public static IEnumerator YieldOnce<T>(T yieldVal, Action<T> callback = null) {
+        public static Promise<TVal> AsPromise<TVal>(this CustomYieldInstruction yieldInstruction, TVal defaultVal) {
+            var promise = new Promise<TVal>(); 
+            YieldOnce(yieldInstruction, promise, defaultVal).Go();
+            return promise;
+        }
+
+        public static Promise<TVal> AsPromise<TVal>(this WaitForSeconds yieldInstruction, TVal defaultVal) {
+            var promise = new Promise<TVal>(); 
+            YieldOnce(yieldInstruction, promise, defaultVal).Go();
+            return promise;
+        }
+
+        public static Promise<TVal> AsPromise<TVal>(this WaitForEndOfFrame yieldInstruction, TVal defaultVal) {
+            var promise = new Promise<TVal>(); 
+            YieldOnce(yieldInstruction, promise, defaultVal).Go();
+            return promise;
+        }
+
+        public static Promise<TVal> AsPromise<TVal>(this IEnumerator yieldInstruction, TVal defaultVal) {
+            var promise = new Promise<TVal>(); 
+            YieldOnce(yieldInstruction, promise, defaultVal).Go();
+            return promise;
+        }
+
+        public static IEnumerator YieldOnce<T, TVal>(T yieldVal, Promise<TVal> promise, TVal defaultVal) {
             yield return yieldVal;
-            callback?.Invoke(yieldVal);
-        }
+            try {
+                promise.Resolve(defaultVal); 
+            }
+            catch (Exception exception) {
+                promise.Reject(exception);
+            }
+        } 
     }
 }
-
