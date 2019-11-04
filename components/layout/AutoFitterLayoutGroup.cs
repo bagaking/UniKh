@@ -33,6 +33,8 @@ namespace UniKh.comp {
         }
 
         protected void CalcAlongAxis(int axis, bool isVertical) {
+            if(null == children) return;
+            
             float combinedPadding = (axis == 0 ? padding.horizontal : padding.vertical);
 
             float totalMin = combinedPadding;
@@ -69,6 +71,7 @@ namespace UniKh.comp {
         }
 
         protected void SetChildrenAlongAxis(int axis) {
+            if(null == children) return;
             if (contentWidthLimit < 0) return;
 
             float size = rectTransform.rect.size[axis]; 
