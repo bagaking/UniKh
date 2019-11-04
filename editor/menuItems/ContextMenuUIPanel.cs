@@ -9,6 +9,7 @@ using UniKh.extensions;
 using UniKh.comp.ui;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UniKh.editor {
     
@@ -39,9 +40,18 @@ namespace UniKh.editor {
             panel.startOffset = Vector3.up * 100;
             panel.startScaleRate = 0.85f;
             go.AddComponent<KhImage>();
+            var rectTransform = panel.transform as RectTransform;
+            var rectParent = rectTransform.parent as RectTransform;
+
+            if (rectParent.sizeDelta.x > 300 && rectParent.sizeDelta.y > 300) {
+                rectTransform.sizeDelta = rectParent.sizeDelta - Vector2.one * 100;
+            }
+            else {
+                rectTransform.sizeDelta =new Vector2(600,600);
+            }
 
 //            var rect = go.GetComponent<RectTransform>();
-            
+
 //            rect.anchorMin = Vector2.zero;
 //            rect.anchorMax = Vector2.one;
 //            rect.offsetMin = Vector2.zero;
