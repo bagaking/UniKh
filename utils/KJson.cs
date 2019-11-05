@@ -4,11 +4,11 @@
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
  */
 
-using System; 
-using UniKh.extensions; 
+using System;
+using UniKh.extensions;
 using System.Collections.Generic;
-using System.IO; 
-using System.Text;  
+using System.IO;
+using System.Text;
 
 namespace UniKh.utils {
     public class KJson {
@@ -135,6 +135,17 @@ namespace UniKh.utils {
             return Create(new List<object>(_data));
         }
 
+        public KJson ForEach<T>(Action<T, int> Executor) {
+            if (isList) {
+                for (int i = 0; i < ListData.Count; i++) Executor((T)ListData[i], i);
+            }
+            else {
+                var count = 0;
+                foreach (var v in Data.Values) Executor((T)v, count++);
+            }
+            return this;
+        }
+
         public KJson DoMap(Action<string, object> Executor) {
             if (Executor == null) throw new KJsonException("[Json DoMap] empty executor");
             if (isList) throw new KJsonException("[Json DoMap] cannot apply DoMap to a seq json");
@@ -142,6 +153,10 @@ namespace UniKh.utils {
                 foreach (var pair in Data)
                     Executor(pair.Key, pair.Value);
             return this;
+        }
+        
+        public KJson DoMap<T>(Action<string, T> Executor) {
+            return DoMap((key, obj) => Executor(key, (T) obj));
         }
 
         public KJson DoList(Action<int, object> Executor) {
@@ -813,7 +828,8 @@ namespace UniKh.utils {
 
     internal static class KJsonUtility {
         public static object Check(this Dictionary<string, object> map, string key) {
-            if (!map.ContainsKey(key)) throw new KJsonException("[KJsonUtility (Parse)Check] key " + key + " not exist ");
+            if (!map.ContainsKey(key))
+                throw new KJsonException("[KJsonUtility (Parse)Check] key " + key + " not exist ");
             return map[key];
         }
 
@@ -901,7 +917,7 @@ namespace UniKh.utils {
             if (value is bool) return (bool) value;
             else
                 throw new KJsonException("[KJsonUtility (Parse)Bool] type of mapitem is dismatch  ," + value + " (" +
-                                        value.GetType() + ")");
+                                         value.GetType() + ")");
         }
 
         public static int ObjectToInt(object value) {
@@ -912,7 +928,7 @@ namespace UniKh.utils {
             else if (value is double) return (int) ((double) value);
             else
                 throw new KJsonException("[KJsonUtility (Parse)Int] type of mapitem is dismatch  ," + value + " (" +
-                                        value.GetType() + ")");
+                                         value.GetType() + ")");
         }
 
         public static uint ObjectToUint(object value) {
@@ -924,7 +940,7 @@ namespace UniKh.utils {
             else if (value is double) return (uint) ((double) value);
             else
                 throw new KJsonException("[KJsonUtility (Parse)Int] type of mapitem is dismatch  ," + value + " (" +
-                                        value.GetType() + ")");
+                                         value.GetType() + ")");
         }
 
         public static long ObjectToLong(object value) {
@@ -935,7 +951,7 @@ namespace UniKh.utils {
             else if (value is double) return (long) ((double) value);
             else
                 throw new KJsonException("[KJsonUtility (Parse)Long] type of mapitem is dismatch  ," + value + " (" +
-                                        value.GetType() + ")");
+                                         value.GetType() + ")");
         }
 
         public static float ObjectToFloat(object value) {
@@ -946,7 +962,7 @@ namespace UniKh.utils {
             else if (value is long) return ((long) value);
             else
                 throw new KJsonException("[KJsonUtility (Parse)Float] type of mapitem is dismatch  ," + value + " (" +
-                                        value.GetType() + ")");
+                                         value.GetType() + ")");
         }
 
         public static double ObjectToDouble(object value) {
@@ -957,7 +973,7 @@ namespace UniKh.utils {
             else if (value is long) return ((long) value);
             else
                 throw new KJsonException("[KJsonUtility (Parse)Double] type of mapitem is dismatch  ," + value + " (" +
-                                        value.GetType() + ")");
+                                         value.GetType() + ")");
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections; 
+﻿using System.Collections;
+using System.Collections.Generic;
 using UniKh.core.csp;
 using UniKh.core.csp.waiting;
 using UniKh.core.tween;
@@ -38,7 +39,7 @@ namespace UniKh.comp.ui {
             yield return stayTime;
             Disappear();
         }
-
+        
         public void Show(string text) {
             if (content) content.text = text;
             gameObject.SetActive(true);
