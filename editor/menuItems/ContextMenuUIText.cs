@@ -26,6 +26,8 @@ namespace UniKh.editor {
             txt.verticalOverflow = VerticalWrapMode.Overflow;
             txt.rectTransform.SetAnchorStretchAll();
             txt.alignment = TextAnchor.MiddleCenter;
+            txt.color = new Color(0.3f, 0.3f, 0.3f);
+            
             if (KhPreferenceStatic.Inst) {
                 txt.fontSize = KhPreferenceStatic.Inst.defaultFontSize;
             }
@@ -39,7 +41,7 @@ namespace UniKh.editor {
             if (KhPreferenceStatic.Inst && KhPreferenceStatic.Inst.fontCH) {
                 txt.font = KhPreferenceStatic.Inst.fontCH;
             }
-
+            txt.text = "中文内容";
             return txt;
         }
 
@@ -50,6 +52,8 @@ namespace UniKh.editor {
             if (KhPreferenceStatic.Inst && KhPreferenceStatic.Inst.fontEN) {
                 txt.font = KhPreferenceStatic.Inst.fontEN;
             }
+
+            txt.text = "English Contents";
             return txt;
         }
         

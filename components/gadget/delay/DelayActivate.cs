@@ -17,17 +17,20 @@ namespace UniKh.comp {
     
     public class DelayActivate : DelayBase<DelayActivate> {
         
+        public bool to = true;
+        
         [Header("Target GameObjects")]
         public List<GameObject> targets;
         
         [Header("Accuracy => Performance")]
         public bool meanwhile = false;
+
  
         public override IEnumerator DoDelayEvent() {
             if(targets == null) yield break;
             foreach (var go in targets) {
                 if (null == go) continue;
-                go.SetActive(true);
+                go.SetActive(to);
                 if(meanwhile) continue;
                 yield return null;
             }

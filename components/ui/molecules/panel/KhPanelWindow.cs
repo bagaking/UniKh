@@ -13,19 +13,19 @@ namespace UniKh.comp.ui {
         public Vector3 startOffset = Vector3.zero;
         public float startScaleRate = 1;
 
-        private Vector3 initPosition = Vector3.zero;
-        
-        private Vector3 finalScale = Vector3.one;
+        private Vector3 _initPosition = Vector3.zero; 
+        private Vector3 _initScale = Vector3.one;
         protected override void OnInit() {
             base.OnInit();
             var trans = transform;
-            initPosition = trans.localPosition; 
-            finalScale = trans.localScale;
-            trans.localScale *= startScaleRate;
+            _initPosition = trans.localPosition; 
+            _initScale = trans.localScale; 
         }
 
         protected override void OnSetActive(bool active) {
-            transform.localPosition = initPosition + startOffset;
+            var trans = transform;
+            trans.localPosition = _initPosition + startOffset;
+            trans.localScale = _initScale * startScaleRate;
             base.OnSetActive(active);
         }
 
@@ -34,7 +34,7 @@ namespace UniKh.comp.ui {
                 yield break;
             }
 //            var endPos = transform.localPosition;
-            transform.TweenScale(finalScale, durationShow).SetEase(easeActive);
+            transform.TweenScale(_initScale, durationShow).SetEase(easeActive);
             transform.TweenMoveOffsetLocal(- startOffset, durationShow).SetEase(easeActive);
             yield return null;
         }

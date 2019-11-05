@@ -19,7 +19,7 @@ namespace UniKh.utils {
 
         public bool Test(float deltaTime) {
             timeAccumulated += deltaTime;
-            if (!(timeAccumulated > timeSpanS * (round + 1))) return false;
+            if (!(timeAccumulated > timeSpanS * round)) return false;
             round++;
             return true;
         }
