@@ -9,14 +9,15 @@ namespace UniKh.comp.ui
     {
         public List<KhTabsItem> btns = new List<KhTabsItem>();
         public List<GameObject> panels = new List<GameObject>();
+        
         public Action<int> OnSelectTab;
+        
         public int lastSelect = -1;
         public int select = -1;
-        public int defaultSelect = -1;
+        public int defaultSelect = 0;
         // Start is called before the first frame update
         void Start()
-        {
-
+        { 
             var btnsTransforms = new List<Transform>();
             for (var i = 0; i < transform.childCount; i++) {
                 var tNode = transform.GetChild(i);
@@ -31,17 +32,14 @@ namespace UniKh.comp.ui
                 btns.Push(btnsTransforms[i].gameObject.GetComponent<KhTabsItem>());
                 var btn = btns[i];
                 var index = i;
-                btn.onClick.AddListener(() => OnTabClick(index));
+                btn.onClick.AddListener(() => Select(index));
             }
-            OnTabClick(defaultSelect);
+            Select(defaultSelect);
         }
-
-        // Update is called once per frame
-        void Update() {
-
-        }
-
-        public void OnTabClick(int index) {
+ 
+        
+        
+        public void Select(int index) {
 
             if (index < 0) return;
             if (select == index) {

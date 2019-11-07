@@ -35,7 +35,7 @@ namespace UniKh.comp.ui {
         }
 
         IEnumerator AutoHide() {
-            transform.TweenMoveOffsetLocal(Vector3.up * 100, stayTime).SetEase(StandardEase.Type.OutSine);
+            transform.TweenMoveOffsetLocal(Vector3.up * 80, stayTime).SetEase(StandardEase.Type.OutQuad);
             yield return stayTime;
             Disappear();
         }

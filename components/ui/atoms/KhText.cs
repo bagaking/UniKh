@@ -14,7 +14,14 @@ namespace UniKh.comp.ui {
 
         public string m_prefix;
         public string m_subfix;
-        
+
+        public override float preferredWidth {
+            get {
+                var settings = GetGenerationSettings(Vector2.zero);
+                return cachedTextGeneratorForLayout.GetPreferredWidth(GetTextToRender(), settings) / pixelsPerUnit;
+            }
+        }
+
         public EveryUpdate updateRotate = new EveryUpdate(0.1f);
 
         [Serializable]
@@ -83,14 +90,13 @@ namespace UniKh.comp.ui {
                 SetAllDirty();
             }
         }
-        
+
         public float NumberRotateTo {
             get => numberTextSetting.rotateTo;
             set => numberTextSetting.rotateTo = value;
         }
 
-        protected override void OnPopulateMesh(VertexHelper toFill) {
-            var textOld = m_Text;
+        protected string GetTextToRender() {
             var builder = SGen.New[m_prefix];
             switch (m_type) {
                 case Type.NumberText:
@@ -100,8 +106,12 @@ namespace UniKh.comp.ui {
                     builder.Append(m_Text);
                     break;
             }
+            return builder.Append(m_subfix).End;
+        }
 
-            m_Text = builder.Append(m_subfix).End;
+        protected override void OnPopulateMesh(VertexHelper toFill) {
+            var textOld = m_Text; 
+            m_Text = GetTextToRender();
             base.OnPopulateMesh(toFill);
             m_Text = textOld;
         }
@@ -116,11 +126,12 @@ namespace UniKh.comp.ui {
                 numberTextSetting.rotateTo,
                 (numberTextSetting.rotateTo - valueInUse) > 1000 ? 0.3f : 0.2f
             );
-             
+
             if (Mathf.Abs(numberTextSetting.rotateTo - valueInUse) <= float.Epsilon) {
                 valueInUse = numberTextSetting.rotateTo;
                 numberTextSetting.rotateTo = float.MinValue;
             }
+
             NumberValue = Mathf.Round(valueInUse * digitRate) / digitRate;
         }
 
@@ -130,6 +141,7 @@ namespace UniKh.comp.ui {
                     if (updateRotate.Test(Time.deltaTime)) {
                         TryRotate();
                     }
+
                     break;
             }
         }

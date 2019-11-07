@@ -24,7 +24,7 @@ namespace UniKh.editor {
             
             txt.horizontalOverflow = HorizontalWrapMode.Overflow;
             txt.verticalOverflow = VerticalWrapMode.Overflow;
-            txt.rectTransform.SetAnchorStretchAll();
+//            txt.rectTransform.SetAnchorStretchAll();
             txt.alignment = TextAnchor.MiddleCenter;
             txt.color = new Color(0.3f, 0.3f, 0.3f);
             

@@ -58,9 +58,9 @@ namespace UniKh.core {
         }
 
         public Promise<TVal> Catch(Action<Exception> cbCatch) {
-            var nextPromise = new Promise<TVal>();
+//            var nextPromise = new Promise<TVal>();
             _reject += cbCatch;
-            return nextPromise;
+            return this;
         }
 
         public override bool keepWaiting => _executed;
