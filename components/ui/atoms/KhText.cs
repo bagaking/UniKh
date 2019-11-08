@@ -62,6 +62,7 @@ namespace UniKh.comp.ui {
         public float NumberValue {
             get => numberTextSetting.value;
             set {
+                m_type = Type.NumberText;
                 numberTextSetting.value = value;
                 SetAllDirty();
             }
