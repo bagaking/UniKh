@@ -7,7 +7,7 @@ namespace UniKh.comp.ui
         public GameObject pActive;
         public GameObject pUnActive;
 
-        public void SetActive(bool active)
+        public void UsingActiveState(bool active)
         {
             pActive.SetActive(active);
             pUnActive.SetActive(!active);

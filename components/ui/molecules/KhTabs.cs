@@ -1,75 +1,66 @@
 ﻿using System;
 using System.Collections.Generic;
+using UniKh.core;
 using UniKh.extensions;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace UniKh.comp.ui
-{
-    public class KhTabs : MonoBehaviour
-    {
-        public List<KhTabsItem> btns = new List<KhTabsItem>();
+namespace UniKh.comp.ui {
+    public class KhTabs : BetterBehavior {
+        public event Action<int, int> OnSelectionChanged;        
         public List<GameObject> panels = new List<GameObject>();
+
+        public int selectedTabIndex = -1;        
+        public int defaultSelection = -1;
         
-        public Action<int> OnSelectTab;
         
-        public int lastSelect = -1;
-        public int select = -1;
-        public int defaultSelect = 0;
-        // Start is called before the first frame update
-        void Start()
-        { 
-            var btnsTransforms = new List<Transform>();
+        private List<KhTabsItem> btns = new List<KhTabsItem>();
+        private int prevSelection = -1;
+
+        protected override void OnInit() {
+            base.OnInit();
             for (var i = 0; i < transform.childCount; i++) {
                 var tNode = transform.GetChild(i);
                 var tab = tNode.gameObject.GetComponent<KhTabsItem>();
-                if (tab)
-                {
-                    btnsTransforms.Add(tNode);
-                }
-            }
-            for (var i = 0; i < btnsTransforms.Count; i++)
-            {
-                btns.Push(btnsTransforms[i].gameObject.GetComponent<KhTabsItem>());
-                var btn = btns[i];
-                var index = i;
-                btn.onClick.AddListener(() => Select(index));
-            }
-            Select(defaultSelect);
-        }
+                var tabInd = i;
+                tab.onClick.AddListener(() => Select(tabInd));
+                btns.Push(tab);
+            } 
+            
+            btns.ForEach(btn => btn.UsingActiveState(false));
+            panels.ForEach(p => p.gameObject.SetActive(false)); 
+            
+            Select(defaultSelection); 
+        } 
  
-        
-        
         public void Select(int index) {
-
             if (index < 0) return;
-            if (select == index) {
-                SetActive(select, true);
-//                lastSelect = -1;
-//                select = -1;
+            if (selectedTabIndex == index) {
+                SetIndexGroupActive(selectedTabIndex, true);
                 return;
             }
-            lastSelect = select;
-            select = index;
 
-            if (lastSelect != -1) {
-                SetActive(lastSelect, false);
+            selectedTabIndex = index;
+            if (prevSelection >= 0) {
+                SetIndexGroupActive(prevSelection, false);
             }
-            SetActive(select, true);
-            Debug.Log(index);
-            OnSelectTab?.Invoke(index);
-
+            
+            SetIndexGroupActive(selectedTabIndex, true);
+            var prev = prevSelection;
+            prevSelection = selectedTabIndex; 
+            
+            OnSelectionChanged?.Invoke(prev, selectedTabIndex); 
         }
-        public void SetActive(int index, bool active) {
+
+        public void SetIndexGroupActive(int index, bool active) {
             var btn = btns[index];
-            if (panels.Count > 0)
-            {
+            if (btn) {
+                btn.UsingActiveState(active);
+
+                if (panels.Count <= index) return;
+
                 var p = panels[index];
                 p.SetActive(active);
-            }
-
-            if (btn)
-            {
-                btn.SetActive(active);
             }
         }
     }

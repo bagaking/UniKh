@@ -13,6 +13,12 @@ using Random = UnityEngine.Random;
 
 namespace UniKh.comp.ui {
     public class KhCandlestickChart : Image {
+
+        public enum GraphType {
+            CandlestickChart,
+            LineChart
+        }
+        
         [Serializable]
         public class Node {
             public float first;
@@ -25,18 +31,20 @@ namespace UniKh.comp.ui {
         public List<Node> Nodes {
             get { return m_nodes; }
             set {
-                SetAllDirty();;
+                SetVerticesDirty();
                 m_nodes = value;
             }
         }
         public List<Node> m_nodes = new List<Node>();
+
+        public GraphType type = GraphType.CandlestickChart;
 
         [ContextMenu("CreateRandomData")]
         public void CreateRandomData() {
             if(Nodes.Count > 0) return;
             float firstValue = Random.Range(4000, 6000);
             var newNodes = new List<Node>();
-            for (var i = 0; i < 60; i++) {
+            for (var i = 0; i < 30; i++) {
                 var node = new Node {
                     first = firstValue,
                     last = firstValue + Random.Range(-100, 100),
@@ -45,8 +53,7 @@ namespace UniKh.comp.ui {
                 };
                 firstValue = node.last;
                 newNodes.Add(node);
-            }
-
+            } 
             Nodes = newNodes;
         }
 
@@ -54,6 +61,7 @@ namespace UniKh.comp.ui {
         public Color colorUp = Color.red;
         public Color colorDown = Color.green;
 
+        public bool showBorder = true;
         public float innerLineSize = 4;
 
         public bool showPings = false;
@@ -71,20 +79,13 @@ namespace UniKh.comp.ui {
             return vbo;
         }
 
-        protected override void OnPopulateMesh(VertexHelper vh) {
-            vh.Clear();
+        private Vector2[] standardUVs = new[] {Vector2.zero, Vector2.up, Vector2.one, Vector2.left};
 
-            Vector2 prevX = Vector2.zero;
-            Vector2 prevY = Vector2.zero;
-            Vector2 uv0 = new Vector2(0, 0);
-            Vector2 uv1 = new Vector2(0, 1);
-            Vector2 uv2 = new Vector2(1, 1);
-            Vector2 uv3 = new Vector2(1, 0);
+        private void AddUIVertexDefault(VertexHelper vh, Color c, Vector2[] verts) {
+            vh.AddUIVertexQuad(SetVbo(verts, standardUVs, c));
+        }
 
-            var rcTrans = rectTransform;
-            Rect rc;
-            var offset = -rcTrans.pivot * (rc = rcTrans.rect).size;
-
+        private void DrawCandlestickChart(VertexHelper vh, Vector2 offset) {
             Vector2 pos0 = Vector2.zero;
             Vector2 pos1 = Vector2.zero;
             Vector2 pos2;
@@ -93,20 +94,19 @@ namespace UniKh.comp.ui {
             var scaleSpanX = rectTransform.rect.width / Nodes.Count;
             var min = float.MaxValue;
             var max = float.MinValue;
-            for (var i = 0; i < Nodes.Count; i++) {
-                var v = Nodes[i].last;
+            foreach (var t in Nodes) {
+                var v = t.last;
                 if (showPings) {
-                    if (min > Nodes[i].min) min = Nodes[i].min;
-                    if (max < Nodes[i].max) max = Nodes[i].max;
+                    if (min > t.min) min = t.min;
+                    if (max < t.max) max = t.max;
                 }
                 else {
-                    if (min > Nodes[i].first) min = Nodes[i].first;
-                    if (max < Nodes[i].last) max = Nodes[i].last;
+                    if (min > t.first) min = t.first;
+                    if (max < t.last) max = t.last;
                 }
-            }
-
-            if (max == min) return;
-            var scaleY = (rectTransform.rect.height - innerLineSize) / (max - min);
+            } 
+            
+            var scaleY = max == min ? 0 : (rectTransform.rect.height - innerLineSize) / (max - min);
 
             float Projection(float y) {
                 return (y - min) * scaleY;
@@ -123,17 +123,50 @@ namespace UniKh.comp.ui {
 
                 if (showPings) {
                     var middlePosX = (pos0.x + pos2.x - innerLineSize) / 2;
-                    vh.AddUIVertexQuad(SetVbo(new[] {
-                            new Vector2(middlePosX, Projection(Nodes[i].min)) + offset,
-                            new Vector2(middlePosX, Projection(Nodes[i].max)) + offset,
-                            new Vector2(middlePosX + innerLineSize, Projection(Nodes[i].max)) + offset,
-                            new Vector2(middlePosX + innerLineSize, Projection(Nodes[i].min)) + offset
-                        },
-                        new[] {uv0, uv1, uv2, uv3}, c));
+                    AddUIVertexDefault(vh, c, new[] {
+                        new Vector2(middlePosX, Projection(Nodes[i].min)) + offset,
+                        new Vector2(middlePosX, Projection(Nodes[i].max)) + offset,
+                        new Vector2(middlePosX + innerLineSize, Projection(Nodes[i].max)) + offset,
+                        new Vector2(middlePosX + innerLineSize, Projection(Nodes[i].min)) + offset
+                    });
                 }
 
-                vh.AddUIVertexQuad(SetVbo(new[] {pos0 + offset, pos1 + offset, pos2 + offset, pos3 + offset},
-                    new[] {uv0, uv1, uv2, uv3}, c));
+                AddUIVertexDefault(vh, c, new[] {pos0 + offset, pos1 + offset, pos2 + offset, pos3 + offset});
+            }
+        }
+
+        protected override void OnPopulateMesh(VertexHelper vh) {
+            vh.Clear(); 
+
+            var rcTrans = rectTransform;
+            Rect rc;
+            var offset = -rcTrans.pivot * (rc = rcTrans.rect).size;
+            
+            if (showBorder) {
+                AddUIVertexDefault(vh, color,new[] {
+                    new Vector2(-innerLineSize, rc.height) + offset,
+                    new Vector2(0, rc.height) + offset,
+                    new Vector2(0, 0) + offset,
+                    new Vector2(-innerLineSize, 0) + offset
+                });
+                AddUIVertexDefault(vh, color,new[] {
+                    new Vector2(-innerLineSize, -innerLineSize) + offset,
+                    new Vector2(rc.width, -innerLineSize) + offset,
+                    new Vector2(rc.width, 0) + offset,
+                    new Vector2(-innerLineSize, 0) + offset
+                });
+            }
+
+
+            switch (type) {
+                case GraphType.CandlestickChart:
+                    DrawCandlestickChart(vh, offset);
+                    break;
+                case GraphType.LineChart:
+                    
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }
