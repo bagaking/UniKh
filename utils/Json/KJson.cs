@@ -169,6 +169,10 @@ namespace UniKh.utils {
 
             return this;
         }
+        
+        public KJson DoList<T>(Action<int, T> Executor) {
+            return DoList((key, obj) => Executor(key, (T) obj));
+        }
 
         public virtual bool HasChild(string key) {
             return Data.ContainsKey(key);
