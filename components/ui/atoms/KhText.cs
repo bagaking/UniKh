@@ -49,7 +49,7 @@ namespace UniKh.comp.ui {
                 var unit = unitLst[scale < unitLst.Length ? scale : unitLst.Length - 1];
                 var format = shrinkNumber == Mathf.Floor(shrinkNumber)
                     ? "F0"
-                    : ("F" + ((scale == 0 ? (int) digit : 3) - remainder));
+                    : ("F" + Mathf.Max(0,(scale <= 0 ? (int) digit : 3) - remainder));
 
                 return showSign
                     ? (sign + shrinkNumber.ToString(format) + unit)
