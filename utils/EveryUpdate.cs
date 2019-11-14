@@ -15,6 +15,12 @@ namespace UniKh.utils {
 
         public EveryUpdate(float timeSpanS) {
             this.timeSpanS = timeSpanS;
+            this.Reset();
+        }
+
+        public void Reset() {
+            this.round = 0;
+            this.timeAccumulated = 0;
         }
 
         public bool Test(float deltaTime) {

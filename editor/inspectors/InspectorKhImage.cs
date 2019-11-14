@@ -14,6 +14,7 @@ namespace UniKh.editor {
     [CanEditMultipleObjects]
     public class InspectorKhImage : ImageEditor {
         public SerializedProperty m_Script;
+        public SerializedProperty m_gray;
         public SerializedProperty m_mirror;
         public SerializedProperty m_rotate;
         public SerializedProperty m_skew;
@@ -25,6 +26,7 @@ namespace UniKh.editor {
         protected override void OnEnable() {
             base.OnEnable();
             m_Script = serializedObject.FindProperty("m_Script");
+            m_gray = serializedObject.FindProperty("m_gray");
             m_mirror = serializedObject.FindProperty("m_mirror");
             m_rotate = serializedObject.FindProperty("m_rotate");
             m_skew = serializedObject.FindProperty("m_skew");
@@ -41,6 +43,7 @@ namespace UniKh.editor {
             serializedObject.Update();
             EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(m_Script, true);
+            EditorGUILayout.PropertyField(m_gray, true);
             EditorGUILayout.PropertyField(m_mirror, true);
             EditorGUILayout.PropertyField(m_rotate, true);
             EditorGUILayout.PropertyField(m_skew, true);

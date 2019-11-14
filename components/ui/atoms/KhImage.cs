@@ -18,6 +18,27 @@ namespace UniKh.comp.ui {
             Both = 3
         }
 
+        public bool Gray {
+            get { return m_gray; }
+            set {
+                m_gray = value;
+                SetImageShader();
+            }
+        }
+
+        public bool m_gray = false;
+        protected Material grayMaterial = null;
+
+        private void SetImageShader() {
+            if (m_gray) {
+                if (null == grayMaterial)
+                    grayMaterial = new Material(Shader.Find("Unlit/TextureGray"));
+                material = grayMaterial;
+            }
+            else
+                material = null;
+        }
+
         public MirrorType Mirror {
             get { return m_mirror; }
             set {
@@ -30,10 +51,9 @@ namespace UniKh.comp.ui {
         [SerializeField] [Range(0, 3)] private int m_rotate = 0;
         [SerializeField] private Vector2 m_skew = Vector2.zero;
 
-        [SerializeField] 
-        [Vector2Plate(-1, -1, 1, 1)] 
+        [SerializeField] [Vector2Plate(-1, -1, 1, 1)]
         public Vector2 gradientDirection = Vector2.zero;
-        
+
         [SerializeField] public Color gradientColor = Color.white;
         [SerializeField] [EaseDetailAttribute] public StandardEase.Type gradientEase = StandardEase.Type.Linear;
 
