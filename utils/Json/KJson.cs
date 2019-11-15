@@ -7,6 +7,7 @@
 using System;
 using UniKh.extensions;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -137,7 +138,11 @@ namespace UniKh.utils {
 
         public KJson ForEach<T>(Action<T, int> Executor) {
             if (isList) {
-                for (int i = 0; i < ListData.Count; i++) Executor((T)ListData[i], i);
+                var listData = ListData; 
+                for (var i = 0; i < listData.Count; i++) { 
+                    var value = listData[i];
+                    Executor((T)value, i);
+                }
             }
             else {
                 var count = 0;

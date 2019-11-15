@@ -59,6 +59,16 @@ namespace UniKh.comp.ui {
 
         [SerializeField] private NumberText numberTextSetting = new NumberText();
 
+        public override string text {
+            get {
+                return base.text;
+            }
+            set {
+                this.m_type = Type.Text;
+                base.text = value;
+            }
+        }
+
         public float NumberValue {
             get => numberTextSetting.value;
             set {
@@ -94,8 +104,14 @@ namespace UniKh.comp.ui {
 
         public float NumberRotateTo {
             get => numberTextSetting.rotateTo;
-            set => numberTextSetting.rotateTo = value;
+            set {
+                numberTextSetting.rotateTo = value;
+                _rotateTolerance = Math.Max(
+                    Mathf.Abs(numberTextSetting.rotateTo - numberTextSetting.value) / 100f, Mathf.Pow(0.1f, NumberDigit) * 10);
+            }
         }
+
+        private float _rotateTolerance = float.Epsilon;
 
         protected string GetTextToRender() {
             var builder = SGen.New[m_prefix];
@@ -128,7 +144,7 @@ namespace UniKh.comp.ui {
                 (numberTextSetting.rotateTo - valueInUse) > 1000 ? 0.3f : 0.2f
             );
 
-            if (Mathf.Abs(numberTextSetting.rotateTo - valueInUse) <= float.Epsilon) {
+            if (Mathf.Abs(numberTextSetting.rotateTo - valueInUse) <= _rotateTolerance) {
                 valueInUse = numberTextSetting.rotateTo;
                 numberTextSetting.rotateTo = float.MinValue;
             }
