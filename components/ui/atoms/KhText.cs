@@ -1,4 +1,5 @@
 ﻿using System;
+using UniKh.extensions;
 using UniKh.utils;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,7 +15,7 @@ namespace UniKh.comp.ui {
 
         public string m_prefix;
         public string m_subfix;
-
+         
         public override float preferredWidth {
             get {
                 var settings = GetGenerationSettings(Vector2.zero);
@@ -31,29 +32,36 @@ namespace UniKh.comp.ui {
             public bool showSign = false;
             public uint digit = 3;
             public bool shrink = false;
+            
+            public string format;
+
             public string[] unitLst = {"", "K", "M", "B", "T", "P", "a", "b", "c", "e", "f", "g"};
 
             internal string GetValueString() {
                 var valueInUse = value;
                 var sign = valueInUse < 0 ? "-" : "+";
-                var temp = Mathf.Abs(valueInUse);
-                if (!shrink) {
-                    var ret = temp.ToString("F" + digit);
-                    return showSign ? sign + ret : ret;
+                var ret = "";
+                var temp = valueInUse;
+                if (format.Exists()) {
+                    ret = (digit == 0 ? Mathf.FloorToInt(temp).ToString(format) : temp.ToString(format));
                 }
-
-                var valueBase = temp < 1 ? 0 : Mathf.Log10(temp);
-                var scale = Mathf.FloorToInt(valueBase / 3);
-                var remainder = Mathf.FloorToInt(valueBase % 3);
-                var shrinkNumber = temp / Mathf.Pow(1000, scale);
-                var unit = unitLst[scale < unitLst.Length ? scale : unitLst.Length - 1];
-                var format = shrinkNumber == Mathf.Floor(shrinkNumber)
-                    ? "F0"
-                    : ("F" + Mathf.Max(0,(scale <= 0 ? (int) digit : 3) - remainder));
-
-                return showSign
-                    ? (sign + shrinkNumber.ToString(format) + unit)
-                    : (shrinkNumber.ToString(format) + unit);
+                else { 
+                    if (!shrink) {
+                        ret = temp.ToString("F" + digit);
+                    } else { 
+                        var valueBase = temp < 1 ? 0 : Mathf.Log10(temp);
+                        var scale = Mathf.FloorToInt(valueBase / 3);
+                        var remainder = Mathf.FloorToInt(valueBase % 3);
+                        var shrinkNumber = temp / Mathf.Pow(1000, scale);
+                        var unit = unitLst[scale < unitLst.Length ? scale : unitLst.Length - 1];
+                        format = shrinkNumber == Mathf.Floor(shrinkNumber)
+                            ? "F0"
+                            : ("F" + Mathf.Max(0, (scale <= 0 ? (int) digit : 3) - remainder));
+                        ret = shrinkNumber.ToString(format) + unit;
+                    }
+                }
+                
+                return showSign ? sign + ret : ret;
             }
         }
 
@@ -98,6 +106,14 @@ namespace UniKh.comp.ui {
             get => numberTextSetting.shrink;
             set {
                 numberTextSetting.shrink = value;
+                SetAllDirty();
+            }
+        }
+        
+        public string NumberFormat {
+            get => numberTextSetting.format;
+            set {
+                numberTextSetting.format = value;
                 SetAllDirty();
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using UniKh.comp.ui;
+using UniKh.extensions;
 using UnityEditor;
 using UnityEngine;
 using TextEditor = UnityEditor.UI.TextEditor;
@@ -21,6 +22,7 @@ namespace UniKh.editor {
         public SerializedProperty numberTextSetting_unitLst;
         public SerializedProperty numberTextSetting_digit;
         public SerializedProperty numberTextSetting_shrink;
+        public SerializedProperty numberTextSetting_format;
 
         protected override void OnEnable() {
             base.OnEnable();
@@ -32,6 +34,7 @@ namespace UniKh.editor {
             m_prefix = serializedObject.FindProperty("m_prefix");
             m_subfix = serializedObject.FindProperty("m_subfix");
             numberTextSetting = serializedObject.FindProperty("numberTextSetting");
+            numberTextSetting_format = numberTextSetting.FindPropertyRelative("format");
             numberTextSetting_value = numberTextSetting.FindPropertyRelative("value");
             numberTextSetting_rotateTo = numberTextSetting.FindPropertyRelative("rotateTo");
             numberTextSetting_showSign = numberTextSetting.FindPropertyRelative("showSign");
@@ -59,17 +62,18 @@ namespace UniKh.editor {
                     break;
                 case KhText.Type.NumberText:
                     EditorGUILayout.PropertyField(numberTextSetting_value);
+                    
                     EditorGUI.indentLevel++;
                     EditorGUILayout.PropertyField(numberTextSetting_showSign);
+                    EditorGUILayout.PropertyField(numberTextSetting_digit);
+                    EditorGUILayout.PropertyField(numberTextSetting_format);
+                    if (!a.NumberFormat.Exists()) {
+                        EditorGUILayout.PropertyField(numberTextSetting_shrink);
+                        if (a.NumberShrink) { 
+                            EditorGUILayout.PropertyField(numberTextSetting_unitLst, true);
+                        }
+                    }
                     EditorGUILayout.PropertyField(numberTextSetting_rotateTo);
-                    EditorGUILayout.PropertyField(numberTextSetting_shrink);
-                    if (a.NumberShrink) {
-                        EditorGUILayout.PropertyField(numberTextSetting_digit, new GUIContent("Max Digits"));
-                        EditorGUILayout.PropertyField(numberTextSetting_unitLst, true);
-                    }
-                    else {
-                        EditorGUILayout.PropertyField(numberTextSetting_digit);
-                    }
 
                     EditorGUI.indentLevel--;
                     break;
