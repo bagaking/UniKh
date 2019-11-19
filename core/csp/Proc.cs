@@ -110,6 +110,12 @@ namespace UniKh.core.csp {
         }
 
         public bool EnqueueOperation(object yieldVal) {
+            
+            if (yieldVal is null) {
+                // skip this frame
+                return EnqueueOperation(Skip.New.Restart());
+            }
+            
             if (yieldVal is WaitingOperation) {
                 // WaitingOperation < CustomYieldInstruction < IEnumerator, the default 
                 SetOpCurr(yieldVal as WaitingOperation);
@@ -175,11 +181,6 @@ namespace UniKh.core.csp {
             if (yieldVal is string) {
                 // wait a frame and show this string 
                 Debug.Log(yieldVal);
-                return EnqueueOperation(Skip.New.Restart());
-            }
-
-            if (yieldVal is null) {
-                // skip this frame
                 return EnqueueOperation(Skip.New.Restart());
             }
  

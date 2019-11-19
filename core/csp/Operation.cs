@@ -10,6 +10,7 @@ using UnityEngine;
 using UniKh.extensions;
 using UniKh.utils;
 using System;
+using System.Collections;
 
 namespace UniKh.core.csp.waiting {
 
@@ -40,6 +41,15 @@ namespace UniKh.core.csp.waiting {
         }
 
         public abstract void Recycle();
+
+        public Proc Go(Action callback) {
+            return CSP.LazyInst.Do(Yield(callback));
+        }
+        
+        private IEnumerator Yield(Action callback) {
+            yield return this;
+            callback?.Invoke();
+        }
     }
 
     public abstract class WaitingOperation<T> : WaitingOperation where T : WaitingOperation<T>, new() {

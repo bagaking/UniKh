@@ -6,13 +6,15 @@
 
 using System;
 using UniKh.core;
+using UniKh.core.csp;
+using UniKh.core.csp.waiting;
 using UnityEngine;
 
 namespace UniKh.core {
     
     public interface IPromise<TVal> {
-        void Resolve(TVal val);
-        void Reject(Exception exception);
+        Promise<TVal> Resolve(TVal val);
+        Promise<TVal> Reject(Exception exception);
     }
 
     public class Promise<TVal> : CustomYieldInstruction, IPromise<TVal> {
@@ -22,14 +24,18 @@ namespace UniKh.core {
 
         private bool _executed = false;
 
-        public void Resolve(TVal val) {
-            _resolve?.Invoke(val);
+        public Promise<TVal> Resolve(TVal val) {
+            if (_executed) return this; // only execute once 
+            Skip.New.Restart().Go(() => _resolve?.Invoke(val));
             _executed = true;
+            return this;
         }
-
-        public void Reject(Exception exception) {
-            _reject?.Invoke(exception);
+ 
+        public Promise<TVal> Reject(Exception exception) {
+            if (_executed) return this; // only execute once
+            Skip.New.Restart().Go(() => _reject?.Invoke(exception));
             _executed = true;
+            return this;
         }
 
         public Promise<TVal> Verbose(Action<TVal> cbThen) {
@@ -43,7 +49,9 @@ namespace UniKh.core {
                 var ret = cbThen(val);
                 nextPromise.Resolve(ret);
             };
-            _reject += nextPromise.Reject;
+            _reject += ex => {
+                nextPromise.Reject(ex);
+            };
             return nextPromise;
         }
         
@@ -53,7 +61,9 @@ namespace UniKh.core {
                 cbThen(val);
                 nextPromise.Resolve(val);
             };
-            _reject += nextPromise.Reject;
+            _reject += ex => {
+                nextPromise.Reject(ex);
+            };
             return nextPromise;
         }
 

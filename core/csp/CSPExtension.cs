@@ -38,7 +38,7 @@ namespace UniKh.core.csp {
             var promise = new Promise<TVal>(); 
             YieldOnce(yieldInstruction, promise, defaultVal).Go();
             return promise;
-        }
+        } 
 
         public static Promise<TVal> AsPromise<TVal>(this CustomYieldInstruction yieldInstruction, TVal defaultVal) {
             var promise = new Promise<TVal>(); 
@@ -64,6 +64,12 @@ namespace UniKh.core.csp {
             return promise;
         }
 
+        public static Promise<object> AsPromise(this CustomYieldInstruction yieldVal) {
+            var promise = new Promise<object>(); 
+            YieldOnce(yieldVal, promise, null).Go();
+            return promise;
+        }
+        
         public static IEnumerator YieldOnce<T, TVal>(T yieldVal, Promise<TVal> promise, TVal defaultVal) {
             yield return yieldVal;
             try {
@@ -72,6 +78,8 @@ namespace UniKh.core.csp {
             catch (Exception exception) {
                 promise.Reject(exception);
             }
-        } 
+        }
+         
+         
     }
 }
