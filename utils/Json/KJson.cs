@@ -291,7 +291,7 @@ namespace UniKh.utils {
             return (byte) Data.Int(key);
         }
 
-        public virtual long Long(string key) {
+        public virtual Int64 Int64(string key) {
             return Data.Long(key);
         }
 
@@ -864,7 +864,7 @@ namespace UniKh.utils {
             return ObjectToInt(map.Check(key));
         }
 
-        public static long Long(this Dictionary<string, object> map, string key) {
+        public static Int64 Long(this Dictionary<string, object> map, string key) {
             return ObjectToLong(map.Check(key));
         }
 
@@ -952,8 +952,8 @@ namespace UniKh.utils {
                                          value.GetType() + ")");
         }
 
-        public static long ObjectToLong(object value) {
-            if (value is long) return ((long) value);
+        public static Int64 ObjectToLong(object value) {
+            if (value is Int64) return ((Int64) value);
             else if (value is int) return ((int) value);
 
             else if (value is float) return (long) ((float) value);
