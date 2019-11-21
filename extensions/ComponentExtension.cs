@@ -15,7 +15,7 @@ namespace UniKh.extensions {
         
         public static Component SetObjectActive(this Component comp, bool active = true) {
             var go = comp.gameObject;
-            if (active != go.activeInHierarchy) {
+            if (active != go.activeSelf) {
                 go.SetActive(active);
             };
             return comp;
