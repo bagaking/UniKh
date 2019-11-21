@@ -12,6 +12,14 @@ namespace UniKh.extensions {
 
             return ret;
         }
+        
+        public static Component SetObjectActive(this Component comp, bool active = true) {
+            var go = comp.gameObject;
+            if (active != go.activeInHierarchy) {
+                go.SetActive(active);
+            };
+            return comp;
+        }
 
 
         public static TComponent AddChild<TComponent>(this Component comp, string name)

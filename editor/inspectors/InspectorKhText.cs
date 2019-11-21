@@ -15,6 +15,9 @@ namespace UniKh.editor {
         public SerializedProperty m_type;
         public SerializedProperty m_prefix;
         public SerializedProperty m_subfix;
+        public SerializedProperty m_outline;
+        public SerializedProperty m_outlineOffset;
+        public SerializedProperty m_outlineColor;
         public SerializedProperty numberTextSetting;
         public SerializedProperty numberTextSetting_value;
         public SerializedProperty numberTextSetting_rotateTo;
@@ -30,6 +33,9 @@ namespace UniKh.editor {
 
             m_Text = serializedObject.FindProperty("m_Text");
             m_FontData = serializedObject.FindProperty("m_FontData");
+            m_outline = serializedObject.FindProperty("m_outline");
+            m_outlineOffset = serializedObject.FindProperty("m_outlineOffset");
+            m_outlineColor = serializedObject.FindProperty("m_outlineColor");
             m_type = serializedObject.FindProperty("m_type");
             m_prefix = serializedObject.FindProperty("m_prefix");
             m_subfix = serializedObject.FindProperty("m_subfix");
@@ -48,13 +54,13 @@ namespace UniKh.editor {
 
             var a = target as KhText;
             serializedObject.Update();
-            EditorGUILayout.Separator();
+            
             EditorGUILayout.PropertyField(m_Script, true);
-
-            EditorGUILayout.PropertyField(m_type, true);
-
+            
+//            EditorGUILayout.Separator();
             EditorGUILayout.LabelField("Content", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
+            EditorGUILayout.PropertyField(m_type, true);
             EditorGUILayout.PropertyField(m_prefix, true);
             switch (a.m_type) {
                 case KhText.Type.Text:
@@ -84,11 +90,25 @@ namespace UniKh.editor {
             EditorGUILayout.PropertyField(m_subfix, true);
             EditorGUI.indentLevel--;
 
-            EditorGUILayout.Separator();
+//            EditorGUILayout.Separator();
             EditorGUILayout.PropertyField(m_FontData);
-
+            
+            EditorGUILayout.LabelField("Appearance Setting", EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
             AppearanceControlsGUI();
+            EditorGUILayout.PropertyField(m_outline);
+            if (a.m_outline != KhText.OutlineType.None) { 
+                EditorGUILayout.PropertyField(m_outlineOffset, true);
+                EditorGUILayout.PropertyField(m_outlineColor, true);
+                
+            }
+            EditorGUI.indentLevel--;
+            
+            EditorGUILayout.LabelField("Events Setting", EditorStyles.boldLabel);
+            EditorGUI.indentLevel++;
             RaycastControlsGUI();
+            EditorGUI.indentLevel--; 
+            
             serializedObject.ApplyModifiedProperties();
         }
     }

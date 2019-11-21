@@ -190,9 +190,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+  m_gray: 0
   m_mirror: 0
   m_rotate: 0
   m_skew: {x: 0, y: 0}
+  gradientDirection: {x: 0, y: 0}
+  gradientColor: {r: 1, g: 1, b: 1, a: 1}
+  gradientEase: 1
 --- !u!222 &36207061
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -213,11 +217,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3534bafaac474a769036d8858e892cf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  btns: []
   panels: []
-  lastSelect: -1
-  select: -1
-  defaultSelect: 0
+  selectedTabIndex: -1
+  defaultSelection: -1
 --- !u!1 &149094453
 GameObject:
   m_ObjectHideFlags: 0
@@ -317,9 +319,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+  m_gray: 0
   m_mirror: 0
   m_rotate: 0
   m_skew: {x: 0, y: 0}
+  gradientDirection: {x: 0, y: 0}
+  gradientColor: {r: 1, g: 1, b: 1, a: 1}
+  gradientEase: 1
 --- !u!222 &170811442
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -444,9 +450,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+  m_gray: 0
   m_mirror: 0
   m_rotate: 0
   m_skew: {x: 0, y: 0}
+  gradientDirection: {x: 0, y: 0}
+  gradientColor: {r: 1, g: 1, b: 1, a: 1}
+  gradientEase: 1
 --- !u!222 &272003149
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -504,7 +514,7 @@ MonoBehaviour:
   clickAnimation: 1
   tweenScale: 0.97
   pActive: {fileID: 0}
-  pUnactive: {fileID: 0}
+  pUnActive: {fileID: 0}
 --- !u!1 &436785504
 GameObject:
   m_ObjectHideFlags: 0
@@ -640,9 +650,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+  m_gray: 0
   m_mirror: 0
   m_rotate: 0
   m_skew: {x: 0, y: 0}
+  gradientDirection: {x: 0, y: 0}
+  gradientColor: {r: 1, g: 1, b: 1, a: 1}
+  gradientEase: 1
 --- !u!222 &554810361
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -663,13 +677,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 896c54eb32e5421fb4dd087d32dc7457, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cg: {fileID: 554810363}
   easeActive: 18
-  easeDisappear: 10
   durationShow: 0.3
-  durationDissappear: 0.1
+  startOffset: {x: 0, y: 0, z: 0}
+  cg: {fileID: 554810363}
+  easeDisappear: 10
+  durationDisappear: 0.3
   autoHide: 0
   stayTime: 2
+  content: {fileID: 0}
 --- !u!225 &554810363
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -750,9 +766,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+  m_gray: 0
   m_mirror: 0
   m_rotate: 0
   m_skew: {x: 0, y: 0}
+  gradientDirection: {x: 0, y: 0}
+  gradientColor: {r: 1, g: 1, b: 1, a: 1}
+  gradientEase: 1
 --- !u!222 &832337246
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -810,7 +830,7 @@ MonoBehaviour:
   clickAnimation: 1
   tweenScale: 0.97
   pActive: {fileID: 0}
-  pUnactive: {fileID: 0}
+  pUnActive: {fileID: 0}
 --- !u!1 &836832118
 GameObject:
   m_ObjectHideFlags: 0
@@ -889,6 +909,115 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 836832118}
+  m_CullTransparentMesh: 0
+--- !u!1 &850716835
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 850716836}
+  - component: {fileID: 850716838}
+  - component: {fileID: 850716837}
+  m_Layer: 0
+  m_Name: a:00
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &850716836
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850716835}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1228782478}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 45.27, y: 133.2}
+  m_SizeDelta: {x: 190.56, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &850716837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850716835}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ada8984603204bf388c8867eb60037b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 7c7325fa363ed064ba11c27f93b46c4b, type: 3}
+    m_FontSize: 32
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 300
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
+    m_LineSpacing: 1
+  m_Text: "\u4E2D\u6587\u5185\u5BB91 ."
+  m_type: 0
+  m_outline: 2
+  m_outlineOffset: {x: 2, y: 2}
+  m_outlineColor: {r: 0.9056604, g: 0.10679956, b: 0.10679956, a: 1}
+  m_prefix: 
+  m_subfix: 
+  updateRotate:
+    timeSpanS: 0.1
+    timeAccumulated: 0
+    round: 0
+  numberTextSetting:
+    value: 0
+    rotateTo: 0
+    showSign: 0
+    digit: 3
+    shrink: 0
+    format: 
+    unitLst:
+    - 
+    - K
+    - M
+    - B
+    - T
+    - P
+    - a
+    - b
+    - c
+    - e
+    - f
+    - g
+--- !u!222 &850716838
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 850716835}
   m_CullTransparentMesh: 0
 --- !u!1 &969222523
 GameObject:
@@ -1042,9 +1171,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+  m_gray: 0
   m_mirror: 0
   m_rotate: 0
   m_skew: {x: 0, y: 0}
+  gradientDirection: {x: 0, y: 0}
+  gradientColor: {r: 1, g: 1, b: 1, a: 1}
+  gradientEase: 1
 --- !u!222 &1052722571
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1145,9 +1278,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+  m_gray: 0
   m_mirror: 0
   m_rotate: 0
   m_skew: {x: 0, y: 0}
+  gradientDirection: {x: 0, y: 0}
+  gradientColor: {r: 1, g: 1, b: 1, a: 1}
+  gradientEase: 1
 --- !u!222 &1064588131
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1205,7 +1342,7 @@ MonoBehaviour:
   clickAnimation: 1
   tweenScale: 0.97
   pActive: {fileID: 0}
-  pUnactive: {fileID: 0}
+  pUnActive: {fileID: 0}
 --- !u!1 &1228782474
 GameObject:
   m_ObjectHideFlags: 0
@@ -1302,6 +1439,7 @@ RectTransform:
   - {fileID: 554810359}
   - {fileID: 1566376376}
   - {fileID: 36207059}
+  - {fileID: 850716836}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1412,9 +1550,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+  m_gray: 0
   m_mirror: 0
   m_rotate: 0
   m_skew: {x: 0, y: 0}
+  gradientDirection: {x: 0, y: 0}
+  gradientColor: {r: 1, g: 1, b: 1, a: 1}
+  gradientEase: 1
 --- !u!222 &1347413240
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1435,11 +1577,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3534bafaac474a769036d8858e892cf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  btns: []
   panels: []
-  lastSelect: -1
-  select: -1
-  defaultSelect: 0
+  selectedTabIndex: -1
+  defaultSelection: -1
 --- !u!1 &1490623083
 GameObject:
   m_ObjectHideFlags: 0
@@ -1508,9 +1648,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+  m_gray: 0
   m_mirror: 0
   m_rotate: 0
   m_skew: {x: 0, y: 0}
+  gradientDirection: {x: 0, y: 0}
+  gradientColor: {r: 1, g: 1, b: 1, a: 1}
+  gradientEase: 1
 --- !u!222 &1490623086
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1568,7 +1712,7 @@ MonoBehaviour:
   clickAnimation: 1
   tweenScale: 0.97
   pActive: {fileID: 0}
-  pUnactive: {fileID: 0}
+  pUnActive: {fileID: 0}
 --- !u!1 &1566376375
 GameObject:
   m_ObjectHideFlags: 0
@@ -1638,9 +1782,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+  m_gray: 0
   m_mirror: 0
   m_rotate: 0
   m_skew: {x: 0, y: 0}
+  gradientDirection: {x: 0, y: 0}
+  gradientColor: {r: 1, g: 1, b: 1, a: 1}
+  gradientEase: 1
 --- !u!222 &1566376378
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1661,13 +1809,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 896c54eb32e5421fb4dd087d32dc7457, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cg: {fileID: 1566376380}
   easeActive: 18
-  easeDisappear: 10
   durationShow: 0.3
-  durationDissappear: 0.1
+  startOffset: {x: 0, y: 0, z: 0}
+  cg: {fileID: 1566376380}
+  easeDisappear: 10
+  durationDisappear: 0.3
   autoHide: 1
   stayTime: 2
+  content: {fileID: 0}
 --- !u!225 &1566376380
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1810,9 +1960,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+  m_gray: 0
   m_mirror: 0
   m_rotate: 0
   m_skew: {x: 0, y: 0}
+  gradientDirection: {x: 0, y: 0}
+  gradientColor: {r: 1, g: 1, b: 1, a: 1}
+  gradientEase: 1
 --- !u!222 &1740525504
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1860,7 +2014,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 1740525503}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -1870,7 +2024,7 @@ MonoBehaviour:
   clickAnimation: 1
   tweenScale: 0.97
   pActive: {fileID: 0}
-  pUnactive: {fileID: 0}
+  pUnActive: {fileID: 0}
 --- !u!1 &2010987401
 GameObject:
   m_ObjectHideFlags: 0
@@ -1941,9 +2095,13 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+  m_gray: 0
   m_mirror: 0
   m_rotate: 0
   m_skew: {x: 0, y: 0}
+  gradientDirection: {x: 0, y: 0}
+  gradientColor: {r: 1, g: 1, b: 1, a: 1}
+  gradientEase: 1
 --- !u!222 &2010987404
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1991,7 +2149,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 2010987403}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -2001,4 +2159,4 @@ MonoBehaviour:
   clickAnimation: 1
   tweenScale: 0.97
   pActive: {fileID: 0}
-  pUnactive: {fileID: 0}
+  pUnActive: {fileID: 0}
