@@ -23,6 +23,10 @@ namespace UniKh.comp.ui {
         public Vector2 m_outlineOffset = Vector2.one;
         public Color m_outlineColor = Color.black;
 
+
+        public Vector2 m_shadowOffset = Vector2.zero;
+        public Color m_shadowColor = Color.black;
+
         public string m_prefix;
         public string m_subfix;
 
@@ -182,6 +186,7 @@ namespace UniKh.comp.ui {
         readonly UIVertex[] m_TempVerts = new UIVertex[4];
 
         const float outlineOffsetScale = 1.25f;
+
         readonly Vector2[][] m_OutlineOffsetBasic = new[] {
             new[] {new Vector2(-1, -1)},
             new[] {new Vector2(+1, -1)},
@@ -224,6 +229,18 @@ namespace UniKh.comp.ui {
             roundingOffset = PixelAdjustPoint(roundingOffset) - roundingOffset;
             toFill.Clear();
 
+            if (m_shadowOffset != Vector2.zero) {
+                for (var i = 0; i < vertCount; ++i) {
+                    var tempVertsIndex = i & 3;
+                    m_TempVerts[tempVertsIndex] = verts[i];
+                    m_TempVerts[tempVertsIndex].position *= unitsPerPixel;
+                    m_TempVerts[tempVertsIndex].position.x += m_shadowOffset.x + roundingOffset.x;
+                    m_TempVerts[tempVertsIndex].position.y += m_shadowOffset.y + roundingOffset.y;
+                    if (tempVertsIndex == 3)
+                        AddUIVertexQuad(toFill, m_TempVerts, m_shadowColor);
+                }
+            }
+
             switch (m_outline) {
                 case OutlineType.Basic:
                     if (roundingOffset != Vector2.zero) {
@@ -260,12 +277,13 @@ namespace UniKh.comp.ui {
                                     AddUIVertexQuad(toFill, m_TempVerts, m_outlineColor);
                             }
                         }
-                    } 
+                    }
+
                     break;
                 case OutlineType.Fine:
                     if (roundingOffset != Vector2.zero) {
                         for (var oInd = 0; oInd < m_OutlineOffsetFine.Length; oInd++) {
-                            var offsets = m_OutlineOffsetFine[oInd]; 
+                            var offsets = m_OutlineOffsetFine[oInd];
                             for (var i = 0; i < vertCount; ++i) {
                                 var tempVertsIndex = i & 3;
                                 m_TempVerts[tempVertsIndex] = verts[i];
@@ -281,7 +299,7 @@ namespace UniKh.comp.ui {
                     }
                     else {
                         for (var oInd = 0; oInd < m_OutlineOffsetFine.Length; oInd++) {
-                            var offsets = m_OutlineOffsetFine[oInd]; 
+                            var offsets = m_OutlineOffsetFine[oInd];
                             for (var i = 0; i < vertCount; ++i) {
                                 var tempVertsIndex = i & 3;
                                 m_TempVerts[tempVertsIndex] = verts[i];
@@ -294,12 +312,12 @@ namespace UniKh.comp.ui {
                                     AddUIVertexQuad(toFill, m_TempVerts, m_outlineColor);
                             }
                         }
-                    } 
+                    }
+
                     break;
             }
 
             if (roundingOffset != Vector2.zero) {
-                 
                 for (var i = 0; i < vertCount; ++i) {
                     var tempVertsIndex = i & 3;
                     m_TempVerts[tempVertsIndex] = verts[i];

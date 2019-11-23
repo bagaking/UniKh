@@ -18,6 +18,8 @@ namespace UniKh.editor {
         public SerializedProperty m_outline;
         public SerializedProperty m_outlineOffset;
         public SerializedProperty m_outlineColor;
+        public SerializedProperty m_shadowOffset;
+        public SerializedProperty m_shadowColor;
         public SerializedProperty numberTextSetting;
         public SerializedProperty numberTextSetting_value;
         public SerializedProperty numberTextSetting_rotateTo;
@@ -36,6 +38,8 @@ namespace UniKh.editor {
             m_outline = serializedObject.FindProperty("m_outline");
             m_outlineOffset = serializedObject.FindProperty("m_outlineOffset");
             m_outlineColor = serializedObject.FindProperty("m_outlineColor");
+            m_shadowColor = serializedObject.FindProperty("m_shadowColor");
+            m_shadowOffset = serializedObject.FindProperty("m_shadowOffset");
             m_type = serializedObject.FindProperty("m_type");
             m_prefix = serializedObject.FindProperty("m_prefix");
             m_subfix = serializedObject.FindProperty("m_subfix");
@@ -99,8 +103,12 @@ namespace UniKh.editor {
             EditorGUILayout.PropertyField(m_outline);
             if (a.m_outline != KhText.OutlineType.None) { 
                 EditorGUILayout.PropertyField(m_outlineOffset, true);
-                EditorGUILayout.PropertyField(m_outlineColor, true);
-                
+                EditorGUILayout.PropertyField(m_outlineColor, true);    
+            }
+            
+            EditorGUILayout.PropertyField(m_shadowOffset);
+            if (a.m_shadowOffset != Vector2.zero) {
+                EditorGUILayout.PropertyField(m_shadowColor);    
             }
             EditorGUI.indentLevel--;
             
