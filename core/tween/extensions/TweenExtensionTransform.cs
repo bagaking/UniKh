@@ -39,13 +39,23 @@ namespace UniKh.core.tween {
             return Tween.LazyInst.Activate(tweener.SetMove(duration));
         }
         
-        public static Tweener TweenMoveOffsetLocal(this Transform trans, Vector3 value, float duration) {
+        public static Tweener TweenMoveOffsetLocal(this Transform trans, Vector3 offset, float duration) {
+            var posOrg = trans.localPosition; 
+            return trans.TweenMoveLocal(posOrg, posOrg + offset, duration);
+        }
+        
+        public static Tweener TweenMoveLocal(this Transform trans, Vector3 to, float duration) {
+            var posOrg = trans.localPosition;
+            return trans.TweenMoveLocal(posOrg, to, duration);
+        }
+        
+        public static Tweener TweenMoveLocal(this Transform trans, Vector3 from, Vector3 to, float duration) {
             var posOrg = trans.localPosition;
             var tweener = new Tweener<Vector3>(
                 () => trans.localPosition,
                 val => trans.localPosition = val,
-                posOrg,
-                posOrg + value,
+                from,
+                to,
                 EvaluateUnityVector3.Inst,
                 () => trans
             );
@@ -54,11 +64,15 @@ namespace UniKh.core.tween {
 
         public static Tweener TweenScale(this Transform trans, Vector3 value, float duration) {
             var sclOrg = trans.localScale;
+            return trans.TweenScale(sclOrg, value, duration);
+        }
+        
+        public static Tweener TweenScale(this Transform trans, Vector3 from, Vector3 to, float duration) { 
             var tweener = new Tweener<Vector3>(
                 () => trans.localScale,
                 val => trans.localScale = val,
-                sclOrg,
-                value,
+                from,
+                to,
                 EvaluateUnityVector3.Inst,
                 () => trans
             );

@@ -16,10 +16,9 @@ namespace UniKh.comp.ui {
             finalAlpha = cg.alpha;
             cg.alpha *= startAlpha;
         }
-        protected override IEnumerator PlayAdmissionAnimation() {
-            if (startAlpha == 1) yield break;
+        protected override void PlayAdmissionAnimation() {
+            if (startAlpha == 1) return;
             cg.DoFade(finalAlpha, durationShow).SetEase(easeActive);
-            yield return null;
         }
     }
 }

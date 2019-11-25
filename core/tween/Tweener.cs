@@ -4,11 +4,10 @@
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
  */
 
-using System; 
-using UnityEngine; 
+using System;
+using UnityEngine;
 
-namespace UniKh.core.tween { 
-
+namespace UniKh.core.tween {
     public class Tweener<TVal> : Tweener {
         // Static Setting
         public Func<TVal> Getter { get; private set; }
@@ -50,43 +49,39 @@ namespace UniKh.core.tween {
             if (Duration <= 0) {
                 throw new Exception("Tweener.MoveTo failed: duration error");
             }
-            
+
             if (Status != State.Active) {
                 return this;
             }
-            
+
             if ((null != Validator) && !Validator()) {
                 StateTransition(State.Terminated);
                 return this;
             }
-            
+
             TweenPos = tweenPos;
             FinishedLoops = Mathf.FloorToInt(TweenPos / Duration);
             if (Loop > 0 && FinishedLoops >= Loop) { // todo: consider about this
                 StateTransition(State.Complete);
             }
 
-            var inLoopPos = TweenPos % Duration; 
-            if (this.Status == State.Complete) { // edge condition: 0 or Duration(max) ?
-                switch (Direction) { // if the tween is completed
-                    case Directions.Forward: // In forward mode, the tween pos should be the duration * loops 
-                        inLoopPos = Duration;
-                        break;
-                    case Directions.Backward: // In Backward mode, the tween pos should be the 0
-                        inLoopPos = 0;
-                        break;
-                    case Directions.PingPong:
-                        inLoopPos = Loop % 2 == 0 ? 0 : Duration;
-                        break;
-                }
+            var inLoopPos = TweenPos % Duration;
+            if (Status == State.Complete) { // edge condition: 0 or Duration(max) ?
+                inLoopPos = Duration; // if the tween is completed, the tween pos should be the duration * loops 
             }
+
             var posScale = inLoopPos / Duration;
-            
-            this.Setter(this.Evaluator.Evaluate(ValFrom, ValTo, Ease.Convert(posScale)));
+
+            if (
+                Direction == Directions.Backward
+                || (Direction == Directions.PingPong && (FinishedLoops & 1) == 1)
+            ) {
+                posScale = 1 - posScale;
+            }
+
+            Setter(Evaluator.Evaluate(ValFrom, ValTo, Ease.Convert(posScale)));
 
             return this;
         }
-
-        
     }
 }

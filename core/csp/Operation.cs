@@ -79,7 +79,7 @@ namespace UniKh.core.csp.waiting {
 
         public Skip() { }
 
-        public Skip Restart(uint frameCountToSkip = 1) {
+        public Skip Start(uint frameCountToSkip = 1) {
             this.frame_count = frameCountToSkip;
             frame_created = CSP.LazyInst.TotalTicks;
             return this;

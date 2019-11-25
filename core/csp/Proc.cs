@@ -116,7 +116,7 @@ namespace UniKh.core.csp {
             
             if (yieldVal is null) {
                 // skip this frame
-                return EnqueueOperation(Skip.New.Restart());
+                return EnqueueOperation(Skip.New.Start());
             }
             
             if (yieldVal is WaitingOperation) {
@@ -178,13 +178,13 @@ namespace UniKh.core.csp {
                 // WaitForEndOfFrame: skip this frame, but try execute in the next tickFrame
                 return
                     EnqueueOperation(Skip.New
-                        .Restart()); // todo: This implementation is incomplete, and it needs to be reconsidered in the future.
+                        .Start()); // todo: This implementation is incomplete, and it needs to be reconsidered in the future.
             }
 
             if (yieldVal is string) {
                 // wait a frame and show this string 
                 Debug.Log(yieldVal);
-                return EnqueueOperation(Skip.New.Restart());
+                return EnqueueOperation(Skip.New.Start());
             }
  
             Debug.LogError(SGen.New["yield return value of type "][yieldVal.GetType()]["are not supported."].End);

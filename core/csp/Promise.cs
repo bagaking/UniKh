@@ -26,14 +26,14 @@ namespace UniKh.core {
 
         public Promise<TVal> Resolve(TVal val) {
             if (_executed) return this; // only execute once 
-            Skip.New.Restart().Go(() => _resolve?.Invoke(val));
+            Skip.New.Start().Go(() => _resolve?.Invoke(val));
             _executed = true;
             return this;
         }
  
         public Promise<TVal> Reject(Exception exception) {
             if (_executed) return this; // only execute once
-            Skip.New.Restart().Go(() => _reject?.Invoke(exception));
+            Skip.New.Start().Go(() => _reject?.Invoke(exception));
             _executed = true;
             return this;
         }
