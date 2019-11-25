@@ -4,6 +4,7 @@
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
  */
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -50,11 +51,13 @@ namespace UniKh.core.csp {
 
         private WaitingOperation m_opCurr;
 
+        internal Func<bool> Validator { get; private set; } = null;
 
-        internal Proc(IEnumerator _procedure, string _tag = "_") {
+        internal Proc(IEnumerator _procedure, string _tag = "_", Func<bool> fnValidate = null) {
             ProcStack.PushLast(_procedure);
             ID = IDCounter++;
             Tag = _tag;
+            Validator = fnValidate;
         }
 
         internal Proc Start() {

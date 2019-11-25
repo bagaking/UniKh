@@ -13,7 +13,7 @@ namespace UniKh.extensions {
             return ret;
         }
         
-        public static Component SetObjectActive(this Component comp, bool active = true) {
+        public static T SetObjectActive<T>(this T comp, bool active = true) where T : Component {
             var go = comp.gameObject;
             if (active != go.activeSelf) {
                 go.SetActive(active);

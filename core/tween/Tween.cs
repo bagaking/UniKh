@@ -42,10 +42,9 @@ namespace UniKh.core {
             ActiveTweeners.ForEach((tweener, ind) => {
                 if (tweener == null) return;
                 if (tweener.Status != Tweener.State.Active) {
-                    if (tweener.Status > Tweener.State.Active) {
-                        _absentTweenerCounts++;
-                        ActiveTweeners[ind] = null;
-                    }
+                    if (tweener.Status <= Tweener.State.Active) return;
+                    _absentTweenerCounts++;
+                    ActiveTweeners[ind] = null;
                     return;
                 }
 

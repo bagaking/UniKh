@@ -20,7 +20,8 @@ namespace UniKh.core.tween {
                 },
                 posOrg.y,
                 posOrg.y + value,
-                EvaluateFloat.Inst
+                EvaluateFloat.Inst,
+                () => trans
             );
             return Tween.LazyInst.Activate(tweener.SetMove(duration));
         }
@@ -32,7 +33,8 @@ namespace UniKh.core.tween {
                 val => trans.position = val,
                 posOrg,
                 posOrg + value,
-                EvaluateUnityVector3.Inst
+                EvaluateUnityVector3.Inst,
+                () => trans
             );
             return Tween.LazyInst.Activate(tweener.SetMove(duration));
         }
@@ -44,7 +46,8 @@ namespace UniKh.core.tween {
                 val => trans.localPosition = val,
                 posOrg,
                 posOrg + value,
-                EvaluateUnityVector3.Inst
+                EvaluateUnityVector3.Inst,
+                () => trans
             );
             return Tween.LazyInst.Activate(tweener.SetMove(duration));
         }
@@ -56,7 +59,8 @@ namespace UniKh.core.tween {
                 val => trans.localScale = val,
                 sclOrg,
                 value,
-                EvaluateUnityVector3.Inst
+                EvaluateUnityVector3.Inst,
+                () => trans
             );
             return Tween.LazyInst.Activate(tweener.SetMove(duration));
         }

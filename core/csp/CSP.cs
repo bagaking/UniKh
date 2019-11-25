@@ -7,8 +7,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-using UniKh.core;
 using UniKh.extensions;
 using System;
 using UniKh.utils;
@@ -20,12 +18,12 @@ namespace UniKh.core {
 
         public static List<Proc> procToRun = new List<Proc>(); // todo: load balancing, priority;
         
-        public Proc Do(IEnumerator _procedure, string tag = "_") {
+        public Proc Do(IEnumerator _procedure, string tag = "_", Func<bool> validator = null) {
             if (!sw.IsRunning) {
                 sw.Start(); // todo
             }
 
-            var proc = new Proc(_procedure, tag);
+            var proc = new Proc(_procedure, tag, validator);
             procToRun.QueuePush(proc);
             return proc;
         }
@@ -78,6 +76,14 @@ namespace UniKh.core {
                 if (!currentProc.isActive) { // 清理失效 proc
                     Rem(currentProc);
                     continue;
+                }
+
+                if (currentProc.Validator != null) {
+                    var result = currentProc.Validator();
+                    if (!result) {
+                        Rem(currentProc);
+                        continue;
+                    }
                 }
 
                 currentProc.Tick(maxTickDurationMS / procLst.Count); // 均分时间窗口, 过程中可能变化 (发生 REM 的话)

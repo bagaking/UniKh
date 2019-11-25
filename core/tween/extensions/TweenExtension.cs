@@ -14,7 +14,8 @@ namespace UniKh.core.tween {
                 val => { cg.alpha = val; },
                 alphaOrg,
                 value,
-                EvaluateFloat.Inst
+                EvaluateFloat.Inst,
+                () => cg
             );
             return Tween.LazyInst.Activate(tweener.SetMove(duration));
         }

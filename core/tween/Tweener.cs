@@ -20,26 +20,31 @@ namespace UniKh.core.tween {
         public TVal ValTo { get; private set; }
         public TweenEvaluator<TVal> Evaluator { get; private set; }
 
+        public Func<bool> Validator { get; private set; }
+
         public Tweener(
             Func<TVal> getter,
             Action<TVal> setter,
             TVal valFrom,
             TVal valTo,
-            TweenEvaluator<TVal> evaluator = null
+            TweenEvaluator<TVal> evaluator = null,
+            Func<bool> fnValidate = null
         ) {
             this.Setter = setter;
             this.Getter = getter;
             this.ValFrom = valFrom;
             this.ValTo = valTo;
             this.Evaluator = evaluator; // != null ? evaluator : DefaultTweenEvaluators.Get<TVal>();
+            this.Validator = fnValidate;
         }
 
         public Tweener(
             Func<TVal> getter,
             Action<TVal> setter,
             TVal valTo,
-            TweenEvaluator<TVal> evaluator = null
-        ) : this(getter, setter, getter(), valTo, evaluator) { }
+            TweenEvaluator<TVal> evaluator = null,
+            Func<bool> fnValidate = null
+        ) : this(getter, setter, getter(), valTo, evaluator, fnValidate) { }
 
         public override Tweener MoveTo(float tweenPos) {
             if (Duration <= 0) {
@@ -47,6 +52,11 @@ namespace UniKh.core.tween {
             }
             
             if (Status != State.Active) {
+                return this;
+            }
+            
+            if ((null != Validator) && !Validator()) {
+                StateTransition(State.Terminated);
                 return this;
             }
             
