@@ -66,6 +66,18 @@ namespace UniKh.core {
             };
             return nextPromise;
         }
+        
+        public Promise<TRet> Then<TRet>(Func<TVal, Promise<TRet>> cbThenPromise) {
+            var nextPromise = new Promise<TRet>(); 
+            _resolve += (val) => {
+                var anotherPromise = cbThenPromise(val);
+                anotherPromise.Then(ret => nextPromise.Resolve(ret));
+            };
+            _reject += ex => {
+                nextPromise.Reject(ex);
+            };
+            return nextPromise;
+        }
 
         public Promise<TVal> Catch(Action<Exception> cbCatch) {
 //            var nextPromise = new Promise<TVal>();
