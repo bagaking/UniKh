@@ -25,7 +25,7 @@ namespace UniKh.comp.ui {
         protected override void OnInit() {
             base.OnInit();
             var trans = transform;
-            Debug.Log("OnInit " + name);
+//            Debug.Log("OnInit " + name);
             _initPosition = trans.localPosition; 
             _initScale = trans.localScale; 
         }
@@ -39,7 +39,7 @@ namespace UniKh.comp.ui {
         }
 
         private Tweener ExecuteAnimation(Tweener.Directions direction, Action<Tweener.State, Tweener.State> cb) {  
-            Debug.Log("Exec " + name);
+//            Debug.Log("Exec " + name);
             transform.TweenScale(_initScale * startScaleRate, _initScale, durationShow).SetEase(easeActive).SetDirection(direction).MoveTo(0);
             var tweener = transform.TweenMoveLocal(_initPosition + startOffset, _initPosition, durationShow).SetEase(easeActive).SetDirection(direction).MoveTo(0); 
             tweener.OnStateChanged += cb;
@@ -66,7 +66,7 @@ namespace UniKh.comp.ui {
                 if (to <= Tweener.State.Active) return;
                 inAction = false;
                 phase = true;
-                Debug.Log("forward done " + name);
+//                Debug.Log("forward done " + name);
             });
         }
         
@@ -85,7 +85,7 @@ namespace UniKh.comp.ui {
                 if (to <= Tweener.State.Active) return;
                 inAction = false;
                 phase = false;
-                Debug.Log("backward done " + name);
+//                Debug.Log("backward done " + name);
             });
         }
         

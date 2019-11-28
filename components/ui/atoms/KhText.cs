@@ -246,8 +246,8 @@ namespace UniKh.comp.ui {
                     if (roundingOffset != Vector2.zero) {
                         for (var oInd = 0; oInd < m_OutlineOffsetBasic.Length; oInd++) {
                             var offsets = m_OutlineOffsetBasic[oInd];
-                            var fitterRate = (float) Mathf.Log10(font.fontSize);
-                            Debug.Log(fitterRate);
+//                            var fitterRate = (float) Mathf.Log10(font.fontSize);
+//                            Debug.Log(fitterRate);
                             for (var i = 0; i < vertCount; ++i) {
                                 var tempVertsIndex = i & 3;
                                 m_TempVerts[tempVertsIndex] = verts[i];
