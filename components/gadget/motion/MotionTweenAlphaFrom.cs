@@ -11,7 +11,7 @@ using UniKh.utils;
 using System.Collections;
 using System.Collections.Generic;
 using UniKh.core.tween;
-using UnityEngine;
+using UnityEngine; 
 
 namespace UniKh.comp.ui {
     public class MotionTweenAlphaFrom : MotionObject<MotionTweenMoveOffsetFrom> {
@@ -25,13 +25,15 @@ namespace UniKh.comp.ui {
         public CanvasGroup CG => _canvasGroup;
 
         protected override void OnInit() {
-            base.OnInit();
+            base.OnInit(); 
             _canvasGroup = this.GetOrAdd<CanvasGroup>();
             _initAlpha = _canvasGroup.alpha;  
         }
 
-        protected override void OnSetActive(bool active) {
-            _canvasGroup.alpha = _initAlpha * startAlphaRate;
+        protected override void OnSetActive(bool active) { 
+            if (active) {
+                _canvasGroup.alpha = _initAlpha * startAlphaRate;
+            }
             base.OnSetActive(active);
         }
 

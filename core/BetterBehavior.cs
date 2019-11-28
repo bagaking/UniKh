@@ -20,8 +20,8 @@ namespace UniKh.core {
                 m_initiated = true;
                 OnInit();
             }
-            m_started = true;
             OnSetActive(true);
+            m_started = true;
         }
 
         private void OnDisable() { OnSetActive(false); }
@@ -33,6 +33,7 @@ namespace UniKh.core {
 
         /// <summary>
         /// when the active state changes, the method will be call.
+        /// onSetActive(false) may be called before OnInit 
         /// </summary>
         protected virtual void OnSetActive(bool active) { }
 
