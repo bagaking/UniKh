@@ -23,6 +23,7 @@ namespace UniKh.editor {
         public SerializedProperty clickAnimation;
         public SerializedProperty tweenScale;
         public SerializedProperty text;
+        public SerializedProperty audioName;
         
         protected override void OnEnable() {
             base.OnEnable();
@@ -30,6 +31,7 @@ namespace UniKh.editor {
             clickAnimation = serializedObject.FindProperty("clickAnimation");
             tweenScale = serializedObject.FindProperty("tweenScale");
             text = serializedObject.FindProperty("text");
+            audioName = serializedObject.FindProperty("audioName");
         }
         
         public override void OnInspectorGUI() {
@@ -43,6 +45,12 @@ namespace UniKh.editor {
             EditorGUILayout.PropertyField(clickAnimation, true);
             EditorGUILayout.PropertyField(tweenScale, true);
             EditorGUILayout.PropertyField(text, true);
+            EditorGUILayout.PropertyField(audioName, true);
+            if (btn.audioName.Exists() && Application.isPlaying) {
+                if (GUILayout.Button("Play")) {
+                    btn.PlayClickAudio();
+                }
+            }
             serializedObject.ApplyModifiedProperties();
         }
     }
