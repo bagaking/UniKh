@@ -7,6 +7,10 @@ namespace UniKh.extensions {
         public static TV TryGet<TK, TV>(this Dictionary<TK, TV> dict, TK key, TV defaultValue) {
             return dict.ContainsKey(key) ? dict[key] : defaultValue;
         }
+        
+        public static TV ReadCache<TK, TV>(this Dictionary<TK, TV> dict, TK key, Func<TK, TV> cbUpdateCache) {
+            return dict.ContainsKey(key) ? dict[key] : (dict[key] = cbUpdateCache(key));
+        }
 
         public static int Inc<TK>(this Dictionary<TK, int> dict, TK key, int incValue) {
             return dict.ContainsKey(key) ? dict[key] += incValue : dict[key] = incValue;
