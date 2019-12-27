@@ -4,15 +4,28 @@
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
  */
 
-using System;
-using System.Collections; 
-using UniKh.core.tween;
 using UniKh.extensions;
-using UnityEngine;  
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace UniKh.comp.ui {
     public class KhPanelWindow : KhPanel<MotionWindow> {
- 
+
+        [Header("Binding")]
+        public Button btnMask;
+        public Button btnClose;
+
+        protected override void OnInit() {
+            base.OnInit();
+            if (btnClose) {
+                btnClose.onClick.AddListener(() => this.SetObjectActive(false));
+            }
+            
+            if (btnMask) {
+                btnMask.onClick.AddListener(() => this.SetObjectActive(false));
+            }
+        }
+
         [ContextMenu("Create Motion")]
         public override MotionWindow CreateDefaultMotionComponents() {
             motion = GetComponent<MotionWindow>();
