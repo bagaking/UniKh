@@ -4,21 +4,17 @@ using UniKh.extensions;
 using UnityEngine;
 
 namespace UniKh.comp.ui {
-    public class KhPanelGround : KhPanel {
-        public CanvasGroup cg;
-
-        public float startAlpha = 0;
+    public class KhPanelGround : KhPanel<MotionTweenAlphaFrom> { 
         
-        private float finalAlpha = 1f;
-        protected override void OnInit() {
-            cg = this.GetOrAdd<CanvasGroup>();
-            if (startAlpha == 1) return;
-            finalAlpha = cg.alpha;
-            cg.alpha *= startAlpha;
-        }
-        protected override void PlayAdmissionAnimation() {
-            if (startAlpha == 1) return;
-            cg.DoFade(finalAlpha, durationShow).SetEase(easeActive);
+        [ContextMenu("Create Motion")]
+        public override MotionTweenAlphaFrom CreateDefaultMotionComponents() {
+            motion = GetComponent<MotionTweenAlphaFrom>();
+            if (!motion) {
+                motion = gameObject.AddComponent<MotionTweenAlphaFrom>();
+                motion.startAlphaRate = 0.4f;
+                motion.durationShow = 0.3f;
+            }
+            return motion;
         }
     }
 }

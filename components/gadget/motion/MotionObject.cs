@@ -4,17 +4,18 @@
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
  */
 
-using UniKh.core;
-using UniKh.extensions;
-using UniKh.utils;
-using System.Collections;
-using System.Collections.Generic;
+using System.Collections; 
+using UniKh.core; 
 using UniKh.core.csp;
-using UniKh.core.tween;
-using UnityEngine;
+using UniKh.core.tween; 
 
 namespace UniKh.comp {
-    public abstract class MotionObject<T> : BetterBehavior where T: MotionObject<T> {
+
+    public class MotionObject : BetterBehavior  {
+        
+    }
+    
+    public abstract class MotionObject<T> : MotionObject where T: MotionObject<T> {
 
         public static string className { get; } = typeof(T).Name;
         

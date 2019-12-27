@@ -21,16 +21,11 @@ namespace UniKh.editor {
             var go = CreateNewGameObject(mc.context as GameObject, "p");
 
             var panel = go.AddComponent<KhPanelGround>();
-            panel.cg = go.AddComponent<CanvasGroup>();
-            panel.startAlpha = 0.4f;
+            var motion = panel.CreateDefaultMotionComponents(); 
             go.AddComponent<KhImage>();
 
             var rect = go.GetComponent<RectTransform>();
             rect.SetAnchorStretchAll();
-//            rect.anchorMin = Vector2.zero;
-//            rect.anchorMax = Vector2.one;
-//            rect.offsetMin = Vector2.zero;
-//            rect.offsetMax = Vector2.zero;
         }
 
         [MenuItem("GameObject/Kh UI (Molecules)/p <Panel>/Window", false, 0)]
@@ -38,8 +33,7 @@ namespace UniKh.editor {
             var go = CreateNewGameObject(mc.context as GameObject, "p", "0");
 
             var panel = go.AddComponent<KhPanelWindow>();
-            panel.startOffset = Vector3.up * 100;
-            panel.startScaleRate = 0.85f;
+            var motion = panel.CreateDefaultMotionComponents(); 
 
             var rectTransform = panel.transform as RectTransform;
             var rectParent = rectTransform.parent as RectTransform;
@@ -74,6 +68,8 @@ namespace UniKh.editor {
 //            
 //            clickEvent.AddListener(clickEvent.GetDelegate(go, getMethodInfo));
 //            btnClose.onClick = clickEvent;
+
+            Selection.activeObject = go;
         }
     }
 }

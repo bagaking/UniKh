@@ -14,7 +14,7 @@ using UniKh.core.tween;
 using UnityEngine; 
 
 namespace UniKh.comp.ui {
-    public class MotionTweenAlphaFrom : MotionObject<MotionTweenMoveOffsetFrom> {
+    public class MotionTweenAlphaFrom : MotionObject<MotionTweenAlphaFrom> {
         
         [Header("Motion Setting")]
         public float startAlphaRate = 1;

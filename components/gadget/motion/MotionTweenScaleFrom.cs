@@ -14,7 +14,7 @@ using UniKh.core.tween;
 using UnityEngine;
 
 namespace UniKh.comp.ui {
-    public class MotionTweenScaleFrom : MotionObject<MotionTweenMoveOffsetFrom> {
+    public class MotionTweenScaleFrom : MotionObject<MotionTweenScaleFrom> {
         
         [Header("Motion Setting")]
         public float startScaleRate = 1;
