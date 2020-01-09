@@ -32,6 +32,12 @@ namespace UniKh.editor {
                 txt.fontSize = KhPreferenceStatic.Inst.defaultFontSize;
             }
 
+            var khBtn = goParent.GetComponent<KhBtn>();
+            if (khBtn && khBtn.text == null) { // auto fit: button
+                khBtn.text = txt;
+                txt.rectTransform.SetAnchorStretchAll();
+            }
+
             return txt;
         }
         

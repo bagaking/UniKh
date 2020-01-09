@@ -9,19 +9,21 @@ using UniKh.extensions;
 using UniKh.utils;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UniKh.comp.ui;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UniKh.editor {
     public class ContextMenuUIButton : ContextMenuUI {
         [MenuItem("GameObject/Kh UI (Molecules)/btn <Button>/Custom", false, 0)]
         internal static GameObject CreateUINodeButton(MenuCommand mc) {
             var go = CreateNewGameObject(mc.context as GameObject, "btn");
-
+            var img = go.AddComponent<KhImage>();
             var btn = go.AddComponent<KhBtn>();
-            btn.image = go.AddComponent<KhImage>();
-            (btn.transform as RectTransform).sizeDelta = new Vector2(160, 120);
+            btn.image = img;
+            ((RectTransform) btn.transform).sizeDelta = new Vector2(160, 120);
             return go;
         }
 
@@ -57,7 +59,59 @@ namespace UniKh.editor {
             rectTransform.SetAnchorPingRightBottom();
         }
 
+        [MenuItem("CONTEXT/KhBtn/Use Bg Node",true)]
+        static bool CheckIfKhBtnCanUseBgNode(MenuCommand command) {
+            var btn = command.context as KhBtn;
+            if(null == btn || null == btn.targetGraphic || btn.targetGraphic.gameObject != btn.gameObject) {
+                return false;
+            }
+            return btn.targetGraphic is KhImage;
+        }
+        
+        [MenuItem("CONTEXT/KhBtn/Use Bg Node")]
+        static void UseBgNode(MenuCommand command) {
+            var btn = command.context as KhBtn;
+            if(null == btn) return;
+            if (null == btn.targetGraphic) {
+                Debug.LogError("KhBtn to convert bg model for must have targetGraphic been set.");
+                return;
+            }
 
+            if (btn.targetGraphic.gameObject != btn.gameObject) { // attached on the same go, create a bg node
+                Debug.LogError("when convert bg model, origin targetGraphic must be a khImage attached to the same gameObject of KhBtn.");
+                return;
+            }
+            
+            var originImage = btn.targetGraphic as KhImage;
+            if (null == originImage) {
+                Debug.LogError("when convert bg model, targetGraphic of the KhBtn must be khImage.");
+                return;
+            }
+            
+            if (!UnityEditorInternal.ComponentUtility.CopyComponent(originImage)) {
+                Debug.LogError("KhBtn convert bg model failed: copy origin img failed.");
+                return;
+            }
+                
+            var goImg = CreateNewGameObject( btn.gameObject, "bg", "");
+            var img = goImg.AddComponent<KhImage>();
+            img.rectTransform.SetAnchorStretchAll();
+            img.rectTransform.SetSiblingIndex(0);
+            if (!UnityEditorInternal.ComponentUtility.PasteComponentValues(img)) {
+                Debug.LogError("KhBtn convert bg model failed: paste img values failed.");
+                Object.DestroyImmediate(goImg);
+                return;
+            } 
+                
+            Undo.RecordObject(btn, "Convert Bg Model");
+            Undo.RegisterFullObjectHierarchyUndo(btn, "Convert Bg Model");
+            btn.targetGraphic = img;
+                
+            Undo.DestroyObjectImmediate(originImage);
+            Object.DestroyImmediate(originImage); 
+            Undo.RegisterCreatedObjectUndo (goImg, "Convert Bg Model");
+        }
+        
         [MenuItem("CONTEXT/KhBtn/Expand Click Area")]
         static void ExpandClickArea(MenuCommand command) {
             var btn = command.context as KhBtn;
