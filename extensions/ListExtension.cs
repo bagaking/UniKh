@@ -16,12 +16,24 @@ namespace UniKh.extensions {
         }
 
 
-        private static StringBuilder sbCombind = new StringBuilder();
+        private static readonly StringBuilder SbCombine = new StringBuilder();
 
-        public static string ToItemsString<TTerm>(this IEnumerable<TTerm> lst, string prefix = "") => lst.Reduce(
-                (prev, term) => prev.Append(' ').Append(term),
-                sbCombind.Clear().Append(prefix))
-            .ToString();
+        public static string ToItemsString<TTerm>(this IEnumerable<TTerm> lst, string prefix = "", int maxCount = 0) {
+            SbCombine.Clear().Append(prefix);
+            if (maxCount <= 0) {
+                foreach (var term in lst) {
+                    SbCombine.Append(' ').Append(term);
+                }
+            } else {
+                foreach (var term in lst) {
+                    if (0 == maxCount--) break;
+                    SbCombine.Append(' ').Append(term);
+                }
+            }
+            return SbCombine.ToString();
+        }
+            
+            
 
         public static List<TResult> Map<TTerm, TResult>(this List<TTerm> lst, System.Func<TTerm, TResult> mapper) {
             var ret = new List<TResult>(lst.Count);

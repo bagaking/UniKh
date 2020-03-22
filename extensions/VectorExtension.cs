@@ -44,6 +44,18 @@ namespace UniKh.extensions {
                 zRange > 0 ? v.z + Random.Range(-zRange, zRange) : v.z
             );
         }
+        
+        public static Vector3 MappingX(this Vector3 v, Converter<float, float> fnMapping) {
+            return new Vector3(fnMapping(v.x), v.y, v.z);
+        }
+        
+        public static Vector3 MappingY(this Vector3 v, Converter<float, float> fnMapping) {
+            return new Vector3(v.x, fnMapping(v.y), v.z);
+        }
+        
+        public static Vector3 MappingZ(this Vector3 v, Converter<float, float> fnMapping) {
+            return new Vector3(v.x, v.y, fnMapping(v.z));
+        }
 
         public static float Dot(this Vector2 v, Vector2 vt) { return Vector2.Dot(v, vt); }
 
