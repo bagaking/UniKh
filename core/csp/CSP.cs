@@ -66,14 +66,14 @@ namespace UniKh.core {
             int roundOfTick = 0;
 
             while (sw.ElapsedMilliseconds - startTimeMS <= maxTickDurationMS && procLst.Count > 0) {
-                if (roundOfTick >= maxExecuteRound) { //Èç¹û±éÀú´ÎÊıÒÑ¾­³¬¹ıMAX_ROUND, Ìø¹ıµÈ´ıÏî
+                if (roundOfTick >= maxExecuteRound) { //å¦‚æœéå†æ¬¡æ•°å·²ç»è¶…è¿‡MAX_ROUND, è·³è¿‡ç­‰å¾…é¡¹
                     break;
                 }
 
                 LastTickIndex %= procLst.Count;
 
                 Proc currentProc = procLst[LastTickIndex];
-                if (!currentProc.isActive) { // ÇåÀíÊ§Ğ§ proc
+                if (!currentProc.isActive) { // æ¸…ç†å¤±æ•ˆ proc
                     Rem(currentProc);
                     continue;
                 }
@@ -86,14 +86,14 @@ namespace UniKh.core {
                     }
                 }
 
-                currentProc.Tick(maxTickDurationMS / procLst.Count); // ¾ù·ÖÊ±¼ä´°¿Ú, ¹ı³ÌÖĞ¿ÉÄÜ±ä»¯ (·¢Éú REM µÄ»°)
+                currentProc.Tick(maxTickDurationMS / procLst.Count); // å‡åˆ†æ—¶é—´çª—å£, è¿‡ç¨‹ä¸­å¯èƒ½å˜åŒ– (å‘ç”Ÿ REM çš„è¯)
                 MonitExecutedInFrame += 1;
 
-                LastTickIndex++; //Ã¿Ìø¼ÆÊı
-                roundOfTick++; //±éÀú¼ÆÊı
+                LastTickIndex++; //æ¯è·³è®¡æ•°
+                roundOfTick++; //éå†è®¡æ•°
 
 
-                if (startIndex == LastTickIndex % procLst.Count) { // Èç¹ûÒÑ¾­Ñ­»·Ò»ÂÖÁË, ÔòÒÔ×îĞ¡TimeSpan½áÊø. ÆäÖĞÉ¾³ıÏî¿ÉÄÜµ¼ÖÂÕâÒ»ÂÖÌõ¼şÓÀÔ¶ÎŞ·¨Âú×ã, Õâ¸ö±ß½ç²»Óè¿¼ÂÇ
+                if (startIndex == LastTickIndex % procLst.Count) { // å¦‚æœå·²ç»å¾ªç¯ä¸€è½®äº†, åˆ™ä»¥æœ€å°TimeSpanç»“æŸ. å…¶ä¸­åˆ é™¤é¡¹å¯èƒ½å¯¼è‡´è¿™ä¸€è½®æ¡ä»¶æ°¸è¿œæ— æ³•æ»¡è¶³, è¿™ä¸ªè¾¹ç•Œä¸äºˆè€ƒè™‘
                     maxTickDurationMS = CONST.TIME_SPAN_MS_MIN;
                 }
 

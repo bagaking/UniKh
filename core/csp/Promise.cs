@@ -8,6 +8,7 @@ using System;
 using UniKh.core;
 using UniKh.core.csp;
 using UniKh.core.csp.waiting;
+using UniKh.extensions;
 using UnityEngine;
 
 namespace UniKh.core {
@@ -17,6 +18,12 @@ namespace UniKh.core {
         Promise<TVal> Reject(Exception exception);
     }
 
+    public static class Promise {
+        public static Promise<T[]> All<T>(params Promise<T>[] promises) {
+            return Promise<T>.All(promises);
+        }
+    }
+    
     public class Promise<TVal> : CustomYieldInstruction, IPromise<TVal> {
         
         private Action<TVal> _resolve;
@@ -24,6 +31,20 @@ namespace UniKh.core {
 
         private bool _executed = false;
 
+        public static Promise<TVal[]> All(params Promise<TVal>[] promises) {
+            var length = promises.Length;
+            var finished = 0;
+            var ret = new TVal[length];
+            for (var i = 0; i < length; i++) {
+                var ind = i;
+                promises[i].Then(val => {
+                    finished++;
+                    return ret[ind] = val;
+                });
+            }
+            return new Condition().Start(_ => finished >= length).AsPromise(ret);
+        }
+        
         public Promise<TVal> Resolve(TVal val) {
             if (_executed) return this; // only execute once 
             Skip.New.Start().Go(() => _resolve?.Invoke(val));

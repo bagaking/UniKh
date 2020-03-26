@@ -63,6 +63,12 @@ namespace UniKh.core.csp {
             YieldOnce(yieldInstruction, promise, defaultVal).Go();
             return promise;
         }
+        
+        public static Promise<object> AsPromise(this IEnumerator yieldInstruction) {
+            var promise = new Promise<object>(); 
+            YieldOnce(yieldInstruction, promise, null).Go();
+            return promise;
+        }
 
         public static Promise<object> AsPromise(this CustomYieldInstruction yieldVal) {
             var promise = new Promise<object>(); 
