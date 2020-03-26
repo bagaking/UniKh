@@ -17,10 +17,21 @@ namespace UniKh.utils {
             RectTransform parentRectTransform, 
             Camera camScene, 
             Canvas canvas = null) {
-            if (null == targetTransform || null == parentRectTransform || null == camScene) {
+            if (null == targetTransform) {
+                throw new Exception("UniKh.utils.PositionProjector ScenePositionToUILocalPosition error: target are not exist");
+            }
+            return ScenePositionToUILocalPosition(targetTransform.position, parentRectTransform, camScene, canvas);
+        }
+        
+        public static Vector2 ScenePositionToUILocalPosition(
+            Vector3 position3D, 
+            RectTransform parentRectTransform, 
+            Camera camScene, 
+            Canvas canvas = null) {
+            if (null == parentRectTransform || null == camScene) {
                 throw new Exception("UniKh.utils.PositionProjector ScenePositionToUILocalPosition error: input cannot be null");
             }
-            var screenPos = camScene.WorldToScreenPoint(targetTransform.position);
+            var screenPos = camScene.WorldToScreenPoint(position3D);
             if (null == canvas) {
                 canvas = parentRectTransform.GetComponentInParent<Canvas>();
             }

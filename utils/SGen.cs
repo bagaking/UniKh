@@ -82,6 +82,12 @@ namespace UniKh.utils {
                 RecycleSelf();
                 return str;
             }
+            
+            public string GetStringAndClear() {
+                var str = ToString();
+                Remove(0, Length);
+                return str;
+            }
 
             public int Length => MStringBuilder?.Length ?? 0;
 

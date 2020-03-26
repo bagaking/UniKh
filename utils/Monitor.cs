@@ -3,6 +3,10 @@ using UniKh.core;
 using UnityEngine;
 
 namespace UniKh.utils {
+    
+    /// <summary>
+    /// 
+    /// </summary>
     public class FrameMonitor : Dictionary<int, Dictionary<string, float>> {
         private int maxId = 0;
 
@@ -24,12 +28,15 @@ namespace UniKh.utils {
     public class Monitor : Singleton<Monitor> {
         public float fps;
         public float deltaTime;
+        public float totalTime;
 
         public int updateCount = 0;
         public int fixedUpdateCount = 0;
 
-        void Update() {
-            deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+        void Update()
+        {
+            totalTime += Time.deltaTime;
+            deltaTime += (Time.deltaTime - deltaTime) * 0.5f;
             fps = 1.0f / deltaTime;
             updateCount++;
         }
@@ -102,6 +109,8 @@ namespace UniKh.utils {
             labelCount = 0;
             GUI.skin.label.fontSize = 28;
             Draw("FPS", Mathf.Ceil(fps));
+            Draw("FPS(AVG)", updateCount / totalTime);
+            
             Draw("Update", updateCount);
             Draw("FUpdate", fixedUpdateCount);
             Draw("Time", Time.time);
