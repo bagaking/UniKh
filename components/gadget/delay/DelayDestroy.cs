@@ -16,9 +16,9 @@ namespace UniKh.comp {
             yield return new WaitForSeconds(delaySec);
 
             if (tid > 0 && ResPool.LazyInst.TIDExist(tid)) {
-                ResPool.LazyInst.Push(target);
+                ResPool.LazyInst.Push(target ? target : gameObject);
             } else {
-                Destroy(target);
+                Destroy(target ? target : gameObject);
             }
         }
     }
