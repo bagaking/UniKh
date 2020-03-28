@@ -13,13 +13,17 @@ namespace UniKh.comp {
         public uint tid;
  
         public override IEnumerator DoDelayEvent() {
-            yield return new WaitForSeconds(delaySec);
-
-            if (tid > 0 && ResPool.LazyInst.TIDExist(tid)) {
+            if (triggerOn == TriggerOn.OnInit) {
+                Debug.LogError("TriggerOn flag of DelayDestroy object should not be set to OnInit.");
+                triggerOn = TriggerOn.OnActive;
+            }
+            
+            if (tid > 0 && ResPool.LazyInst.TidExist(tid)) {
                 ResPool.LazyInst.Push(target ? target : gameObject);
             } else {
                 Destroy(target ? target : gameObject);
             }
+            yield break; 
         }
     }
 }

@@ -21,9 +21,9 @@ namespace UniKh.comp {
         public TriggerOn triggerOn = TriggerOn.OnActive;
         public float delaySec = 1;
 
-        private static string tagOnInit = typeof(T).Name + ":OnInit";
-        private static string tagOnActive = typeof(T).Name + ":OnActive";
-        private static string tagOnClose = typeof(T).Name + ":OnClose";
+        private static readonly string TagOnInit = typeof(T).Name + ":OnInit";
+        private static readonly string TagOnActive = typeof(T).Name + ":OnActive";
+        private static readonly string TagOnClose = typeof(T).Name + ":OnClose";
 
         public abstract IEnumerator DoDelayEvent();
 
@@ -31,7 +31,7 @@ namespace UniKh.comp {
             base.OnInit();
             if (triggerOn == TriggerOn.OnInit) {
                 DoDelayEvent()
-                    .Go(tagOnInit)
+                    .Go(TagOnInit)
                     .Delay(core.csp.waiting.UnitySecond.New.Start(delaySec));
             }
         }
@@ -44,14 +44,14 @@ namespace UniKh.comp {
             if (active) {
                 if (triggerOn == TriggerOn.OnActive) {
                     DoDelayEvent()
-                        .Go(tagOnActive)
+                        .Go(TagOnActive)
                         .Delay(core.csp.waiting.UnitySecond.New.Start(delaySec));
                 }
             }
             else {
                 if (triggerOn == TriggerOn.OnClose) {
                     DoDelayEvent()
-                        .Go(tagOnClose)
+                        .Go(TagOnClose)
                         .Delay(core.csp.waiting.UnitySecond.New.Start(delaySec));
                 }
             }
