@@ -16,42 +16,57 @@ namespace UniKh.res {
         public readonly Dictionary<uint, GameObject> prefabCache = new Dictionary<uint, GameObject>();
 
         public GameObject Pop(uint tid, bool setActive = false) {
-            if (pool.ContainsKey(tid) && pool[tid].Count > 0) return pool[tid].Pop();
+            if (pool.ContainsKey(tid) && pool[tid].Count > 0) {
+                return pool[tid].Pop();
+            }
+            
             var go = prefabCache.ContainsKey(tid)
                 ? Instantiate(prefabCache[tid])
                 : ResMgr.LazyInst.Create<GameObject>($"prefab_r/{tid}");
-            objIds[go.GetHashCode()] = tid;
-            go.name = go.name.Replace("(Clone)", "");
-            if(setActive)
-            {
+            if (!pool.ContainsKey(tid)) {
+                pool[tid] = new List<GameObject>();
+            }
+
+            var hash = go.GetHashCode();
+
+            if (objIds.ContainsKey(hash)) {
+                Debug.LogError("hash code " + hash + "are already exist");
+            }
+            
+            objIds[hash] = tid;
+
+            totalCreated.Inc(tid, 1);
+            go.name = go.name.Replace("(Clone)", totalCreated[tid].ToString());
+            
+            if (setActive) {
                 go.SetActive(true);
             }
-            totalCreated.Inc(tid, 1);
+            
             return go;
         }
 
         public void Bind(uint tid, GameObject prefab) {
-            if(tid == 0) throw new Exception($"ResPool.Bind error: tid {tid} cannot be zero");
+            if (tid == 0) throw new Exception($"ResPool.Bind error: tid {tid} cannot be zero");
             if (pool.ContainsKey(tid)) throw new Exception($"ResPool.Bind error: tid {tid} is already exist");
             prefabCache[tid] = prefab;
+            pool[tid] = new List<GameObject>();
         }
 
-        public bool TIDExist(uint tid)
-        {
+        public bool TidExist(uint tid) {
             return pool.ContainsKey(tid);
         }
 
-        public void Push(GameObject obj) {
-            var objHash = obj.GetHashCode();
-            if (!objIds.ContainsKey(objHash)) throw new Exception($"ResPool.Push error: cannot find id of the game object {obj}");
+        public void Push(GameObject gObj) {
+            var objHash = gObj.GetHashCode(); 
+            if (!objIds.ContainsKey(objHash))
+                throw new Exception($"ResPool.Push error: cannot find id of the game object {gObj}");
             var tid = objIds[objHash];
+            gObj.SetActive(false); 
+            
             if (!pool.ContainsKey(tid)) pool[tid] = new List<GameObject>();
-            pool[tid].Push(obj);
-            obj.transform.SetParent(Inst.transform);
-            obj.transform.localPosition = Vector3.zero;
-            obj.SetActive(false);
+            pool[tid].Push(gObj);
+            gObj.transform.SetParent(Inst.transform);
+            gObj.transform.localPosition = Vector3.zero;
         }
-
-
     }
 }
