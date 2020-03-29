@@ -106,7 +106,7 @@ namespace UniKh.extensions {
         }
 
         public static float DistanceManhattan(this Vector3 v, Vector3 vTo) {
-            return (v.x > vTo.x ? v.x - vTo.x : vTo.z - v.x) + (v.y > vTo.y ? v.y - vTo.y : vTo.y - v.y) +
+            return (v.x > vTo.x ? v.x - vTo.x : vTo.x - v.x) + (v.y > vTo.y ? v.y - vTo.y : vTo.y - v.y) +
                    (v.z > vTo.z ? v.z - vTo.z : vTo.z - v.z);
         }
 
