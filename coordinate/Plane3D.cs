@@ -11,7 +11,7 @@ namespace UniKh.coordinate {
         public Vector3 IntersectWithRay(Ray ray) {
             var baseFactor = Vector3.Dot(normal, ray.direction);
             if (Mathf.Abs(baseFactor) <= float.Epsilon) {
-                baseFactor = float.Epsilon;
+                return Vector3.positiveInfinity;
             }
 
             var t = -Vector3.Dot(normal, (ray.origin - origin)) / baseFactor;
@@ -21,7 +21,7 @@ namespace UniKh.coordinate {
         public Vector3 IntersectWithRay(Vector3 rayOrigin, Vector3 rayDirection) {
             var baseFactor = Vector3.Dot(normal, rayDirection);
             if (Mathf.Abs(baseFactor) <= float.Epsilon) {
-                baseFactor = float.Epsilon;
+                return Vector3.positiveInfinity;
             }
 
             var t = -Vector3.Dot(normal, (rayOrigin - origin)) / baseFactor;
@@ -38,6 +38,10 @@ namespace UniKh.coordinate {
             var zz = normal.z * normal.z;
             var yz = normal.y * normal.z;
             var xXyYzZ = xx + yy + zz;
+
+            if (Mathf.Abs(xXyYzZ) <= float.Epsilon) {
+                return Vector3.positiveInfinity;
+            }
 
             return new Vector3(
                 (xy * origin.y + yy * p.x - xy * p.y + xz * origin.z + zz * p.x - xz * p.z + xx * origin.x) / xXyYzZ,
