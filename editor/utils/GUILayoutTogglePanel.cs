@@ -23,7 +23,7 @@ namespace UniKh.editor {
 
         public GUILayoutScrollPanel scrollPanel;
 
-        public void Draw(string appendTitle, Action DeawContent) {
+        public void Draw(string appendTitle, Action drawContent) {
             GUILayout.Space(3f);
 
             var cBgOrigin = GUI.backgroundColor;
@@ -33,11 +33,11 @@ namespace UniKh.editor {
             GUILayout.Space(2f);
             GUI.backgroundColor = cBgOrigin;
 
-            if (state && null != DeawContent) {
+            if (state && null != drawContent) {
                 if(null != scrollPanel) {
-                    scrollPanel.Draw(DeawContent);
+                    scrollPanel.Draw(drawContent);
                 } else {
-                    DeawContent();
+                    drawContent();
                 }
             } else {
                 GUILayout.Space(3f);

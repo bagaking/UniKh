@@ -120,7 +120,7 @@ namespace UniKh.utils {
             return AfterDraw();
         }
 
-        public Gizmo2DDrawer DrawLine(Vector2[] poses) {
+        public Gizmo2DDrawer DrawLine(params Vector2[] poses) {
             BeforeDraw();
             var maxInd = poses.Length - 1;
             var lines = new Vector3[maxInd * 2];

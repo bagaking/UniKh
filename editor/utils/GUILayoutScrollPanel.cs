@@ -17,9 +17,9 @@ namespace UniKh.editor {
         public GUILayoutScrollPanel() { 
         }
 
-        public void Draw(Action DeawContent, params GUILayoutOption[] options) {
+        public void Draw(Action drawContent, params GUILayoutOption[] options) {
             position = EditorGUILayout.BeginScrollView(position, options);
-            DeawContent();
+            drawContent();
             EditorGUILayout.EndScrollView();
         }
 

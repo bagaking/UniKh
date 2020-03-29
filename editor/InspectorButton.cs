@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using UniKh.utils.Inspector;
+using UniKh.extensions;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,7 +23,10 @@ namespace UniKh.editor {
                 .Where(o => Attribute.IsDefined(o, typeof(BtnAttribute)));
 
             foreach (var memberInfo in methods) {
-                if (!GUILayout.Button(memberInfo.Name)) continue;
+
+                var btnAttr = memberInfo.GetCustomAttribute<BtnAttribute>();
+                
+                if (!GUILayout.Button(btnAttr.Name.Exists() ? btnAttr.Name : memberInfo.Name)) continue;
                 var method = memberInfo as MethodInfo;
                 if (method != null) method.Invoke(mono, null);
             }
