@@ -8,10 +8,7 @@ using System;
 using UniKh.core.tween;
 using UniKh.extensions;
 using UnityEditor;
-using UnityEditor.Rendering;
-using UnityEditor.UIElements;
 using UnityEngine;
-using UniKh.extensions;
 
 namespace UniKh.editor {
     [CustomPropertyDrawer(typeof(EaseDetailAttribute))]

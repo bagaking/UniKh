@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -177,7 +178,7 @@ namespace UniKh.editor {
 
             Handles.DrawAAPolyLine(points);
             if (closure) {
-                Handles.DrawLine(points[points.Length - 1], points[0]);
+                points.Append(points[0]);
             }
 
             Handles.EndGUI();

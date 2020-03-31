@@ -10,15 +10,15 @@ namespace UniKh.editor {
             var resMgr = target as ResMgr;
 
             EditorGUILayout.LabelField("Cache1");
-            if (resMgr.Cache1 != null) {
-                foreach (var pair in resMgr.Cache1) {
+            if (resMgr.cache.Cache1 != null) {
+                foreach (var pair in resMgr.cache.Cache1) {
                     EditorGUILayout.LabelField(pair.Key);
                 }
             }
 
             EditorGUILayout.LabelField("Cache2");
-            if (resMgr.Cache2 != null) {
-                foreach (var pair in resMgr.Cache2) {
+            if (resMgr.cache.Cache2 != null) {
+                foreach (var pair in resMgr.cache.Cache2) {
                     EditorGUILayout.LabelField(pair.Key);
                 }
             }
