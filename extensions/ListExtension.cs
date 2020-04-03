@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Text; 
+using System.Text;
 
 namespace UniKh.extensions {
     public static class ListExtension {
-
         static Random random = new Random();
 
         public static TPrev Reduce<TPrev, TTerm>(
@@ -30,10 +29,10 @@ namespace UniKh.extensions {
                     SbCombine.Append(' ').Append(term);
                 }
             }
+
             return SbCombine.ToString();
         }
-            
-            
+
 
         public static List<TResult> Map<TTerm, TResult>(this List<TTerm> lst, System.Func<TTerm, TResult> mapper) {
             var ret = new List<TResult>(lst.Count);
@@ -44,9 +43,13 @@ namespace UniKh.extensions {
             return ret;
         }
 
-        public static TTerm Last<TTerm>(this List<TTerm> lst) { return lst[lst.Count - 1]; }
+        public static TTerm Last<TTerm>(this List<TTerm> lst) {
+            return lst[lst.Count - 1];
+        }
 
-        public static TTerm First<TTerm>(this List<TTerm> lst) { return lst[0]; }
+        public static TTerm First<TTerm>(this List<TTerm> lst) {
+            return lst[0];
+        }
 
 
         public static void ForEach<TTerm>(this IEnumerable<TTerm> lst, System.Action<TTerm> action) {
@@ -67,12 +70,15 @@ namespace UniKh.extensions {
             }
         }
 
-        public static void Push<TTerm>(this List<TTerm> lst, TTerm item) { lst.Add(item); }
+        public static void Push<TTerm>(this List<TTerm> lst, TTerm item) {
+            lst.Add(item);
+        }
 
         public static bool Append<TTerm>(this List<TTerm> lst, TTerm item) {
             if (lst.Contains(item)) {
                 return false;
             }
+
             lst.Add(item);
             return false;
         }
@@ -86,18 +92,18 @@ namespace UniKh.extensions {
         public static List<TTerm> Filter<TTerm>(this List<TTerm> lst, System.Predicate<TTerm> condition) {
             var ret = new List<TTerm>(lst.Count / 4 + 1);
 
-            lst.ForEach(t => {
-                if (condition(t)) {
-                    ret.Add(t);
+            lst.ForEach(
+                t => {
+                    if (condition(t)) {
+                        ret.Add(t);
+                    }
                 }
-            });
+            );
             return ret;
         }
-        
-        public static List<TTerm> ChangeLength<TTerm>(this List<TTerm> lst, int length)
-        {
-            if (length < 0)
-                throw new ArgumentException("the new length must be >= 0.");
+
+        public static List<TTerm> ChangeLength<TTerm>(this List<TTerm> lst, int length) {
+            if (length < 0) throw new ArgumentException("the new length must be >= 0.");
 
             if (lst.Count < length) {
                 lst.Capacity = length;
@@ -105,22 +111,25 @@ namespace UniKh.extensions {
                     lst.Add(default);
                 }
             }
-            
+
             while (lst.Count > length) lst.RemoveRange(length, lst.Count - length);
             return lst;
         }
-        
+
         public static List<TTerm> InPlaceFilter<TTerm>(this List<TTerm> lst, System.Predicate<TTerm> condition) {
             var shrinkOffset = 0;
             for (var i = 0; i < lst.Count; i++) {
                 var item = lst[i];
                 if (!condition(lst[i])) {
-                    shrinkOffset++; continue;
+                    shrinkOffset++;
+                    continue;
                 }
+
                 if (condition(item) && shrinkOffset > 0) {
                     lst[i - shrinkOffset] = item;
                 }
             }
+
             lst.ChangeLength(lst.Count - shrinkOffset);
             return lst;
         }
@@ -129,6 +138,7 @@ namespace UniKh.extensions {
             if (list.Count <= 0) {
                 throw new Exception("cannot call RandomElem for a empty list");
             }
+
             return list[random.Next(list.Count)];
         }
 
@@ -143,6 +153,7 @@ namespace UniKh.extensions {
             if (self.Count <= 0) {
                 throw new Exception("List pop first elem error: empty list");
             }
+
             elem = self[0];
             self.RemoveAt(0);
             return self;
@@ -162,6 +173,7 @@ namespace UniKh.extensions {
             if (self.Count <= 0) {
                 throw new Exception("List pop last elem error: empty list");
             }
+
             elem = self[self.Count - 1];
             self.RemoveAt(self.Count - 1);
             return self;
@@ -230,31 +242,42 @@ namespace UniKh.extensions {
             self.PopLast(out T t);
             return t;
         }
-        
-        
-        public static List<T> Shuffle<T>(this List<T> self) {
-            var lst = new List<T>(self.Count);
-            for (var i = 0; i < self.Count; i++) {
-                if (lst.Count <= 0) {
-                    lst.Push(self[i]);
-                    continue;
-                }
-                var pos = random.Next(lst.Count);
-                if (pos == i) continue; // otherwise A will not occur at first place
-                var tmp = lst[pos]; 
-                lst[pos] = self[i]; 
-                lst.Add(tmp);
-            }  
-            
-            for (var i = lst.Count - 1; i > 0; i--) {
-                var pos = random.Next(i);
-                if (pos == i) continue;
-                var temp = lst[pos];
-                lst[pos] = lst[i];
-                lst[i] = temp;
-            }
-            return lst;
-        } 
 
+
+        /// <summary>
+        /// Shuffle the list to random in place.
+        /// using Fisher-Yates Shuffle Algorithm
+        /// </summary>
+        public static List<T> ShuffleInPlace<T>(this List<T> self) {
+            var i = self.Count;
+            while (i > 1) {
+                var ind = random.Next(0, i);
+                if (--i == ind) continue;
+                var temp = self[ind];
+                self[ind] = self[i];
+                self[i] = temp;
+            }
+
+            return self;
+        }
+
+        /// <summary>
+        /// clone a new list and shuffle it.
+        /// using Inside-Out Shuffle Algorithm
+        /// </summary>
+        public static List<T> Shuffle<T>(this List<T> self) {
+            var count = self.Count;
+            var ret = new List<T>(count) { self[0] };
+            
+            for (var i = 1; i < count; i ++) {
+                ret.Append(self[i]);
+                var ind = random.Next(0, i + 1);
+                if(ind == i) continue;
+                ret[i] = ret[ind];
+                ret[ind] = self[i];
+            }
+
+            return ret;
+        }
     }
 }
