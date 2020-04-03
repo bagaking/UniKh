@@ -63,6 +63,11 @@ namespace UniKh.core.tween {
             return this;
         }
         
+        public Tweener SetDuration(float duration) {
+            Duration = duration;
+            return this;
+        }
+        
         public Tweener SetEase(Easing ease) {
             Ease = ease;
             return this;
@@ -84,6 +89,20 @@ namespace UniKh.core.tween {
 
         public void Terminate() {
             StateTransition(State.Terminated);
+        }
+
+        public Promise<Tweener> AsPromise() {
+            var promise = new Promise<Tweener>();
+            
+            this.OnStateChanged += (from, to) => {
+                if (to == State.Complete) {
+                    promise.Resolve(this);
+                } else if(to == State.Terminated || to == State.Error) {
+                    promise.Reject(new Exception("Tweener state fall into " + to));
+                }
+            };
+
+            return promise;
         }
         
     }

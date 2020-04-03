@@ -10,6 +10,33 @@ namespace UniKh.core.tween {
     
     public static class TweenExtensionTransform {
 
+        
+        public static Tweener TweenEulerAngle(this Transform trans, Vector3 value, float duration) {
+            var posOrg = trans.eulerAngles;
+            var tweener = new Tweener<Vector3>(
+                () => trans.eulerAngles,
+                val =>  trans.eulerAngles = val,
+                posOrg,
+                value,
+                EvaluateUnityVector3.Inst,
+                () => trans
+            );
+            return Tween.LazyInst.Activate(tweener.SetMove(duration));
+        }
+            
+        public static Tweener TweenMove(this Transform trans, Vector3 value, float duration) {
+            var posOrg = trans.position;
+            var tweener = new Tweener<Vector3>(
+                () => trans.position,
+                val =>  trans.SetPositionAndRotation(val, trans.rotation),
+                posOrg,
+                posOrg + value,
+                EvaluateUnityVector3.Inst,
+                () => trans
+            );
+            return Tween.LazyInst.Activate(tweener.SetMove(duration));
+        }
+        
         public static Tweener TweenMoveY(this Transform trans, float value, float duration) {
             var posOrg = trans.position;
             var tweener = new Tweener<float>(
