@@ -5,6 +5,18 @@ namespace UniKh.utils.Inspector {
     [System.AttributeUsage(System.AttributeTargets.Method)]
     public class BtnAttribute : PropertyAttribute {
         public string Name;
+        public bool OnlyWhenPlaying = false;
+
+        public BtnAttribute() {   
+        }
+        
+        public BtnAttribute(bool onlyWhenPlaying) {
+            OnlyWhenPlaying = onlyWhenPlaying;
+        }
+        
+        public BtnAttribute(string name, bool onlyWhenPlaying = false) : this(onlyWhenPlaying){
+            Name = name;
+        }
     }
 
     [System.AttributeUsage(System.AttributeTargets.Method)]

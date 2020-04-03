@@ -33,6 +33,7 @@ namespace UniKh.editor {
             var btnLst = methods.Filter(o => Attribute.IsDefined(o, typeof(BtnAttribute)));
             foreach (var memberInfo in btnLst) { 
                 var btnAttr = memberInfo.GetCustomAttribute<BtnAttribute>(); 
+                if(btnAttr.OnlyWhenPlaying && !Application.isPlaying) return;
                 if (!GUILayout.Button(btnAttr.Name.Exists() ? btnAttr.Name : memberInfo.Name)) continue;
                 var method = memberInfo as MethodInfo;
                 if (method != null) method.Invoke(mono, null);
