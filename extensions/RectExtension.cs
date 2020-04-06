@@ -46,6 +46,29 @@ namespace UniKh.extensions {
             
             return new Vector2(min, max);
         }
+         
         
+        public static Vector2 GetProjectionOf(this Rect rSelf, Vector2 v, Vector2 windowsShrink = default) {
+            var minPos = rSelf.min;
+            var size = rSelf.size;
+            if (windowsShrink != default) {
+                minPos += windowsShrink;
+                size -= windowsShrink * 2;
+            }
+            var offset = v - minPos;
+            if (offset.x > size.x) {
+                offset.x = size.x;
+            } else if (offset.x < 0) {
+                offset.x = 0;
+            }
+
+            if (offset.y > size.y) {
+                offset.y = size.y;
+            } else if (offset.y < 0) {
+                offset.y = 0;
+            }
+
+            return offset + minPos;
+        }
     }
 }

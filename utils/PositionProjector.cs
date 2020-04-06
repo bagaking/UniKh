@@ -7,6 +7,7 @@
 using System;
 using UniKh.coordinate;
 using UniKh.core;
+using UniKh.extensions;
 using UnityEngine;
 
 namespace UniKh.utils {
@@ -39,7 +40,22 @@ namespace UniKh.utils {
             var ray = camScene.ViewportPointToRay(viewportPos);
             return plane.IntersectWithRay(ray);
         }
+        public static Vector2 ScenePositionToUILocalPositionRestricted(
+            Transform targetTransform,
+            RectTransform parentRectTransform,
+            Camera camScene,
+            Canvas canvas = null,
+            Vector2 windowsShrink = default) {
+            if (null == targetTransform) {
+                throw new Exception(
+                    "UniKh.utils.PositionProjector ScenePositionToUILocalPosition error: target are not exist");
+            }
 
+            var pos = ScenePositionToUILocalPosition(targetTransform.position, parentRectTransform, camScene, canvas);
+            
+            return parentRectTransform.rect.GetProjectionOf(pos, windowsShrink)  ; // pos
+        }
+        
         public static Vector2 ScenePositionToUILocalPosition(
             Transform targetTransform,
             RectTransform parentRectTransform,

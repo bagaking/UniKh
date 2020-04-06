@@ -56,6 +56,10 @@ namespace UniKh.extensions {
             return new Vector3(v.x, v.y, fnMapping(v.z));
         }
 
+        public static Vector3 ToVector2XnZ(this Vector3 v) {
+            return new Vector2(v.x, v.z);
+        }
+        
         public static float Dot(this Vector2 v, Vector2 vt) {
             return Vector2.Dot(v, vt);
         }
