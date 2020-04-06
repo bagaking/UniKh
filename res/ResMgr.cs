@@ -37,7 +37,7 @@ namespace UniKh.mgr {
                 Cache1 = new Dictionary<string, T>(PageSize);
             }
 
-            if (!Cache1.ContainsKey(key) && Cache1.Count >= PageSize) {
+            if (!Cache1.ContainsKey(key) && Cache1.Count >= PageSize) { // todo: 如果是 monoBehavior 退出缓存时要手动删除一下
                 Cache2 = Cache1;
                 Cache1 = new Dictionary<string, T>(PageSize);
             }

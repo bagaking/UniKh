@@ -59,6 +59,15 @@ namespace UniKh.res {
 
         public void Kill(GameObject gObj) {
             var objHash = gObj.GetHashCode();
+
+            if (!gameObject.activeInHierarchy) {
+                if (objIds.ContainsKey(objHash)) {
+                    objIds.Remove(objHash);
+                }
+                Destroy(gObj);
+                return;
+            }
+            
             if (!objIds.ContainsKey(objHash)) {
                 // throw new Exception($"ResPool: gObj {gObj} with absent hash are killed.");
                 Debug.LogError($"ResPool: gObj {gObj} with absent hash are killed.");
