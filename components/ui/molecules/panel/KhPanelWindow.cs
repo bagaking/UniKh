@@ -4,6 +4,7 @@
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
  */
 
+using UniKh.core;
 using UniKh.extensions;
 using UnityEngine;
 using UnityEngine.UI;
@@ -42,8 +43,8 @@ namespace UniKh.comp.ui {
         }
         
         [ContextMenu("Hide")]
-        public void Hide() {
-            motion.Hide();
+        public Promise<object> Hide(float durationScale = 1) {
+            return motion.Hide(durationScale);
         }
         
     }

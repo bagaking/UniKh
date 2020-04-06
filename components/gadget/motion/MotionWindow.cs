@@ -7,8 +7,12 @@
 using System; 
 using UniKh.extensions; 
 
-using System.Collections; 
+using System.Collections;
+using UniKh.core;
+using UniKh.core.csp;
+using UniKh.core.csp.waiting;
 using UniKh.core.tween;
+using UniKh.utils.Inspector;
 using UnityEngine;
 
 namespace UniKh.comp.ui {
@@ -54,7 +58,7 @@ namespace UniKh.comp.ui {
             return tweener;
         }
          
-        [ContextMenu("Show")]
+        [Btn(true)]
         public void Show() {
             if (startOffset == Vector3.zero && startScaleRate == 1) {
                 return;
@@ -77,22 +81,26 @@ namespace UniKh.comp.ui {
             });
         }
         
-        [ContextMenu("Hide")]
-        public void Hide() {
-            if (startOffset == Vector3.zero && startScaleRate == 1) {
-                return;
+        
+        [Btn(true)]
+        public Promise<object> Hide(float durationScale = 1) {
+            if (startOffset == Vector3.zero && Math.Abs(startScaleRate - 1) < 0.0001f) {
+                return Skip.New.Start().AsPromise();
             }
             
             if (inAction) {
-                return;
+                return Condition.New.Start(_=>!inAction).AsPromise();
             }
 
-            inAction = true; 
-            ExecuteAnimation(Tweener.Directions.Backward, (from, to) => {
-                if (to <= Tweener.State.Active) return;
-                inAction = false;
-                phase = false; 
-            });
+            inAction = true;
+            return ExecuteAnimation(
+                Tweener.Directions.Backward,
+                (from, to) => {
+                    if (to <= Tweener.State.Active) return;
+                    inAction = false;
+                    phase = false;
+                }
+            ).SetDuration(durationShow * durationScale).AsPromise().Then(_ => (object)_);
         }
     }
 }

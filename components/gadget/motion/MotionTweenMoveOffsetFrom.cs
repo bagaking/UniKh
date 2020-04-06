@@ -11,6 +11,7 @@ using UniKh.utils;
 using System.Collections;
 using System.Collections.Generic;
 using UniKh.core.tween;
+using UniKh.utils.Inspector;
 using UnityEngine; 
 
 namespace UniKh.comp.ui {
@@ -37,6 +38,12 @@ namespace UniKh.comp.ui {
             }
             transform.TweenMoveOffsetLocal(- startOffset, durationShow).SetEase(easeActive);
             yield return null;
+        }
+
+        [Btn(true)]
+        public void Hide() {
+            transform.TweenMoveOffsetLocal(startOffset, durationShow).SetEase(easeActive).OnStateChanged +=
+                (state, state1) => { this.SetObjectActive(false); };
         }
     }
 } 
