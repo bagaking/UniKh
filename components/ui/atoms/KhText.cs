@@ -104,6 +104,7 @@ namespace UniKh.comp.ui {
             get => numberTextSetting.value;
             set {
                 m_type = Type.NumberText;
+                if (Math.Abs(numberTextSetting.value - value) < 0.00001f) return;
                 numberTextSetting.value = value;
                 SetAllDirty();
             }
