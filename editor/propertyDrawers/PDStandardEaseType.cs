@@ -1,4 +1,4 @@
-/** PDCubicBezier.cs
+/** PDStandardEaseType.cs
  *  Author:         bagaking <kinghand@foxmail.com>
  *  CreateTime:     2019/10/16 18:52:00
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
