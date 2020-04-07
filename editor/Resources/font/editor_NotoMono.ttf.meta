@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f0c47b7490d7dfa4cb5b8d5237b6fdf4
+guid: 742e3a6becdb59f4db253e2d65f664ed
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,9 +8,9 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: PangMenZhengDao
+  fontName: Noto Mono
   fontNames:
-  - PangMenZhengDao
+  - Noto Mono
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

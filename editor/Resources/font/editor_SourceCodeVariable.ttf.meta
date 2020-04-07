@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f0c47b7490d7dfa4cb5b8d5237b6fdf4
+guid: c154dd4b235f25846b8ef4c62fe88fa6
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,9 +8,9 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: PangMenZhengDao
+  fontName: Source Code Variable
   fontNames:
-  - PangMenZhengDao
+  - Source Code Variable
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
