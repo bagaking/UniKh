@@ -1,4 +1,4 @@
-using UniKh.mgr;
+using UniKh.res;
 using UnityEditor;
 
 namespace UniKh.editor {

@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UniKh.core;
-using UniKh.extensions;
-using UniKh.mgr;
+using UniKh.extensions; 
 using UnityEngine;
 
 namespace UniKh.res {

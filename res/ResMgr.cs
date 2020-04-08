@@ -1,70 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Giu.Basic.Helper;
+using System.Collections.Generic;  
 using UniKh.core;
 using UniKh.core.csp;
-using UniKh.utils.Inspector;
-using Unity.Collections;
+using UniKh.utils;
+using UniKh.utils.Inspector; 
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace UniKh.mgr {
-    public class CacheLru<T> where T : class {
-        public Dictionary<string, T> Cache1 { get; private set; }
-        public Dictionary<string, T> Cache2 { get; private set; }
-
-        public int PageSize { get; private set; }
-
-        public CacheLru(int pageSize = 64) {
-            Cache1 = new Dictionary<string, T>(PageSize = pageSize);
-        }
-
-        public T Get(string key) {
-            if (Cache1 != null && Cache1.ContainsKey(key)) {
-                return Cache1[key];
-            }
-
-            if (Cache2 != null && Cache2.ContainsKey(key)) {
-                return Cache2[key];
-            }
-
-            return null;
-        }
-
-        public TVal Set<TVal>(string key, TVal obj) where TVal : T {
-            if (Cache1 == null) {
-                Cache1 = new Dictionary<string, T>(PageSize);
-            }
-
-            if (!Cache1.ContainsKey(key) && Cache1.Count >= PageSize) { // todo: 如果是 monoBehavior 退出缓存时要手动删除一下
-                Cache2 = Cache1;
-                Cache1 = new Dictionary<string, T>(PageSize);
-            }
-
-            Cache1[key] = obj;
-            return obj;
-        }
-
-
-        public override string ToString() {
-            var sb = new StringBuilder("ResMgr : ");
-            sb.AppendLine().Append("cache 1 :");
-            if (Cache1 != null)
-                foreach (var key in Cache1.Keys) {
-                    sb.Append(key).Append(' ');
-                }
-
-            sb.AppendLine().Append("cache 2 :");
-            if (Cache2 != null)
-                foreach (var key in Cache2.Keys) {
-                    sb.Append(key).Append(' ');
-                }
-
-            return sb.ToString();
-        }
-    }
-
+namespace UniKh.res {
+     
     public class ResMgr : Singleton<ResMgr> {
         public CacheLru<Object> cache = new CacheLru<Object>(64);
 

@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using UniKh.utils.Inspector;
 using UniKh.extensions;
-using UniKh.mgr;
-using UniKh.utils;
+using UniKh.res;
+using UniKh.utils.Inspector; 
 using UnityEditor;
 using UnityEngine;
 

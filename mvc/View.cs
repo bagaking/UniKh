@@ -1,6 +1,3 @@
-using System.Collections;
-using UniKh.core;
-using UniKh.mgr;
 using UnityEngine;
 
 namespace UniKh.mvc {
