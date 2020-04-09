@@ -4,6 +4,7 @@
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
  */
 
+using UnityEditor;
 using UnityEngine;
 
 namespace UniKh.editor {
@@ -12,9 +13,7 @@ namespace UniKh.editor {
         public static GUIStyle LabelCodeStyle {
             get {
                 if (_labelCodeStyle == null) {
-                    _labelCodeStyle = new GUIStyle(GUI.skin.label);
-                    _labelCodeStyle.font = EditorFontCode;
-                    return _labelCodeStyle;
+                    _labelCodeStyle = new GUIStyle(GUI.skin.label) {font = EditorFontCode}; 
                 } 
                 return _labelCodeStyle;
             }
@@ -24,14 +23,25 @@ namespace UniKh.editor {
         public static GUIStyle LabelEditorStyle {
             get {
                 if (_labelEditorStyle == null) {
-                    _labelEditorStyle = new GUIStyle(GUI.skin.label);
-                    _labelEditorStyle.font = EditorFontEditor;
-                    return _labelEditorStyle;
+                    _labelEditorStyle = new GUIStyle(GUI.skin.label) {font = EditorFontEditor}; 
                 } 
                 return _labelEditorStyle;
             }
         }
         private static GUIStyle _labelEditorStyle;
+        
+        public static GUIStyle LabelEditorTagStyle {
+            get {
+                if (_labelEditorTagStyle == null) {
+                    _labelEditorTagStyle = new GUIStyle(LabelEditorStyle) { 
+                        alignment = TextAnchor.LowerRight,
+                        padding = new RectOffset(2, 2, 2, 2)
+                    }; 
+                } 
+                return _labelEditorTagStyle;
+            }
+        }
+        private static GUIStyle _labelEditorTagStyle;
         
         public static Font EditorFontCode {
             get {
@@ -71,5 +81,33 @@ namespace UniKh.editor {
         public static Vector2 CulcContentSize(GUIContent content, GUIStyle style) {
             return style.CalcSize(content);
         }
+        
+        public static Rect DrawTag(string tag, string hint) {
+            var rect = EditorGUILayout.GetControlRect(false, 16);
+            Render.BeginColor(Color.gray);
+            GUI.Label(
+                rect,
+                new GUIContent(tag, hint),
+                LabelEditorTagStyle
+            );
+            Render.EndColor();
+            return rect;
+        }
+        
+        public static void DrawOverlapHeaderRect(Rect r, Color cLight, Color cShadow) { 
+            cLight.a = 0.1f;
+            cShadow.a = 0.05f;
+            EditorGUI.DrawRect(r, cLight);
+            var lightLine = new Rect(r.xMin, r.yMax - 2, r.width, 2);
+            EditorGUI.DrawRect(lightLine, cLight);
+            lightLine.y += 1;
+            lightLine.height = 1;
+            EditorGUI.DrawRect(lightLine, cLight);
+            lightLine.y += 1;
+            EditorGUI.DrawRect(lightLine, cShadow);
+            lightLine.height += 1;
+            EditorGUI.DrawRect(lightLine, cShadow);
+        }
+
     }
 }
