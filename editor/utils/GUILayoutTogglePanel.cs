@@ -7,46 +7,75 @@
 using UnityEngine;
 using System;
 using UniKh.utils;
+using UnityEditor;
 
 namespace UniKh.editor {
     public class GUILayoutTogglePanel {
+        public string Title;
+        public bool State;
 
-        public string title;
-        public bool state;
+        public GUIStyle TabStyle {
+            get {
+                if (_tabStyle == null) {
+                    // GUI.skin.GetStyle("dragtab")
+                    _tabStyle = new GUIStyle(GUI.skin.button) {
+                        font = EditorUtils.EditorFontEditor,
+                        fontSize = 12,
+                        fontStyle = FontStyle.Normal,
+                        alignment = TextAnchor.MiddleLeft,
+                        padding = {
+                            left = 8,
+                        },
+                        margin = new RectOffset(1, 1, 0, 0)
+                    };
+                }
+
+                return _tabStyle;
+            }
+        }
+        
+        public Color BgColor;
+
         public GUILayoutTogglePanel(string title, bool initState = false, bool usingScroll = true) {
-            this.title = title;
-            this.state = initState;
+            this.Title = title;
+            this.State = initState;
+            BgColor = new Color(0.9f, 0.95f, 0.96f);
             if (usingScroll) {
-                scrollPanel = new GUILayoutScrollPanel();
+                ScrollPanel = new GUILayoutScrollPanel();
             }
         }
 
-        public GUILayoutScrollPanel scrollPanel;
+        public GUILayoutScrollPanel ScrollPanel;
+        private GUIStyle _tabStyle;
 
         public void Draw(string appendTitle, Action drawContent) {
             GUILayout.Space(3f);
 
             var cBgOrigin = GUI.backgroundColor;
-            GUI.backgroundColor = new Color(2f, 2f, 0.9f);
-            state = GUILayout.Toggle(state, SGen.New[state ? "\u25B2" : "\u25BC"]["<b> <size=11>"][title][' '][appendTitle]["</size></b>"].End, "dragtab", GUILayout.MinWidth(20f));
+            GUI.backgroundColor = BgColor;
+            var text = SGen.New[State ? "\u25B2 " : "\u25BC "][Title][' '][appendTitle].End;
+            //["<b> <size=11>"]["</size></b>"]
+
+            State = GUILayout.Toggle(State, text, TabStyle, GUILayout.MinWidth(20f));
+            var rectA = GUILayoutUtility.GetLastRect();
+            // EditorGUI.DrawRect(rectA,  GUI.backgroundColor);
 
             GUILayout.Space(2f);
             GUI.backgroundColor = cBgOrigin;
 
-            if (state && null != drawContent) {
-                if(null != scrollPanel) {
-                    scrollPanel.Draw(drawContent);
+            if (State && null != drawContent) {
+                if (null != ScrollPanel) {
+                    ScrollPanel.Draw(drawContent);
                 } else {
                     drawContent();
                 }
             } else {
                 GUILayout.Space(3f);
             }
-
         }
 
-        public void Draw(Action DeawContent) {
-            this.Draw("", DeawContent);
+        public void Draw(Action drawContent) {
+            this.Draw("", drawContent);
         }
     }
 }

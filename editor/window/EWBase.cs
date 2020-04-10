@@ -33,10 +33,12 @@ namespace UniKh.editor {
 
 
         protected virtual void OnGUI() {
-            if (__initiated) {
-                HandleBasicEvent(Event.current);
-                GUIProc(Event.current);
-            }
+            if (!__initiated) return;
+            
+            HandleBasicEvent(Event.current);
+            EditorUtils.Render.BeginSandBox();
+            GUIProc(Event.current);
+            EditorUtils.Render.EndSandBox();
         }
 
         public virtual bool Initial() { return true; }
