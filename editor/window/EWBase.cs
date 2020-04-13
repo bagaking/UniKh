@@ -24,16 +24,16 @@ namespace UniKh.editor {
         }
 
         [System.NonSerialized]
-        private bool __initiated = false;
+        private bool _initiated = false;
 
         protected virtual void OnEnable() {
-            __initiated = Initial();
+            _initiated = Initial();
             Repaint();
         }
 
 
         protected virtual void OnGUI() {
-            if (!__initiated) return;
+            if (!_initiated) return;
             
             HandleBasicEvent(Event.current);
             EditorUtils.Render.BeginSandBox();
@@ -46,15 +46,15 @@ namespace UniKh.editor {
         public abstract void GUIProc(Event e);
 
 
-        public const float standardItemHeight = 18;
+        public const float StandardItemHeight = 18;
 
-        private bool __first_layout_executed = false;
+        private bool _firstLayoutExecuted = false;
 
         public Vector2 MouseDownPos { get; private set; }
 
         public Vector2 MouseCurrentPos { get; private set; }
 
-        public Vector2 MouseDelta { get { return MouseCurrentPos - MouseDownPos; } }
+        public Vector2 MouseDelta => MouseCurrentPos - MouseDownPos;
 
         public bool MouseDown { get; private set; }
 

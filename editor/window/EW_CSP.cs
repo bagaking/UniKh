@@ -7,7 +7,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using UniKh.core;
 using UniKh.extensions;
 using System;
@@ -50,6 +49,8 @@ namespace UniKh.editor {
         // Related fields should be cleared when restart the game, cuz the editor state will not be cleared;
         private static long latestCollectTick { get; set; } = -1;
         public long TicksLost { get; private set; } = 0;
+        
+        private Rect rc0 = new Rect();
 
         public static Dictionary<int, ProcStatistic> procStatistics = new Dictionary<int, ProcStatistic>();
 
@@ -57,6 +58,7 @@ namespace UniKh.editor {
             if (!procStatistics.ContainsKey(id)) {
                 procStatistics.Add(id, new ProcStatistic());
             }
+
             return procStatistics[id];
         }
 
@@ -64,16 +66,41 @@ namespace UniKh.editor {
         public GUILayoutTogglePanel tpProcFinished = new GUILayoutTogglePanel("Proc finished", false, false);
         public GUILayoutScrollPanel scrollProcsInfo = new GUILayoutScrollPanel();
 
+        public GUIStyle labelStyle {
+            get {
+                if (_labelStyle == null) {
+                    _labelStyle = new GUIStyle(EditorUtils.LabelEditorStyle) {
+                        wordWrap = true
+                    };
+                }
+
+                return _labelStyle;
+            }
+        }
+
+        private GUIStyle _labelStyle;
+
+        public Color colorAlert = new Color(1, 0.2f, 0.1f);
+        private Color shadowColor = new Color(0, 0, 0, 0.08f);
+
 
         public override void GUIProc(Event e) {
             if (latestCollectTick < 0) {
                 if (!Application.isPlaying) {
-                    EditorGUILayout.LabelField("UniKh/CSP can only be accessed while the program is running ...");
+                    EditorUtils.Render.SetColor(colorAlert);
+                    EditorUtils.Render.Space(16f);
+                    EditorGUILayout.LabelField(
+                        "UniKh/CSP can only be accessed while the program is running ...",
+                        labelStyle
+                    );
+
                     return;
                 }
 
                 if (!CSP.Inst) {
-                    EditorGUILayout.LabelField("UniKh/CSP cre not loaded ...");
+                    EditorUtils.Render.SetColor(colorAlert);
+                    EditorUtils.Render.Space(16f);
+                    EditorGUILayout.LabelField("UniKh/CSP cre not loaded ...", labelStyle);
                     return;
                 }
             }
@@ -84,90 +111,135 @@ namespace UniKh.editor {
             procStatistics.Keys.CopyTo(array, 0);
             var disabledProcs = new List<int>(array);
 
-            scrollProcsInfo.Draw(() => {
-                if (Application.isPlaying) {
-                    DrawActiveProcs();
-                    disabledProcs = disabledProcs.Filter(procID => !CSP.Inst.procLst.Exists(proc => proc.ID == procID));
-                } else {
-                    EditorGUILayout.LabelField("UniKh/CSP is not running. Here's the data of procs from the last run.");
-                }
-                disabledProcs.Reverse();
-                DrawFinishedProcs(disabledProcs);
-            });
+            scrollProcsInfo.Draw(
+                () => {
+                    if (Application.isPlaying) {
+                        DrawActiveProcs();
+                        disabledProcs =
+                            disabledProcs.Filter(procID => !CSP.Inst.procLst.Exists(proc => proc.ID == procID));
+                    } else {
+                        EditorGUILayout.LabelField(
+                            "UniKh/CSP is not running. Here's the data of procs from the last run.",
+                            labelStyle
+                        );
+                    }
 
+
+                    disabledProcs.Reverse();
+                    DrawFinishedProcs(disabledProcs);
+                }
+            );
         }
 
         public void DrawRuntime() {
             if (!CSP.Inst) {
-                EditorGUILayout.LabelField("UniKh/CSP cre not running ...");
-            } else {
-                EditorGUILayout.LabelField("Runtime:");
-                EditorGUILayout.LabelField("|  Procs\t| Frames\t| MS\t| Ticks\t| Updates\t| Lost");
-                EditorGUILayout.LabelField($"| {CSP.Inst.procLst.Count}\t| {CSP.Inst.MonitExecutedInFrame}\t| {CSP.Inst.MonitTickTimeCost}\t| {CSP.Inst.TotalTicks}\t| {CSP.Inst.MonitTotalUpdates}\t| {TicksLost}");
+                EditorUtils.Render.SetColor(colorAlert);
+                EditorUtils.Render.Space(16f);
+                EditorGUILayout.LabelField("UniKh/CSP is not running ...", labelStyle);
+                EditorUtils.Render.SetColor(Color.white);
+                return;
             }
+
+            EditorUtils.Render.SetColor(Color.white);
+            EditorGUILayout.LabelField("Runtime:", EditorUtils.LabelEditorStyle);
+            EditorGUILayout.LabelField(
+                "| Procs\t| Frames\t| MS\t| Ticks\t| Updates\t| Lost",
+                EditorUtils.LabelCodeStyle
+            );
+            EditorGUILayout.LabelField(
+                $"| {CSP.Inst.procLst.Count}\t| {CSP.Inst.MonitExecutedInFrame}\t| {CSP.Inst.MonitTickTimeCost}\t| {CSP.Inst.TotalTicks}\t| {CSP.Inst.MonitTotalUpdates}\t| {TicksLost}",
+                EditorUtils.LabelCodeStyle
+            );
         }
 
         public void DrawActiveProcs() {
-            tpProcInAction.Draw(CSP.Inst.procLst.Count.ToString(), () => {
-                foreach (var proc in CSP.Inst.procLst) {
-                    var st = GetProcStatistic(proc.ID);
+            tpProcInAction.Draw(
+                CSP.Inst.procLst.Count.ToString(),
+                () => {
+                    CSP.Inst.procLst.ForEach((proc, i) => {
+                        var st = GetProcStatistic(proc.ID);
 
-                    var OpCurr = proc.GetOpCurr();
-                    EditorGUILayout.LabelField(
-                        SGen.New[proc.ID][". #"][proc.Tag]
-                        ["  Detected:at-"][st.DetectedAt][",tick-"][st.DetectedTick]
-                        ["  ExecutedTime:"][proc.ExecutedTime]
-                        ["  Frames:"][proc.MonitTickFrameCount]['/'][st.TotalFrameCount]
-                        ["  MS:"][proc.MonitTickTimeCost]['/'][st.TotalCpuTimeCostMS]
-                        ["  Waiting:"][OpCurr == null ? "(null)" : OpCurr.ToString()]
-                        .End);
+                        var OpCurr = proc.GetOpCurr();
+                        EditorGUILayout.LabelField(
+                            SGen.New[proc.ID][". #"][proc.Tag]
+                                [" | At:"][st.DetectedAt]["(tick:"][st.DetectedTick][')']
+                                [" ExecutedTime:"][proc.ExecutedTime]
+                                [" Frames:"][proc.MonitTickFrameCount]['/'][st.TotalFrameCount]
+                                [" MS:"][proc.MonitTickTimeCost]['/'][st.TotalCpuTimeCostMS]
+                                [" Waiting:"][OpCurr == null ? "(null)" : OpCurr.ToString()]
+                                .End,
+                            EditorUtils.LabelCodeStyle
+                        );
+                        Rect rect = rc0;
+                        if( i%2 == 0) {
+                            rect = GUILayoutUtility.GetLastRect();
+                        }
 
-                    var StackTrace = SGen.New["Stack: "];
-                    proc.ProcStack.ForEach((layer, ind) => {
-                        StackTrace = StackTrace['/'][layer.Current == null ? "null" : layer.Current.ToString()];
+                        var StackTrace = SGen.New["Stack: "];
+                        proc.ProcStack.ForEach(
+                            (layer, ind) => {
+                                StackTrace = StackTrace['/'][layer.Current == null ? "null" : layer.Current.ToString()];
+                            }
+                        );
+                        EditorGUILayout.LabelField(StackTrace.End, EditorUtils.LabelCodeStyle);
+                        if( i%2 == 0) {
+                            var rect2 = GUILayoutUtility.GetLastRect();
+                            EditorGUI.DrawRect(new Rect(rect.position, new Vector2(rect.width, rect.height + rect2.height + 4)), shadowColor);
+                        }
                     });
-                    EditorGUILayout.LabelField(StackTrace.End);
                 }
-            });
+            );
         }
 
         public void DrawFinishedProcs(List<int> finishedProcs) {
-            tpProcFinished.Draw("(" + finishedProcs.Count + ")", () => {
-                finishedProcs.ForEach(procID => {
-                    var id = procID;
-                    var st = GetProcStatistic(id);
-                    EditorGUILayout.LabelField(
-                        SGen.New[id][". #"][st.Tag]
-                        ["  Detected:at-"][st.DetectedAt][",tick-"][st.DetectedTick]
-                        ["  Frames:"][st.TotalFrameCount]
-                        ["  MS:"][st.TotalCpuTimeCostMS]
-                        ["  Finished:at-"][st.FinishAt][",tick-"][st.FinishTick]
-                        .End);
-                });
-            });
+            tpProcFinished.Draw(
+                "(" + finishedProcs.Count + ")",
+                () => {
+                    finishedProcs.ForEach((procID, i) => {
+                            var id = procID;
+                            var st = GetProcStatistic(id);
+                            EditorGUILayout.LabelField(
+                                SGen.New[id][". #"][st.Tag]
+                                    [" | At:"][st.DetectedAt]['-'][st.FinishAt]["(tick:"][st.DetectedTick]['-'][st.FinishTick][')']
+                                    [" Frames:"][st.TotalFrameCount]
+                                    [" MS:"][st.TotalCpuTimeCostMS]
+                                    .End,
+                                EditorUtils.LabelCodeStyle
+                            );
+                            if( i%2 == 0) {
+                                var rect = GUILayoutUtility.GetLastRect();
+                                EditorGUI.DrawRect(rect, shadowColor);
+                            }
+                        }
+                    );
+                }
+            );
         }
 
         private void CollectData() {
             if (null == CSP.Inst) {
                 return;
             }
+
             var totalTicks = CSP.Inst.TotalTicks;
             if (latestCollectTick >= totalTicks) {
                 return;
             }
+
             foreach (var proc in CSP.Inst.procLst) {
                 var st = GetProcStatistic(proc.ID);
                 st.Tag = proc.Tag;
                 st.TotalCpuTimeCostMS += proc.MonitTickTimeCost;
                 st.TotalFrameCount += proc.MonitTickFrameCount;
 
-
                 if (st.DetectedAt == 0) {
                     st.DetectedAt = proc.ExecutedTime;
                 }
+
                 if (st.DetectedTick == 0) {
                     st.DetectedTick = totalTicks;
                 }
+
                 st.FinishAt = proc.ExecutedTime;
                 st.FinishTick = totalTicks;
             }
@@ -175,27 +247,26 @@ namespace UniKh.editor {
             if (latestCollectTick != -1) {
                 var skiped = (totalTicks - latestCollectTick - 1);
                 if (skiped != 0) {
-                    Debug.LogWarning(SGen.New["EW_CSP CollectData: lost ticks - skiped:"][skiped][" TotalTicks:"][totalTicks][" latestCollectTick:"][latestCollectTick]);
+                    Debug.LogWarning(
+                        SGen.New["EW_CSP CollectData: lost ticks - skiped:"][skiped][" TotalTicks:"][totalTicks][
+                            " latestCollectTick:"][latestCollectTick]
+                    );
                     TicksLost += skiped;
                 }
             }
-            latestCollectTick = totalTicks;
 
+            latestCollectTick = totalTicks;
         }
 
         public void Update() {
-
-
             //if (!Application.isPlaying && using_corou_in_editor) {
             //    Corou.TriggerTick();
             //}
 
             if (Application.isPlaying && !EditorApplication.isPaused) {
-                CollectData();
+                CollectData(); // todo: fix this
                 Repaint();
             }
         }
-
     }
 }
-
