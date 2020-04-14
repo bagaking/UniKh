@@ -1,3 +1,5 @@
+![Logo](/editor/Resources/logo/logo-unikh-light.png)
+
 # Unikh - An enterprise level game framework for unity
 
 Unikh is an enterprise level game framework for unity, which is methodology for creating game systems. It includes a well-thought-out framework design and a rich set of toolchains to help developers quickly build high-quality commercial or indie game projects.
