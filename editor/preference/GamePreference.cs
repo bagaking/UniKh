@@ -18,6 +18,10 @@ namespace UniKh.editor {
 
         [PreferenceItem("UniKh/Preferences")]
         public static void DrawUniKhPreferences() {
+             
+            var fontOrg = EditorStyles.label.font;
+            EditorStyles.label.font = EditorUtils.EditorFontEditor; 
+            
             var configList =
                 AssetDatabase.LoadAssetAtPath<KhPreferenceStatic>($"Assets/Resources/{KhPreferenceStatic.assetName}.asset");
             if (configList == null) {
@@ -57,7 +61,12 @@ namespace UniKh.editor {
 
             soConfig.ApplyModifiedProperties();
 
+            EditorStyles.label.font = fontOrg;
 
+            var logo = EditorUtils.UniKh.LogoLight.Val;
+            var size = new Vector2(logo.width, logo.height) / 4;
+            var rect = GUILayoutUtility.GetRect(11, 100000, 11, 1000000);
+            GUI.DrawTexture(new Rect(new Vector2(rect.width - size.x - 2, rect.position.y + rect.height - size.y - 2), size),  EditorUtils.UniKh.LogoLight);
 //                EditorGUILayout.EndScrollView();
         }
     }
