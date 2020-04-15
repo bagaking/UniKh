@@ -41,6 +41,7 @@ namespace UniKh.editor {
             procStatistics.Clear();
             //}
             //};
+            IsUniKhWindow = true;
 
             return true;
         }

@@ -4,44 +4,50 @@
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
  */
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-using UniKh.core;
-using UniKh.extensions;
+using System;
 using UnityEditor;
+using UnityEngine;
 
 namespace UniKh.editor {
     public abstract class EWBase<T> : EditorWindow where T : EWBase<T> {
-
         public static T GetWindow(string title = "UniKh - New Window") {
             var window = GetWindow<T>();
+            // window.titleContent = new GUIContent(EditorUtils.UniKh.logo, title);
             window.titleContent = new GUIContent(title);
             window.Focus();
             window.Repaint();
             return window;
         }
 
-        [System.NonSerialized]
-        private bool _initiated = false;
+        [NonSerialized] private bool _initiated = false;
 
         protected virtual void OnEnable() {
             _initiated = Initial();
             Repaint();
         }
 
+        public bool IsUniKhWindow { get; protected set; } = false;
 
         protected virtual void OnGUI() {
             if (!_initiated) return;
-            
+
+            if (IsUniKhWindow) {
+                var size =
+                    new Vector2(EditorUtils.UniKh.LogoWhite.Val.width, EditorUtils.UniKh.LogoWhite.Val.height) /
+                    4;
+                GUI.DrawTexture(new Rect(position.size - size - Vector2.one * 1, size), EditorUtils.UniKh.LogoGray);
+                // GUI.DrawTexture(new Rect(position.size - size - Vector2.one * 1, size), EditorUtils.UniKh.LogoWhite);
+            }
+
             HandleBasicEvent(Event.current);
             EditorUtils.Render.BeginSandBox();
             GUIProc(Event.current);
             EditorUtils.Render.EndSandBox();
         }
 
-        public virtual bool Initial() { return true; }
+        public virtual bool Initial() {
+            return true;
+        }
 
         public abstract void GUIProc(Event e);
 
@@ -63,20 +69,16 @@ namespace UniKh.editor {
             switch (e.type) {
                 case EventType.MouseDown:
                     MouseDown = true;
-                    MouseDownPos = MouseCurrentPos; break;
+                    MouseDownPos = MouseCurrentPos;
+                    break;
                 case EventType.MouseUp:
-                    MouseDown = false; break;
+                    MouseDown = false;
+                    break;
             }
-
         }
 
         public void SendWindowEvent(string eventName) {
             SendEvent(EditorGUIUtility.CommandEvent(eventName));
         }
-
-
-
-
-
     }
 }

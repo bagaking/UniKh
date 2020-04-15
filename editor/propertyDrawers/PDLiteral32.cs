@@ -16,74 +16,68 @@ namespace UniKh.editor {
     [CustomPropertyDrawer(typeof(Literal32))]
     public class PDLiteral32 : PropertyDrawer {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
-            return (base.GetPropertyHeight(property, label) + 10) ;
+            return (base.GetPropertyHeight(property, label) + 10);
         }
 
-        public static GUIStyle TagStyle {
-            get {
-                if (_tagStyle == null) {
-                    _tagStyle = new GUIStyle(EditorUtils.LabelCodeStyle) {alignment = TextAnchor.MiddleRight, fontSize = 9};
-                    return _tagStyle;
-                } 
-                return _tagStyle;
-            }
-        }
-        private static GUIStyle _tagStyle;
+        public static LazyVal<GUIStyle> TagStyle = new LazyVal<GUIStyle>(
+            () => new GUIStyle(EditorUtils.LabelCodeStyle) {alignment = TextAnchor.MiddleRight, fontSize = 9}
+        );
         
-        public static GUIStyle FloatStyle {
-            get {
-                if (_floatStyle == null) {
-                    _floatStyle = new GUIStyle(GUI.skin.label) {alignment = TextAnchor.UpperRight, fontSize = 10 };
-                    _floatStyle.fontStyle = FontStyle.Italic;
-                    _floatStyle.font = EditorUtils.EditorFontEditor;
-                    return _floatStyle;
-                } 
-                return _floatStyle;
+        public static LazyVal<GUIStyle> FloatStyle = new LazyVal<GUIStyle>(
+            () => {
+                var floatStyle = new GUIStyle(GUI.skin.label) {
+                    alignment = TextAnchor.UpperRight,
+                    fontSize = 10,
+                    fontStyle = FontStyle.Italic,
+                    font = EditorUtils.EditorFontEditor
+                };
+                return floatStyle;
             }
-        }
+        );
+ 
 
-        private static GUIStyle _floatStyle;
-        
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) {
             EditorGUI.BeginProperty(position, label, property);
 
             // position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
 
             var render = EditorUtils.Render.BeginSandBox();
-             
+
             // EditorGUI.indentLevel = 0;
             position.position += new Vector2(0, 0);
- 
-            
+
+
             var r = new Rect(position.position, position.size - new Vector2(0, 9));
-            var rTag = new Rect(position.position + new Vector2(2, position.size.y - 10), new Vector2(position.size.x, 10));
+            var rTag = new Rect(
+                position.position + new Vector2(2, position.size.y - 10),
+                new Vector2(position.size.x, 10)
+            );
 
             unchecked {
-                var h = (uint)property.FindPropertyRelative("h").longValue;
-                var l = (uint)property.FindPropertyRelative("l").longValue;
+                var h = (uint) property.FindPropertyRelative("h").longValue;
+                var l = (uint) property.FindPropertyRelative("l").longValue;
                 var rawL = l & Literal32.MaskL;
                 var rawH = h & Literal32.MaskH;
-            
-                var val = (uint)EditorGUI.IntField(r, label, (int)(rawL | rawH));
+
+                var val = (uint) EditorGUI.IntField(r, label, (int) (rawL | rawH));
                 property.FindPropertyRelative("h").longValue = (val & Literal32.MaskH | Literal32.RanL);
                 property.FindPropertyRelative("l").longValue = (val & Literal32.MaskL | Literal32.RanH);
 
-                 
-                
-                EditorGUI.LabelField(rTag, 
+
+                EditorGUI.LabelField(
+                    rTag,
                     $"{Convert.ToString(rawH, 16)}|{Convert.ToString(rawL, 16)} <{Convert.ToString(h, 16)}|{Convert.ToString(l, 16)}>",
-                    TagStyle);
+                    TagStyle
+                );
 
                 render.SetColor(new Color(1, 1, 1, 0.3f));
                 EditorGUI.LabelField(r, $"UniKh.Literal32", FloatStyle);
-            } 
-            
-            
-            
-            
+            }
+
+
             // EditorGUI.PropertyField(GetRect(0), );
             // EditorGUI.PropertyField(GetRect(1), property.FindPropertyRelative("l"));
-            
+
             // var target = property.serializedObject.targetObject;
             // var targetType = target.GetType();
             // var field = targetType.GetField(property.propertyPath);
@@ -119,7 +113,7 @@ namespace UniKh.editor {
             // EditorUtils.Render.EndLabelWidth();
 
             EditorUtils.Render.EndSandBox();
-            
+
             EditorGUI.EndProperty();
         }
     }

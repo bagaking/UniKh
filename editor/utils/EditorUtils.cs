@@ -4,70 +4,39 @@
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
  */
 
+using UniKh.dataStructure;
 using UnityEditor;
 using UnityEngine;
 
 namespace UniKh.editor {
     public static class EditorUtils {
 
-        public static GUIStyle LabelCodeStyle {
-            get {
-                if (_labelCodeStyle == null) {
-                    _labelCodeStyle = new GUIStyle(GUI.skin.label) {font = EditorFontCode}; 
-                } 
-                return _labelCodeStyle;
-            }
+        public static class UniKh {
+            public static LazyVal<Texture> LogoWhite = new LazyVal<Texture>(()=>(Texture) Resources.Load("logo/logo-unikh-white"));
+            public static LazyVal<Texture> LogoGray = new LazyVal<Texture>(()=>(Texture) Resources.Load("logo/logo-unikh-gray"));
+            public static LazyVal<Texture> LogoLight = new LazyVal<Texture>(()=>(Texture) Resources.Load("logo/logo-unikh-light"));
         }
-        private static GUIStyle _labelCodeStyle;
         
-        public static GUIStyle LabelEditorStyle {
-            get {
-                if (_labelEditorStyle == null) {
-                    _labelEditorStyle = new GUIStyle(GUI.skin.label) {font = EditorFontEditor}; 
-                } 
-                return _labelEditorStyle;
-            }
-        }
-        private static GUIStyle _labelEditorStyle;
+        public static LazyVal<GUIStyle> LabelCodeStyle =
+            new LazyVal<GUIStyle>(() => new GUIStyle(GUI.skin.label) {font = EditorFontCode});
+
+        public static LazyVal<GUIStyle> LabelEditorStyle =
+            new LazyVal<GUIStyle>(() => new GUIStyle(GUI.skin.label) {font = EditorFontEditor});  
         
-        public static GUIStyle LabelEditorTagStyle {
-            get {
-                if (_labelEditorTagStyle == null) {
-                    _labelEditorTagStyle = new GUIStyle(LabelEditorStyle) { 
-                        alignment = TextAnchor.LowerRight,
-                        padding = new RectOffset(2, 2, 2, 2)
-                    }; 
-                } 
-                return _labelEditorTagStyle;
-            }
-        }
-        private static GUIStyle _labelEditorTagStyle;
         
-        public static Font EditorFontCode {
-            get {
-                if (_editorFontCode == null) {
-                    // _editorFontCode = (Font) Resources.Load("font/editor_NotoMono");
-                    _editorFontCode = (Font) Resources.Load("font/editor_SourceCodeVariable");
-                }
-
-                return _editorFontCode;
-            }
-        }
-
-        private static Font _editorFontCode = null;
-        
-        public static Font EditorFontEditor {
-            get {
-                if (_editorFontCh == null) {
-                    _editorFontCh = (Font) Resources.Load("font/editor_PangMenZhengDao");
-                }
-
-                return _editorFontCh;
-            }
-        }
-
-        private static Font _editorFontCh = null;
+        public static LazyVal<GUIStyle> LabelEditorTagStyle =
+            new LazyVal<GUIStyle>(() => new GUIStyle(LabelEditorStyle) {
+                alignment = TextAnchor.LowerRight,
+                padding = new RectOffset(2, 2, 2, 2)
+            });  
             
+        public static LazyVal<Font> EditorFontCode =
+            new LazyVal<Font>(() => (Font) Resources.Load("font/editor_SourceCodeVariable"));
+ 
+        public static LazyVal<Font> EditorFontEditor =
+            new LazyVal<Font>(() => (Font) Resources.Load("font/editor_PangMenZhengDao"));
+        
+ 
         public static EditorRenderer Render = new EditorRenderer();
 
         public static int GetLastControlId() {
@@ -81,7 +50,7 @@ namespace UniKh.editor {
         public static Vector2 CulcContentSize(GUIContent content, GUIStyle style) {
             return style.CalcSize(content);
         }
-        
+
         public static Rect DrawTag(string tag, string hint) {
             var rect = EditorGUILayout.GetControlRect(false, 16);
             Render.BeginColor(Color.gray);
@@ -93,8 +62,8 @@ namespace UniKh.editor {
             Render.EndColor();
             return rect;
         }
-        
-        public static void DrawOverlapHeaderRect(Rect r, Color cLight, Color cShadow) { 
+
+        public static void DrawOverlapHeaderRect(Rect r, Color cLight, Color cShadow) {
             cLight.a = 0.1f;
             cShadow.a = 0.05f;
             EditorGUI.DrawRect(r, cLight);
@@ -108,6 +77,5 @@ namespace UniKh.editor {
             lightLine.height += 1;
             EditorGUI.DrawRect(lightLine, cShadow);
         }
-
     }
 }
