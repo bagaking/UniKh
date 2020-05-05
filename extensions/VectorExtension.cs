@@ -56,7 +56,7 @@ namespace UniKh.extensions {
             return new Vector3(v.x, v.y, fnMapping(v.z));
         }
 
-        public static Vector3 ToVector2XnZ(this Vector3 v) {
+        public static Vector2 ToVector2XnZ(this Vector3 v) {
             return new Vector2(v.x, v.z);
         }
         

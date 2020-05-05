@@ -39,7 +39,14 @@ namespace UniKh.extensions {
             for (var i = 0; i < lst.Count; i++) {
                 ret.Add(mapper(lst[i]));
             }
-
+            return ret;
+        }
+        
+        public static List<TResult> Map<TTerm, TResult>(this List<TTerm> lst, System.Func<TTerm, int, TResult> mapper) {
+            var ret = new List<TResult>(lst.Count);
+            for (var i = 0; i < lst.Count; i++) {
+                ret.Add(mapper(lst[i], i));
+            }
             return ret;
         }
 

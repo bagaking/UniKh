@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.Object;
 
@@ -55,10 +56,19 @@ namespace UniKh.extensions {
 
             return null;
         }
+        
+        public static List<Transform> GetChildren(this Transform trans, bool includeInactive = true) {
+            var children = new List<Transform>();
+            trans.ForEachChild(children.Add, includeInactive);
+            return children;
+        }
 
-        public static void ForEachChild(this Transform trans, Action<Transform> func) {
+        public static void ForEachChild(this Transform trans, Action<Transform> func, bool includeInactive = true) {
             if (func == null) throw new Exception("func must exist when traversing child nodes");
-            for (var i = 0; i < trans.childCount; i++) func(trans.GetChild(i));
+            for (var i = 0; i < trans.childCount; i++) {
+                if (!includeInactive && !trans.gameObject.activeInHierarchy) return;
+                func(trans.GetChild(i));
+            }
         }
         
         public static void ForEachChild<T>(this Transform trans, Action<T> func) where T : Component{
