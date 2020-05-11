@@ -38,7 +38,9 @@ namespace UniKh.utils {
                         new CombineInstance {
                             mesh = mf.sharedMesh,
                             subMeshIndex = subi,
-                            transform = parkCenter ? parkCenter.worldToLocalMatrix * localToWorldMatrix : localToWorldMatrix
+                            transform = parkCenter
+                                ? parkCenter.worldToLocalMatrix * localToWorldMatrix
+                                : localToWorldMatrix
                         }
                     );
                 }
@@ -68,34 +70,43 @@ namespace UniKh.utils {
             return gb;
         }
 
-        public static List<MeshRenderer> MergeGroupByMaterial(IEnumerable<MeshRenderer> mrs, Transform parkCenter = null) {
+        public static List<MeshRenderer> MergeGroupByMaterial(IEnumerable<MeshRenderer> mrs,
+            Transform parkCenter = null) {
             var gb = GroupBy(mrs, parkCenter);
             var newMrs = new List<MeshRenderer>();
             gb.Combine.ForEach(
                 (cl, i) => {
                     var meshI = new Mesh();
                     meshI.CombineMeshes(cl.ToArray());
-                    newMrs.Add(CreateObjectByCombineInstanceLst(cl.ToArray(), new [] {gb.MatLst[i]}));
+                    newMrs.Add(CreateObjectByCombineInstanceLst(cl.ToArray(), new[] {gb.MatLst[i]}));
                 }
             );
             return newMrs;
         }
 
-        public static MeshRenderer Merge(IEnumerable<MeshRenderer> mrs, Transform parkCenter = null, string name = "merged-mesh") {
+        public static MeshRenderer Merge(IEnumerable<MeshRenderer> mrs,
+            Transform parkCenter = null,
+            string name = "merged-mesh") {
             var gb = GroupBy(mrs, parkCenter);
+            var vertSum = 0;
             var mergedSubMeshes = gb.Combine.Map(
                 (cl, i) => {
                     var meshI = new Mesh();
                     meshI.CombineMeshes(cl.ToArray());
-                    // CreateObjectByCombineInstanceLst(cl.ToArray(), new [] {gb.MatLst[i]});
+                    vertSum += meshI.vertexCount;
                     return new CombineInstance {
                         mesh = meshI,
                         transform = Matrix4x4.identity
                     };
                 }
             );
-
+            
+            if(vertSum >= 65535) {
+                Debug.LogError("The combined mesh try to generate are exceeded the limit (" + vertSum + "/65535)");
+            }
+            
             return CreateObjectByCombineInstanceLst(mergedSubMeshes.ToArray(), gb.MatLst.ToArray(), name);
         }
+
     }
 }
