@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace UniKh.extensions {
     public static class ListExtension {
@@ -49,6 +51,14 @@ namespace UniKh.extensions {
             }
             return ret;
         }
+        
+        public static List<TTerm> Merge<TTerm, TResult>(this IEnumerable<IEnumerable<TTerm>> lst) {
+            var ret = new List<TTerm>();
+            foreach (var l in lst) {
+                ret.AddRange(l);
+            }
+            return ret;
+        }
 
         public static TTerm Last<TTerm>(this List<TTerm> lst) {
             return lst[lst.Count - 1];
@@ -85,7 +95,6 @@ namespace UniKh.extensions {
             if (lst.Contains(item)) {
                 return false;
             }
-
             lst.Add(item);
             return false;
         }

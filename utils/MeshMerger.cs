@@ -108,5 +108,73 @@ namespace UniKh.utils {
             return CreateObjectByCombineInstanceLst(mergedSubMeshes.ToArray(), gb.MatLst.ToArray(), name);
         }
 
+        public static List<MeshRenderer> Batch(IEnumerable<MeshRenderer> mrs,
+            Transform parkCenter = null,
+            string name = "merged-mesh") {
+            var gb = GroupBy(mrs, parkCenter);
+            
+            // 1. merge meshes has same mat into a list of meshes that are not larger than 65535.
+            var mergedSubMeshes = gb.Combine.Map( 
+                (cl, i) => { // for every mat
+                    var ret = new List<CombineInstance>();
+                    var tempCiLst = new List<CombineInstance>();
+                    var vertSum = 0;
+                    
+                    // flush scanned cis into a mesh
+                    Action flush = () => {
+                        var meshI = new Mesh();
+                        vertSum = 0;
+                        meshI.CombineMeshes(tempCiLst.ToArray());
+                        tempCiLst.Clear();
+                        ret.Add(
+                            new CombineInstance {
+                                mesh = meshI,
+                                transform = Matrix4x4.identity
+                            }
+                        );
+                    };
+
+                    foreach (var c in cl) {
+                        if (vertSum + c.mesh.vertices.Length >= 65535 && tempCiLst.Count > 0) { // if the size are about to exceed 65535, flush once.
+                            flush();
+                        }
+                        tempCiLst.Add(c);
+                        vertSum += c.mesh.vertexCount;
+                    }
+
+                    if (tempCiLst.Count > 0) { // flush results left in the queue.
+                        flush();
+                    }
+
+                    return ret;
+                }
+            );
+
+            //2. merge all meshes into a list of blob (of mesh renderer) that are not larger than 65535.
+            var retMrs = new List<MeshRenderer>();
+            for(var round = 0; mergedSubMeshes.Reduce((p, v) => p || v.Count > 0, false); round ++){
+                var cis = new List<CombineInstance>();
+                var mats = new List<Material>();
+
+                bool executed;
+                var vertSum = 0;
+                do {
+                    executed = false;
+                    for (var i = 0; i < mergedSubMeshes.Count; i++) {
+                        if (mergedSubMeshes[i].Count <= 0) continue;
+                        if (vertSum != 0 && vertSum + mergedSubMeshes[i].Last().mesh.vertexCount >= 65535) break;
+                        executed = true;
+                        
+                        var ci = mergedSubMeshes[i].PopLast();
+                        cis.Add(ci);
+                        mats.Add(gb.MatLst[i]);
+                        vertSum += ci.mesh.vertexCount;
+                    }
+                } while (executed);
+                
+                retMrs.Add(CreateObjectByCombineInstanceLst(cis.ToArray(), mats.ToArray(), name + "_" + round));
+            }
+            return retMrs;
+        }
     }
 }
