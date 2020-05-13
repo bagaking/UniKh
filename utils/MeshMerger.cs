@@ -84,6 +84,13 @@ namespace UniKh.utils {
             return newMrs;
         }
 
+        /// <summary>
+        /// Merge small assets that the total vertex count are not larger than 65535.
+        /// </summary>
+        /// <param name="mrs">list of MeshRenderer to merge.</param>
+        /// <param name="parkCenter">when execute merge, which transform should be considered as the center point.</param>
+        /// <param name="name">name of the result object, default is `merged-mesh`.</param>
+        /// <returns>MeshRenderer of the merged mesh.</returns>
         public static MeshRenderer Merge(IEnumerable<MeshRenderer> mrs,
             Transform parkCenter = null,
             string name = "merged-mesh") {
@@ -108,9 +115,16 @@ namespace UniKh.utils {
             return CreateObjectByCombineInstanceLst(mergedSubMeshes.ToArray(), gb.MatLst.ToArray(), name);
         }
 
+        /// <summary>
+        /// Merge assets into a list of blobs.
+        /// </summary>
+        /// <param name="mrs">list of MeshRenderer to merge.</param>
+        /// <param name="parkCenter">when execute merge, which transform should be considered as the center point.</param>
+        /// <param name="name">name of the result object, default is `batched-mesh`.</param>
+        /// <returns>a list of batched MeshRenderers.</returns>
         public static List<MeshRenderer> Batch(IEnumerable<MeshRenderer> mrs,
             Transform parkCenter = null,
-            string name = "merged-mesh") {
+            string name = "batched-mesh") {
             var gb = GroupBy(mrs, parkCenter);
             
             // 1. merge meshes has same mat into a list of meshes that are not larger than 65535.
