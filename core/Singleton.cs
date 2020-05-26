@@ -6,18 +6,17 @@ namespace UniKh.core {
     public class Singleton<T> : MonoBehaviour where T : Singleton<T>, new() {
         public static T Inst { get; private set; }
 
-        public static T LazyInst {
-            get {
-                if (Inst) return Inst;
-                var type = typeof(T);
+        public static T LazyInst => EnsureInst();
+
+        public static T EnsureInst() {
+            if (Inst) return Inst;
+            var type = typeof(T);
                 
-                var inUniKh = type.Namespace != null && type.Namespace.StartsWith("UniKh");
-                var go = new GameObject(inUniKh ? $"[S]UniKh/{type.Name}" : $"[S]{type.FullName}");
-                var mono = go.AddComponent<T>();
-                if (Inst == mono) return mono;
-                return _SetInst(mono);
-            }
-        }
+            var inUniKh = type.Namespace != null && type.Namespace.StartsWith("UniKh");
+            var go = new GameObject(inUniKh ? $"[S]UniKh/{type.Name}" : $"[S]{type.FullName}");
+            var mono = go.AddComponent<T>();
+            return Inst == mono ? mono : _SetInst(mono);
+        } 
 
         private static T _SetInst(T mono) {
             Inst = mono;
