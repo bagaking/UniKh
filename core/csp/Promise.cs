@@ -22,6 +22,10 @@ namespace UniKh.core {
         public static Promise<T[]> All<T>(params Promise<T>[] promises) {
             return Promise<T>.All(promises);
         }
+        
+        public static Promise<T> Race<T>(params Promise<T>[] promises) {
+            return Promise<T>.Race(promises);
+        }
     }
     
     public class Promise<TVal> : CustomYieldInstruction, IPromise<TVal> {
@@ -43,6 +47,27 @@ namespace UniKh.core {
                 });
             }
             return new Condition().Start(_ => finished >= length).AsPromise(ret);
+        }
+        
+        public static Promise<TVal> Race(params Promise<TVal>[] promises) { // no reject
+            var length = promises.Length;
+            var finished = false;
+            var ret = default(TVal); 
+            for (var i = 0; i < length; i++) {
+                promises[i].Then(val => {
+                    finished = true;
+                    Debug.Log("race item finished " + val);
+                    return ret = val;
+                }).Catch(
+                    e => {
+                        Debug.LogError("Error happens in race: " + e);
+                    });
+            }
+            return new Condition().Start(_ => finished).AsPromise(ret).Then(
+                r => {
+                    Debug.Log("race finished");
+                    return r;
+                });
         }
         
         public Promise<TVal> Resolve(TVal val) {
@@ -106,6 +131,6 @@ namespace UniKh.core {
             return this;
         }
 
-        public override bool keepWaiting => _executed;
+        public override bool keepWaiting => !_executed;
     }
 }
