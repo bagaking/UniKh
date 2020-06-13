@@ -30,7 +30,7 @@ namespace UniKh.core.tween {
                 () => trans.position,
                 val =>  trans.SetPositionAndRotation(val, trans.rotation),
                 posOrg,
-                posOrg + value,
+                value,
                 EvaluateUnityVector3.Inst,
                 () => trans
             );
