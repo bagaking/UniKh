@@ -286,7 +286,7 @@ namespace UniKh.extensions {
             var ret = new List<T>(count) { self[0] };
             
             for (var i = 1; i < count; i ++) {
-                ret.Append(self[i]);
+                ret.Add(self[i]);
                 var ind = random.Next(0, i + 1);
                 if(ind == i) continue;
                 ret[i] = ret[ind];
