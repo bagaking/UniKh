@@ -42,6 +42,9 @@ namespace UniKh.core.csp.waiting {
 
         public abstract void Recycle();
 
+        /// <summary>
+        /// Callback will be triggered after the waiting operation finished.
+        /// </summary>
         public Proc Go(Action callback) {
             return CSP.LazyInst.Do(Yield(callback));
         }
@@ -66,6 +69,9 @@ namespace UniKh.core.csp.waiting {
             }
         }
 
+        /// <summary>
+        /// Custom waiting operation should implement the Recycle method. 
+        /// </summary>
         public override void Recycle() {
             pool.StackPush(this as T); // todo: pool.Append(this as T); ?
         }

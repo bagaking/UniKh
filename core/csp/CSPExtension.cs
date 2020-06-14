@@ -27,8 +27,7 @@ namespace UniKh.core.csp {
                 if (null == ret) {
                     ret = new List<object>();
                 }
-
-                ret.Push((payload.Current as Result).Val);
+                ret.Push((payload.Current as Result)?.Val);
             }
 
             return ret;
