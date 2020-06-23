@@ -15,4 +15,12 @@ namespace UniKh.core.tween {
             return from + offset * evaluatePos;
         }
     }
+
+    public class EvaluateUnityVector3RotateTowards : TweenEvaluator<Vector3, EvaluateUnityVector3RotateTowards> {
+
+        public override Vector3 Evaluate(Vector3 from, Vector3 to, float evaluatePos) {
+            var radius = Vector3.Angle(from, to) * Mathf.Deg2Rad;
+            return Vector3.RotateTowards(from, to, evaluatePos * radius, 0f);
+        }
+    }
 }
