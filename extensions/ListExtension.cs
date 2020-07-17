@@ -19,16 +19,32 @@ namespace UniKh.extensions {
 
         private static readonly StringBuilder SbCombine = new StringBuilder();
 
-        public static string ToItemsString<TTerm>(this IEnumerable<TTerm> lst, string prefix = "", int maxCount = 0) {
+        public static string ToItemsString<TTerm>(this IEnumerable<TTerm> lst, int maxCount = 0) {
+            return lst.ToItemsString("", " ", maxCount);
+        }
+
+        public static string ToItemsString<TTerm>(this IEnumerable<TTerm> lst, string prefix, int maxCount = 0) {
+            return lst.ToItemsString(prefix, " ", maxCount);
+        }
+
+        public static string ToItemsString<TTerm>(this IEnumerable<TTerm> lst, string prefix, string seperator, int maxCount = 0) {
             SbCombine.Clear().Append(prefix);
+            var it = lst.GetEnumerator();
             if (maxCount <= 0) {
-                foreach (var term in lst) {
-                    SbCombine.Append(' ').Append(term);
+                if(it.MoveNext()) {
+                    SbCombine.Append(it.Current);
+                }
+
+                while (it.MoveNext()) {
+                    SbCombine.Append(seperator).Append(it.Current);
                 }
             } else {
-                foreach (var term in lst) {
-                    if (0 == maxCount--) break;
-                    SbCombine.Append(' ').Append(term);
+                if (it.MoveNext()) {
+                    SbCombine.Append(it.Current);
+                } 
+                while (it.MoveNext()) {
+                    if (0 == --maxCount) break;
+                    SbCombine.Append(seperator).Append(it.Current);
                 }
             }
 
