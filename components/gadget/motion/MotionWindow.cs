@@ -83,11 +83,11 @@ namespace UniKh.comp.ui {
 
 
         [Btn(true)]
-        private Promise<object> hide() {
+        public Promise<object> Hide() {
             return Hide(1);
         }
 
-        public Promise<object> Hide(float durationScale = 1) {
+        public Promise<object> Hide(float durationScale) {
             if (startOffset == Vector3.zero && Math.Abs(startScaleRate - 1) < 0.0001f) {
                 return Skip.New.Start().AsPromise();
             }
@@ -103,6 +103,7 @@ namespace UniKh.comp.ui {
                     if (to <= Tweener.State.Active) return;
                     inAction = false;
                     phase = false;
+                    this.SetObjectActive(false);
                 }
             ).SetDuration(durationShow * durationScale).AsPromise().Then(_ => (object)_);
         }
