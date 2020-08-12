@@ -1,4 +1,4 @@
-﻿using UniKh.utils;
+using UniKh.utils;
 using UnityEngine;
 
 namespace UniKh.coordinate {
