@@ -2,7 +2,7 @@ using System;
 using UniKh.utils;
 using UnityEngine;
 
-namespace UniKh.coordinate {
+namespace UniKh.space {
     [Serializable]
     public class LineSeg3D {
         public Vector3 origin;

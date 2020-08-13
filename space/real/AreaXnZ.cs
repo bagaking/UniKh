@@ -2,7 +2,7 @@ using UniKh.utils;
 using UniKh.utils.Inspector;
 using UnityEngine;
 
-namespace UniKh.coordinate {
+namespace UniKh.space {
     
     [System.Serializable]
     public class AreaXnZ {

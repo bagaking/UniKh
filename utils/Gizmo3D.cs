@@ -1,12 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Numerics;
-using UniKh.coordinate;
-using UniKh.dataStructure;
+using UniKh.space;
 using UniKh.extensions;
 using UnityEngine;
-using Plane = UnityEngine.Plane;
-using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
 namespace UniKh.utils {

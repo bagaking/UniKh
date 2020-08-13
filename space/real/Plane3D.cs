@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace UniKh.coordinate {
+namespace UniKh.space {
     
     [Serializable]
     public class Plane3D {

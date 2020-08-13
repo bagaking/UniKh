@@ -5,9 +5,9 @@
  */
 
 using System;
-using UniKh.coordinate;
 using UniKh.core;
 using UniKh.extensions;
+using UniKh.space;
 using UnityEngine;
 
 namespace UniKh.utils {

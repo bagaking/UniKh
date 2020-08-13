@@ -28,6 +28,10 @@ namespace UniKh.space {
         public int Index(int coordRow, int coordCol) {
             return coordRow * Size.Col + coordCol;
         }
+        
+        public int Index(V2I coord) {
+            return coord.Row * Size.Col + coord.Col;
+        }
 
         public int[] CreateMatrix() {
             return new int[Length];

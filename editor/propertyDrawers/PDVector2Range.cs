@@ -4,8 +4,6 @@
  *  Copyright:      (C) 2019 - 2029 bagaking, All Rights Reserved
  */
 
-using System;
-using UniKh.coordinate;
 using UniKh.utils.Inspector;
 using UnityEditor;
 using UnityEngine;
