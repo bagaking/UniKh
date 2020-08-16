@@ -12,6 +12,10 @@ namespace UniKh.space {
 
         public int Length => Size.Area00;
 
+        public Window FullWindow => fullWindow ?? (fullWindow = GetWindow(V2I.zero, Size));
+
+        public Window fullWindow = null;
+
         public Coord() { }
 
         public Coord(int colSize, int rowSize) {
@@ -46,13 +50,13 @@ namespace UniKh.space {
 
             return coord;
         }
-    
-        public Window GetWindow(V2I from, V2I to) {
-            return new Window(ClampInPlace(from), ClampInPlace(to));
-        }
         
         public Window GetWindow(int rowFrom, int rowTo, int colFrom, int colTo) {
-            return GetWindow(new V2I(colFrom, rowFrom), new V2I(colTo, rowTo));
+            return new Window(ClampInPlace(new V2I(colFrom, rowFrom)), ClampInPlace(new V2I(colTo, rowTo)));
+        }
+        
+        public Window GetWindow(V2I from, V2I to) {
+            return GetWindow(from.Row, to.Row, from.Col, to.Col);
         }
         
         public Window GetWindow(int coordX, int coordY, int distance = 1) {
@@ -90,8 +94,6 @@ namespace UniKh.space {
                     }
                 }
             }
-
-       
         }
     }
 
