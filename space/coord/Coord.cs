@@ -18,15 +18,11 @@ namespace UniKh.space {
 
         public Coord() { }
 
-        public Coord(int colSize, int rowSize) {
+        public Coord(int rowSize, int colSize) {
             this.Size = new V2I(colSize, rowSize);
         }
         
-        public Coord(uint colSize, uint rowSize) : this((int)colSize, (int)rowSize){
-        }
-
-        public static float Manhattan(float disX, float disY) {
-            return (disX < 0 ? -disX : disX) + (disY < 0 ? -disY : disY);
+        public Coord(uint rowSize, uint colSize) : this((int)rowSize, (int)colSize){
         }
 
         public int Index(int coordRow, int coordCol) {
@@ -59,16 +55,16 @@ namespace UniKh.space {
             return GetWindow(from.Row, to.Row, from.Col, to.Col);
         }
         
-        public Window GetWindow(int coordX, int coordY, int distance = 1) {
-            return GetWindow(coordY - distance, coordY + distance, coordX - distance, coordX + distance);
+        public Window GetWindow(int coordRow, int coordCol,  int distance = 1) {
+            return GetWindow(coordRow - distance, coordRow + distance, coordCol - distance, coordCol + distance);
         }
         
         [Serializable]
         public class Window {
 
-            public Window(int xFrom, int yFrom, int xTo, int yTo) {
-                From = new V2I(xFrom, yFrom);
-                To = new V2I(xTo, yTo);
+            public Window(int colFrom, int rowFrom, int colTo, int rowTo) {
+                From = new V2I(colFrom, rowFrom);
+                To = new V2I(colTo, rowTo);
             }
         
             public Window(V2I from, V2I to) {
@@ -79,17 +75,17 @@ namespace UniKh.space {
             public V2I From { get; }
             public V2I To { get; }
 
-            public int XMin => From.x;
-            public int YMin => From.y;
-            public int XMax => To.x;
-            public int YMax => To.y;
+            public int RowMin => From.y;
+            public int RowMax => To.y;
+            public int ColMin => From.x;
+            public int ColMax => To.x;
 
             public int SizeX => To.x - From.x + 1;
             public int SizeY => To.y - From.y + 1;
  
             public void ForEachPos(Action<int, int> func) {
-                for (var i = XMin; i <= XMax; i++) {
-                    for (var j = YMin; j <= YMax; j++) {
+                for (var i = ColMin; i <= ColMax; i++) {
+                    for (var j = RowMin; j <= RowMax; j++) {
                         func(i, j);
                     }
                 }
