@@ -33,10 +33,6 @@ namespace UniKh.space {
             return coord.Row * Size.Col + coord.Col;
         }
 
-        public int[] CreateMatrix() {
-            return new int[Length];
-        }
-
         public V2I ClampInPlace(V2I coord) {
             if (coord.Col < 0) coord.x = 0;
             else if (coord.Col >= Size.Col) coord.x = XMax;
@@ -57,6 +53,10 @@ namespace UniKh.space {
         
         public Window GetWindow(int coordRow, int coordCol,  int distance = 1) {
             return GetWindow(coordRow - distance, coordRow + distance, coordCol - distance, coordCol + distance);
+        }
+
+        public Grid2D CreateGrid2D() {
+            return new Grid2D(Size.Row, Size.Col);
         }
         
         [Serializable]

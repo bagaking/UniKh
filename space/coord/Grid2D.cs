@@ -2,7 +2,7 @@ using UniKh.dataStructure;
 using UniKh.space;
 using UniKh.utils;
 
-namespace UniKh.dataSource {
+namespace UniKh.space {
     public class Grid2D : Coord {
         public V2I Center { get; }
 
@@ -23,7 +23,7 @@ namespace UniKh.dataSource {
             set => gridMarks[index] = value;
         }
 
-        public Grid2D(int colSize, int rowSize): base(rowSize, colSize) {
+        public Grid2D(int rowSize, int colSize): base(rowSize, colSize) {
             gridMarks = new int[Length];
             Center = Size / 2;
         }
